@@ -32,7 +32,7 @@ Gear test-system with Juergen
 try: # when working with an installed Cnc25D package
   from cnc25d import cnc25d_api
 except:    # when working on the source files
-  import importing_cnc25d # give access to the cnc25d package
+  from . import importing_cnc25d # give access to the cnc25d package
   from cnc25d import cnc25d_api
 #cnc25d_api.importing_freecad()
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -43,6 +43,7 @@ import sys
 from cnc25d import cnc25d_design
 #
 import Part
+import six
 
     
 ################################################################
@@ -155,7 +156,7 @@ def center_position(ai_center_diameter, ai_pd1, ai_pd2, ai_pd3, ai_pd4, ai_optio
   l13_min = max(l12, l23, l34, l41)
   l13_max = min(l12+l23, l34+l41)
   l13 = (l13_min+l13_max)/2.0
-  print("l13: min {:0.3f}  max {:0.3f} l13 {:0.3f}".format(l13_min, l13_max, l13))
+  six.print_(("l13: min {:0.3f}  max {:0.3f} l13 {:0.3f}".format(l13_min, l13_max, l13)))
   # c1
   c1x = 0.0
   c1y = 0.0
@@ -181,7 +182,7 @@ def center_position(ai_center_diameter, ai_pd1, ai_pd2, ai_pd3, ai_pd4, ai_optio
   c3: x {:0.3f}  y {:0.3f}
   c4: x {:0.3f}  y {:0.3f}
   """.format(c1x, c1y, c2x, c2y, c3x, c3y, c4x, c4y)
-  print("{:s}".format(info_txt))
+  six.print_(("{:s}".format(info_txt)))
   ### dxf
   # plank outline 
   smooth_radius = 40

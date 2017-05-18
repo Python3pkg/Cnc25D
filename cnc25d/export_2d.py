@@ -28,7 +28,7 @@ export_2d.py provides functions to create DXF file from a FreeCAD Part Oject
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import importing_freecad
+from . import importing_freecad
 importing_freecad.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())

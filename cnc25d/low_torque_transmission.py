@@ -29,7 +29,8 @@ As every Cnc25D designs, you can view the 2D-figures in a Tk-window, generate th
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import cnc25d_api
+from . import cnc25d_api
+import six
 cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -52,9 +53,9 @@ import Part
 #import svgwrite
 #from dxfwrite import DXFEngine
 # cnc25d
-import gearring
-import gearwheel
-import gear_profile # to get the high-level parameter to find the angle position
+from . import gearring
+from . import gearwheel
+from . import gear_profile # to get the high-level parameter to find the angle position
 #import axle_lid
 
 ################################################################
@@ -314,15 +315,15 @@ def ltt_constraint_check(c):
   if(c['planet_nb']==0):
     c['planet_nb'] = c['planet_number_max']
   if(c['planet_nb']>c['planet_number_max']):
-    print("ERR247: Error, planet_nb {:d} is bigger than planet_number_max {:d}".format(c['planet_nb'], c['planet_number_max']))
+    six.print_(("ERR247: Error, planet_nb {:d} is bigger than planet_number_max {:d}".format(c['planet_nb'], c['planet_number_max'])))
     sys.exit(2)
   if(c['planet_nb']<1):
-    print("ERR251: Error, planet_nb {:d} must be bigger or equal to 1".format(c['planet_nb']))
+    six.print_(("ERR251: Error, planet_nb {:d} must be bigger or equal to 1".format(c['planet_nb'])))
     sys.exit(2)
   # epicyclic fitting
   epicyclic_tooth_check = (2*(c['sun_gear_tooth_nb'] + c['planet_gear_tooth_nb'])) % c['planet_nb']
   if(epicyclic_tooth_check != 0):
-    print("WARN243: Warning, not respected epicyclic-gearing-tooth-nb relation: 2*(sun_gear_tooth_nb {:d} + planet_gear_tooth_nb {:d}) % planet_nb {:d} == {:d} (should be 0)".format(c['sun_gear_tooth_nb'], c['planet_gear_tooth_nb'], c['planet_nb'], epicyclic_tooth_check))
+    six.print_(("WARN243: Warning, not respected epicyclic-gearing-tooth-nb relation: 2*(sun_gear_tooth_nb {:d} + planet_gear_tooth_nb {:d}) % planet_nb {:d} == {:d} (should be 0)".format(c['sun_gear_tooth_nb'], c['planet_gear_tooth_nb'], c['planet_nb'], epicyclic_tooth_check)))
   c['planet_angle_inc'] = 2*math.pi/c['planet_nb']
   c['planet_circle_radius'] = (c['sun_gear_tooth_nb'] + c['planet_gear_tooth_nb'])*c['gear_module']/2.0
   c['planet_angle_position'] = []
@@ -355,15 +356,15 @@ def ltt_constraint_check(c):
     c['sun_oriantation_angles'].append(i_gp.get_constraint()['second_positive_initial_angle'])
     #c['sun_oriantation_angles'].append(math.fmod(i_gp.get_constraint()['second_positive_initial_angle']+sun_half_tooth_angle, 2*sun_half_tooth_angle)-sun_half_tooth_angle) # it is better to do this normaization when comparing
     if(abs(sun_x_position - 0.0)>radian_epsilon):
-      print("ERR286: Error, sun_x_position {:0.3f} is not at the expected coordinate 0.0".format(sun_x_position))
+      six.print_(("ERR286: Error, sun_x_position {:0.3f} is not at the expected coordinate 0.0".format(sun_x_position)))
       sys.exit(2)
     if(abs(sun_y_position - 0.0)>radian_epsilon):
-      print("ERR289: Error, sun_y_position {:0.3f} is not at the expected coordinate 0.0".format(sun_y_position))
+      six.print_(("ERR289: Error, sun_y_position {:0.3f} is not at the expected coordinate 0.0".format(sun_y_position)))
       sys.exit(2)
     #if(abs(c['sun_oriantation_angles'][i]-c['sun_oriantation_angles'][0])>radian_epsilon):
     angle_diff = math.fmod(c['sun_oriantation_angles'][i]-c['sun_oriantation_angles'][0]+11*sun_half_tooth_angle, 2*sun_half_tooth_angle)-sun_half_tooth_angle # might habe issue when the difference is negative
     if(abs(angle_diff)>radian_epsilon):
-      print("ERR293: Error, {:d}-sun_oriantation_angles {:0.3f} is different from 0-sun_oriantation_angles {:0.3f}".format(i, c['sun_oriantation_angles'][i], c['sun_oriantation_angles'][0]))
+      six.print_(("ERR293: Error, {:d}-sun_oriantation_angles {:0.3f} is different from 0-sun_oriantation_angles {:0.3f}".format(i, c['sun_oriantation_angles'][i], c['sun_oriantation_angles'][0])))
       #print("dbg306: sun_half_tooth_angle:", sun_half_tooth_angle, 2*sun_half_tooth_angle, i_gp.get_constraint()['second_pi_module_angle'])
       #print("dbg307: sun_oriantation_angles:", c['sun_oriantation_angles'])
       #print("dbg369: angle_diff:", angle_diff)
@@ -374,24 +375,24 @@ def ltt_constraint_check(c):
   c['sun_axle_radius'] = c['sun_axle_diameter']/2.0
   c['sun_gear_hollow_diameter'] = c['gear_module']*(c['sun_gear_tooth_nb']-3)
   if(c['sun_axle_diameter']+2*c['sun_spacer_length']>c['sun_gear_hollow_diameter']):
-    print("ERR310: Error, sun_axle_diameter {:0.3f} or sun_spacer_length {:0.3f} are too big compare to sun_gear_hollow_diameter {:0.3f}".format(c['sun_axle_diameter'], c['sun_spacer_length'], c['sun_gear_hollow_diameter']))
+    six.print_(("ERR310: Error, sun_axle_diameter {:0.3f} or sun_spacer_length {:0.3f} are too big compare to sun_gear_hollow_diameter {:0.3f}".format(c['sun_axle_diameter'], c['sun_spacer_length'], c['sun_gear_hollow_diameter'])))
     sys.exit(2)
   # planet axle and spacer
   c['planet_axle_radius'] = c['planet_axle_diameter']/2.0
   c['planet_gear_hollow_diameter'] = c['gear_module']*(c['planet_gear_tooth_nb']-3)
   if(c['planet_axle_diameter']+2*c['planet_spacer_length']>c['planet_gear_hollow_diameter']):
-    print("ERR311: Error, planet_axle_diameter {:0.3f} or planet_spacer_length {:0.3f} are too big compare to planet_gear_hollow_diameter {:0.3f}".format(c['planet_axle_diameter'], c['planet_spacer_length'], c['planet_gear_hollow_diameter']))
+    six.print_(("ERR311: Error, planet_axle_diameter {:0.3f} or planet_spacer_length {:0.3f} are too big compare to planet_gear_hollow_diameter {:0.3f}".format(c['planet_axle_diameter'], c['planet_spacer_length'], c['planet_gear_hollow_diameter'])))
     sys.exit(2)
   # planet_carrier axle and spacer
   c['planet_carrier_axle_radius'] = c['planet_carrier_axle_diameter']/2.0
   if(c['planet_carrier_axle_diameter']+2*c['planet_carrier_spacer_length']>c['planet_gear_hollow_diameter']):
-    print("ERR315: Error, planet_carrier_axle_diameter {:0.3f} or planet_carrier_spacer_length {:0.3f} are too big compare to planet_gear_hollow_diameter {:0.3f}".format(c['planet_carrier_axle_diameter'], c['planet_carrier_spacer_length'], c['planet_gear_hollow_diameter']))
+    six.print_(("ERR315: Error, planet_carrier_axle_diameter {:0.3f} or planet_carrier_spacer_length {:0.3f} are too big compare to planet_gear_hollow_diameter {:0.3f}".format(c['planet_carrier_axle_diameter'], c['planet_carrier_spacer_length'], c['planet_gear_hollow_diameter'])))
     sys.exit(2)
   if(c['planet_carrier_axle_holder_diameter']>c['planet_gear_hollow_diameter']):
-    print("ERR318: Error, planet_carrier_axle_holder_diameter {:0.3f} is too big compare to planet_gear_hollow_diameter {:0.3f}".format(c['planet_carrier_axle_holder_diameter'], c['planet_gear_hollow_diameter']))
+    six.print_(("ERR318: Error, planet_carrier_axle_holder_diameter {:0.3f} is too big compare to planet_gear_hollow_diameter {:0.3f}".format(c['planet_carrier_axle_holder_diameter'], c['planet_gear_hollow_diameter'])))
     sys.exit(2)
   if(c['planet_axle_diameter']+2*c['planet_spacer_length']>c['planet_carrier_axle_holder_diameter']):
-    print("ERR321: Error, planet_carrier_axle_holder_diameter {:0.3f} is too small compare to planet_axle_diameter {:0.3f} and planet_spacer_length {:0.3f}".format(c['planet_axle_diameter'], c['planet_spacer_length'], c['planet_carrier_axle_holder_diameter']))
+    six.print_(("ERR321: Error, planet_carrier_axle_holder_diameter {:0.3f} is too small compare to planet_axle_diameter {:0.3f} and planet_spacer_length {:0.3f}".format(c['planet_axle_diameter'], c['planet_spacer_length'], c['planet_carrier_axle_holder_diameter'])))
     sys.exit(2)
   c['planet_carrier_axle_holder_radius'] = c['planet_carrier_axle_holder_diameter']/2.0
   # planet_carrier_external_diameter
@@ -400,10 +401,10 @@ def ltt_constraint_check(c):
     c['planet_carrier_external_diameter'] = c['planet_carrier_external_diameter_max']
   c['planet_carrier_external_radius'] = c['planet_carrier_external_diameter']/2.0
   if(c['planet_carrier_external_diameter']>c['planet_carrier_external_diameter_max']):
-    print("ERR329: Error, planet_carrier_external_diameter {:0.3f} is bigger than planet_carrier_external_diameter_max {:0.3f}".format(c['planet_carrier_external_diameter'], c['planet_carrier_external_diameter_max']))
+    six.print_(("ERR329: Error, planet_carrier_external_diameter {:0.3f} is bigger than planet_carrier_external_diameter_max {:0.3f}".format(c['planet_carrier_external_diameter'], c['planet_carrier_external_diameter_max'])))
     sys.exit(2)
   if(c['planet_carrier_external_radius']<c['planet_circle_radius']-c['planet_carrier_axle_holder_radius']+radian_epsilon):
-    print("ERR325: Error, planet_carrier_external_radius {:0.3f} is too small compare to planet_circle_radius {:0.3f} and planet_carrier_axle_holder_radius {:0.3f}".format(c['planet_carrier_external_radius'], c['planet_circle_radius'], c['planet_carrier_axle_holder_radius']))
+    six.print_(("ERR325: Error, planet_carrier_external_radius {:0.3f} is too small compare to planet_circle_radius {:0.3f} and planet_carrier_axle_holder_radius {:0.3f}".format(c['planet_carrier_external_radius'], c['planet_circle_radius'], c['planet_carrier_axle_holder_radius'])))
     sys.exit(2)
   # planet_carrier_internal_diameter
   c['planet_carrier_internal_diameter_min'] = c['gear_module']*(c['sun_gear_tooth_nb']+4)
@@ -412,16 +413,16 @@ def ltt_constraint_check(c):
     c['planet_carrier_internal_diameter'] = c['planet_carrier_internal_diameter_default']
   c['planet_carrier_internal_radius'] = c['planet_carrier_internal_diameter']/2.0
   if(c['planet_carrier_internal_diameter']<c['planet_carrier_internal_diameter_min']):
-    print("ERR342: Error, planet_carrier_internal_diameter {:0.3f} is smaller than planet_carrier_internal_diameter_min {:0.3f}".format(c['planet_carrier_internal_diameter'], c['planet_carrier_internal_diameter_min']))
+    six.print_(("ERR342: Error, planet_carrier_internal_diameter {:0.3f} is smaller than planet_carrier_internal_diameter_min {:0.3f}".format(c['planet_carrier_internal_diameter'], c['planet_carrier_internal_diameter_min'])))
     sys.exit(2)
   if(c['planet_carrier_internal_diameter']>c['planet_carrier_external_diameter']-radian_epsilon):
-    print("ERR345: Error, planet_carrier_internal_diameter {:0.3f} is bigger than planet_carrier_external_diameter {:0.3f}".format(c['planet_carrier_internal_diameter'], c['planet_carrier_external_diameter']))
+    six.print_(("ERR345: Error, planet_carrier_internal_diameter {:0.3f} is bigger than planet_carrier_external_diameter {:0.3f}".format(c['planet_carrier_internal_diameter'], c['planet_carrier_external_diameter'])))
     sys.exit(2)
   # planet_carrier_rear_smooth_radius
   if(c['planet_carrier_rear_smooth_radius']<c['cnc_router_bit_radius']):
     c['planet_carrier_rear_smooth_radius'] = c['cnc_router_bit_radius']
   if(c['planet_carrier_rear_smooth_radius']>min(c['planet_carrier_internal_radius'], c['planet_carrier_axle_holder_radius'])):
-    print("ERR351: Error, planet_carrier_rear_smooth_radius {:0.3f} is too big compare to planet_carrier_internal_radius {:0.3f} and planet_carrier_axle_holder_radius {:0.3f}".format(c['planet_carrier_rear_smooth_radius'], c['planet_carrier_internal_radius'],  c['planet_carrier_axle_holder_radius']))
+    six.print_(("ERR351: Error, planet_carrier_rear_smooth_radius {:0.3f} is too big compare to planet_carrier_internal_radius {:0.3f} and planet_carrier_axle_holder_radius {:0.3f}".format(c['planet_carrier_rear_smooth_radius'], c['planet_carrier_internal_radius'],  c['planet_carrier_axle_holder_radius'])))
     sys.exit(2)
   # planet_carrier_middle_clearance_diameter
   c['planet_carrier_middle_clearance_diameter_min'] = c['gear_module']*(c['planet_gear_tooth_nb']+4)
@@ -429,7 +430,7 @@ def ltt_constraint_check(c):
     c['planet_carrier_middle_clearance_diameter'] = c['planet_carrier_middle_clearance_diameter_min']
   c['planet_carrier_middle_clearance_radius'] = c['planet_carrier_middle_clearance_diameter']/2.0
   if(c['planet_carrier_middle_clearance_diameter']<c['planet_carrier_middle_clearance_diameter_min']):
-    print("ERR370: Error, planet_carrier_middle_clearance_diameter {:0.3f} is smaller than planet_carrier_middle_clearance_diameter_min {:0.3f}".format(c['planet_carrier_middle_clearance_diameter'], c['planet_carrier_middle_clearance_diameter_min']))
+    six.print_(("ERR370: Error, planet_carrier_middle_clearance_diameter {:0.3f} is smaller than planet_carrier_middle_clearance_diameter_min {:0.3f}".format(c['planet_carrier_middle_clearance_diameter'], c['planet_carrier_middle_clearance_diameter_min'])))
     sys.exit(2)
   # planet_carrier_middle_smooth_radius
   if(c['planet_carrier_middle_smooth_radius']<c['cnc_router_bit_radius']):
@@ -458,7 +459,7 @@ def ltt_constraint_check(c):
     aOAD = math.pi/2 - c['planet_angle_inc']/2.0
     aOAF = aOAD + aDAE
     if(aOAG<aOAF):
-      print("ERR395: Error, planet_carrier_external_radius {:0.3f} is too small compare to planet_carrier_middle_clearance_radius {:0.3f} or planet_carrier_middle_smooth_radius {:0.3f}".format(c['planet_carrier_external_radius'], c['planet_carrier_middle_clearance_radius'], c['planet_carrier_middle_smooth_radius']))
+      six.print_(("ERR395: Error, planet_carrier_external_radius {:0.3f} is too small compare to planet_carrier_middle_clearance_radius {:0.3f} or planet_carrier_middle_smooth_radius {:0.3f}".format(c['planet_carrier_external_radius'], c['planet_carrier_middle_clearance_radius'], c['planet_carrier_middle_smooth_radius'])))
       sys.exit(2)
     elif(aOAH<aOAF):
       c['middle_planet_carrier_aOAH'] = aOAF # a bit more to ensure a good cnc_cut
@@ -514,7 +515,7 @@ def ltt_constraint_check(c):
     c['middle_planet_carrier_fitting_square_int_angle'] = middle_fs['int_angle']
     c['middle_planet_carrier_fitting_square_int_radius'] = middle_fs['int_radius']
     if(middle_fs['ref_radius']<c['middle_planet_carrier_internal_radius']):
-      print("ERR435: Error, planet_carrier_fitting_square_l2 {:0.3f} is too big".format(c['planet_carrier_fitting_square_l2']))
+      six.print_(("ERR435: Error, planet_carrier_fitting_square_l2 {:0.3f} is too big".format(c['planet_carrier_fitting_square_l2'])))
       sys.exit(2)
     c['planet_carrier_fitting_hole_ref'] = middle_fs['ref_radius']
     front_fs = sub_fitting_square(c['planet_carrier_external_radius'],
@@ -533,7 +534,7 @@ def ltt_constraint_check(c):
     c['planet_carrier_fitting_hole_position_angle'] = aBOC
   # step_nb
   if(c['step_nb']<1):
-    print("ERR456: Error, step_nb {:d} is bigger or equal to 1".format(c['step_nb']))
+    six.print_(("ERR456: Error, step_nb {:d} is bigger or equal to 1".format(c['step_nb'])))
     sys.exit(2)
   # first step z-dimension
   c['middle_planet_carrier_width'] = c['rear_planet_carrier_spacer_width'] + c['planet_slack'] + c['planet_width'] + c['planet_spacer_width']
@@ -548,43 +549,43 @@ def ltt_constraint_check(c):
   # hexagon_hole_diameter
   c['hexagon_hole_radius'] = c['hexagon_hole_diameter']/2.0
   if(c['hexagon_hole_radius']<c['sun_axle_radius']):
-    print("ERR472: Error, hexagon_hole_radius {:0.3f} is smaller than sun_axle_radius {:0.3f}".format(c['hexagon_hole_radius'], c['sun_axle_radius']))
+    six.print_(("ERR472: Error, hexagon_hole_radius {:0.3f} is smaller than sun_axle_radius {:0.3f}".format(c['hexagon_hole_radius'], c['sun_axle_radius'])))
     sys.exit(2)
   if(c['hexagon_length']<c['hexagon_hole_diameter']+radian_epsilon):
-    print("ERR475: Error, hexagon_length {:0.3f} must be bigger than hexagon_hole_diameter {:0.3f}".format(c['hexagon_length'], c['hexagon_hole_diameter']))
+    six.print_(("ERR475: Error, hexagon_length {:0.3f} must be bigger than hexagon_hole_diameter {:0.3f}".format(c['hexagon_length'], c['hexagon_hole_diameter'])))
     sys.exit(2)
   c['hexagon_angle'] = math.pi/6
   c['hexagon_radius'] = c['hexagon_length']/2.0/math.cos(c['hexagon_angle'])
   if(c['hexagon_radius']>c['planet_carrier_external_radius']-radian_epsilon):
-    print("ERR480: Error, hexagon_length {:0.3f} is too big compare to planet_carrier_external_diameter {:0.3f}".format(c['hexagon_length'], c['planet_carrier_external_diameter']))
+    six.print_(("ERR480: Error, hexagon_length {:0.3f} is too big compare to planet_carrier_external_diameter {:0.3f}".format(c['hexagon_length'], c['planet_carrier_external_diameter'])))
     sys.exit(2)
   # hexagon_smooth_radius
   if(c['hexagon_smooth_radius']<c['cnc_router_bit_radius']):
     c['hexagon_smooth_radius'] = c['cnc_router_bit_radius']
   if(c['hexagon_smooth_radius']>c['hexagon_length']/2.0-radian_epsilon):
-    print("ERR486: Error, hexagon_smooth_radius {:0.3f} is too big compare to hexagon_length {:0.3f}".format(c['hexagon_smooth_radius'], c['hexagon_length']))
+    six.print_(("ERR486: Error, hexagon_smooth_radius {:0.3f} is too big compare to hexagon_length {:0.3f}".format(c['hexagon_smooth_radius'], c['hexagon_length'])))
     sys.exit(2)
   # output_cover_width, output_holder_width, hexagon_width
   c['output_holder_width2'] = c['output_holder_width'] + c['output_cover_width']
   c['output_cover_depth'] = c['hexagon_width'] - c['output_holder_width']
   if(c['output_cover_depth']<0):
-    print("ERR494: Error, output_cover_depth {:0.3f} < 0. output_cover_width{:0.3f} or hexagon_width {:0.3f} too small or output_holder_width {:0.3f} too big".format(c['output_cover_depth'], c['output_cover_width'], c['hexagon_width'], c['output_holder_width']))
+    six.print_(("ERR494: Error, output_cover_depth {:0.3f} < 0. output_cover_width{:0.3f} or hexagon_width {:0.3f} too small or output_holder_width {:0.3f} too big".format(c['output_cover_depth'], c['output_cover_width'], c['hexagon_width'], c['output_holder_width'])))
     sys.exit(2)
   if(c['output_cover_depth']>c['output_cover_width']):
-    print("ERR497: Error, output_cover_depth {:0.3f} is too big compare to output_cover_width {:0.3f}".format(c['output_cover_depth'], c['output_cover_width']))
+    six.print_(("ERR497: Error, output_cover_depth {:0.3f} is too big compare to output_cover_width {:0.3f}".format(c['output_cover_depth'], c['output_cover_width'])))
     sys.exit(2)
   if(c['output_cover_depth']>c['input_slack']):
-    print("ERR500: Error, input_slack {:0.3f} is too small compare to output_cover_depth {:0.3f}".format(c['input_slack'], c['output_cover_depth']))
+    six.print_(("ERR500: Error, input_slack {:0.3f} is too small compare to output_cover_depth {:0.3f}".format(c['input_slack'], c['output_cover_depth'])))
     sys.exit(2)
   # output_cover_radius_slack
   c['holder_radius'] = i_gr.get_constraint()['holder_radius']
   c['output_cover_radius'] = c['planet_carrier_external_radius']+c['output_cover_radius_slack']
   if(c['output_cover_radius']>c['holder_radius']-radian_epsilon):
-    print("ERR508: Error, output_cover_radius_slack {:0.3f} is too big compare to planet_carrier_external_radius {:0.3f} and holder_radius {:0.3f}".format(c['output_cover_radius_slack'], c['planet_carrier_external_radius'], c['holder_radius']))
+    six.print_(("ERR508: Error, output_cover_radius_slack {:0.3f} is too big compare to planet_carrier_external_radius {:0.3f} and holder_radius {:0.3f}".format(c['output_cover_radius_slack'], c['planet_carrier_external_radius'], c['holder_radius'])))
     sys.exit(2)
   c['output_holder_radius'] = c['holder_radius'] - c['output_holder_thickness']
   if(c['output_holder_radius']<c['output_cover_radius']):
-    print("ERR563: Error, output_holder_thickness {:0.3} or output_cover_radius_slack {:0.3} are too big".format(c['output_holder_thickness'], c['output_cover_radius_slack']))
+    six.print_(("ERR563: Error, output_holder_thickness {:0.3} or output_cover_radius_slack {:0.3} are too big".format(c['output_holder_thickness'], c['output_cover_radius_slack'])))
     sys.exit(2)
   c['output_holder_crenel_nb_default'] = int((c['holder_crenel_number']+1)/2)+1
   if(c['output_holder_crenel_nb']==0):
@@ -592,13 +593,13 @@ def ltt_constraint_check(c):
   # output_axle_holder
   c['output_axle_radius'] = c['output_axle_diameter']/2.0
   if(c['output_axle_radius']<radian_epsilon):
-    print("ERR513: Error, output_axle_diameter {:0.3f} is too small".format(c['output_axle_diameter']))
+    six.print_(("ERR513: Error, output_axle_diameter {:0.3f} is too small".format(c['output_axle_diameter'])))
     sys.exit(2)
   if(c['axle_holder_D']<c['output_axle_diameter']-radian_epsilon):
-    print("ERR516: Error, axle_holder_D {:0.3f} is too small compare to output_axle_diameter {:0.3f}".format(c['axle_holder_D'], c['output_axle_diameter']))
+    six.print_(("ERR516: Error, axle_holder_D {:0.3f} is too small compare to output_axle_diameter {:0.3f}".format(c['axle_holder_D'], c['output_axle_diameter'])))
     sys.exit(2)
   if(c['axle_holder_D']/2.0+c['axle_holder_B']>c['holder_radius']):
-    print("ERR519: Error, axle_holder_D {:0.3f} or axle_holder_B {:0.3f} are too big compare to holder_radius {:0.3f}".format(c['axle_holder_D'], c['axle_holder_B'], c['holder_radius']))
+    six.print_(("ERR519: Error, axle_holder_D {:0.3f} or axle_holder_B {:0.3f} are too big compare to holder_radius {:0.3f}".format(c['axle_holder_D'], c['axle_holder_B'], c['holder_radius'])))
     sys.exit(2)
   c['output_axle_cylinder_width'] = c['axle_holder_A'] + c['axle_holder_C']
   c['output_axle_cylinder_thickness'] = c['axle_holder_D']/2.0 - c['output_axle_radius']
@@ -608,33 +609,33 @@ def ltt_constraint_check(c):
   # input_axle_diameter
   c['input_axle_radius'] = c['input_axle_diameter']/2.0
   if(c['input_axle_radius']>c['sun_axle_radius']):
-    print("ERR521: Error, input_axle_radius {:0.3f} is too big compare to sun_axle_radius {:0.3f}".format(c['input_axle_radius'], c['sun_axle_radius']))
+    six.print_(("ERR521: Error, input_axle_radius {:0.3f} is too big compare to sun_axle_radius {:0.3f}".format(c['input_axle_radius'], c['sun_axle_radius'])))
     sys.exit(2)
   # input_sun_width
   c['input_sun_width_min'] = c['sun_width']
   if(c['input_sun_width']==0):
     c['input_sun_width'] = c['input_sun_width_min']
   if(c['input_sun_width']<c['input_sun_width_min']):
-    print("ERR525: Error, input_sun_width {:0.3f} is too small compare to input_sun_width_min {:0.3f}".format(c['input_sun_width'], c['input_sun_width_min']))
+    six.print_(("ERR525: Error, input_sun_width {:0.3f} is too small compare to input_sun_width_min {:0.3f}".format(c['input_sun_width'], c['input_sun_width_min'])))
     sys.exit(2)
   # motor_holder
   c['motor_shape_rectangle_ncircle'] = True
   if(c['motor_y_width']==0):
     c['motor_shape_rectangle_ncircle'] = False
   if(c['motor_x_width']<c['gear_module']*(c['sun_gear_tooth_nb']+2)):
-    print("WARN532: Warning, motor_x_width {:0.3f} is small compare to the sun-gear".format(c['motor_x_width']))
+    six.print_(("WARN532: Warning, motor_x_width {:0.3f} is small compare to the sun-gear".format(c['motor_x_width'])))
   if(c['motor_shape_rectangle_ncircle']):
     if(c['motor_y_width']<c['gear_module']*(c['sun_gear_tooth_nb']+2)):
-      print("WARN535: Warning, motor_y_width {:0.3f} is small compare to the sun-gear".format(c['motor_y_width']))
+      six.print_(("WARN535: Warning, motor_y_width {:0.3f} is small compare to the sun-gear".format(c['motor_y_width'])))
   motor_xy_width_max = max(c['motor_x_width'], c['motor_y_width'])
   if((motor_xy_width_max/2.0+c['motor_holder_E']+c['motor_holder_B'])>c['holder_radius']):
-    print("ERR541: Error, motor_holder_E {:0.3f} or motor_holder_B {:0.3f} are too big compare to holder_radius {:0.3f}".format(c['motor_holder_E'], c['motor_holder_B'], c['holder_radius']))
+    six.print_(("ERR541: Error, motor_holder_E {:0.3f} or motor_holder_B {:0.3f} are too big compare to holder_radius {:0.3f}".format(c['motor_holder_E'], c['motor_holder_B'], c['holder_radius'])))
     sys.exit(2)
   motor_xy_width_min = c['motor_x_width']
   if(c['motor_shape_rectangle_ncircle']):
     motor_xy_width_min = min(c['motor_x_width'], c['motor_y_width'])
   if(c['motor_holder_leg_width']>motor_xy_width_min/4.0):
-    print("ERR545: Error, motor_holder_leg_width {:0.3f} is too big compare to motor_xy_width_min {:0.3f}".format(c['motor_holder_leg_width'], motor_xy_width_min))
+    six.print_(("ERR545: Error, motor_holder_leg_width {:0.3f} is too big compare to motor_xy_width_min {:0.3f}".format(c['motor_holder_leg_width'], motor_xy_width_min)))
     sys.exit(2)
   c['motor_holder_leg_x'] = c['motor_holder_A'] + c['motor_holder_C'] + c['motor_holder_D']
   c['motor_holder_leg_y'] = c['motor_holder_B'] + c['motor_holder_E']

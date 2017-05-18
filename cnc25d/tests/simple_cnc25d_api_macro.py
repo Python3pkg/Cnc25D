@@ -72,7 +72,7 @@ This script focus on the figure-level API functions
 try: # when working with an installed Cnc25D package
   from cnc25d import cnc25d_api
 except:    # when working on the source files
-  import importing_cnc25d # give access to the cnc25d package
+  from . import importing_cnc25d # give access to the cnc25d package
   from cnc25d import cnc25d_api # import the Cnc25D API modules
 # add the FreeCAD library path to the search path
 cnc25d_api.importing_freecad()
@@ -81,6 +81,7 @@ import Part
 from FreeCAD import Base
 #
 import math # to get the pi number
+import six
 #import Tkinter # to display the outline in a small GUI
 #import svgwrite
 #from dxfwrite import DXFEngine
@@ -146,10 +147,10 @@ cnc25d_api.write_figure_in_svg(simple_figure, "{:s}/simple_part_mozman.svg".form
 cnc25d_api.write_figure_in_dxf(simple_figure, "{:s}/simple_part_mozman.dxf".format(test_output_dir))
 
 # simple_part in 3D BRep
-print("Generate {:s}/simple_part.brep".format(test_output_dir))
+six.print_(("Generate {:s}/simple_part.brep".format(test_output_dir)))
 simple_part.exportBrep("{:s}/simple_part.brep".format(test_output_dir))
 # simple_part in 2D DXF
-print("Generate {:s}/simple_part.dxf".format(test_output_dir))
+six.print_(("Generate {:s}/simple_part.dxf".format(test_output_dir)))
 # slice simple_part in the XY plan at a height of simple_extrude_height/2
 cnc25d_api.export_to_dxf(simple_part, Base.Vector(0,0,1), simple_extrude_height/2, "{:s}/simple_part.dxf".format(test_output_dir))
 

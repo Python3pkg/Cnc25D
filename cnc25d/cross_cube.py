@@ -29,7 +29,7 @@ The main function displays in a Tk-interface the cross_cube piece, or generates 
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import cnc25d_api
+from . import cnc25d_api
 cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -52,8 +52,8 @@ import Part
 #import svgwrite
 #from dxfwrite import DXFEngine
 # cnc25d
-import cross_cube_sub
-import crest
+from . import cross_cube_sub
+from . import crest
 
 ################################################################
 # cross_cube constraint_constructor

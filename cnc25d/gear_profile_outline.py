@@ -29,7 +29,7 @@ It has been created to split the too large gear_profile.py file into two smaller
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import cnc25d_api
+from . import cnc25d_api
 #cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -54,7 +54,8 @@ import sys
 #import svgwrite
 #from dxfwrite import DXFEngine
 # cnc25d
-import small_geometry # use some well-tested functions from the internal of the cnc25d_api
+from . import small_geometry # use some well-tested functions from the internal of the cnc25d_api
+import six
 
 ################################################################
 # module variable
@@ -91,8 +92,8 @@ def involute_to_circle(ai_center, ai_base_radius, ai_initial_angle, ai_orientati
   u = ai_parameter
   # check the parameter
   if(u<0):
-    print("ERR099: Error, the parameter of the involute_to_circle must be positive {:0.8f}".format(u))
-    print("dbg887: ai_center {:0.2f} {:0.2f}  ai_base_radius {:0.2f}  ai_initial_angle {:0.2f}  ai_orientation {:d}  ai_parameter {:0.2f}".format(ai_center[0], ai_center[1], ai_base_radius, ai_initial_angle, ai_orientation, ai_parameter))
+    six.print_(("ERR099: Error, the parameter of the involute_to_circle must be positive {:0.8f}".format(u)))
+    six.print_(("dbg887: ai_center {:0.2f} {:0.2f}  ai_base_radius {:0.2f}  ai_initial_angle {:0.2f}  ai_orientation {:d}  ai_parameter {:0.2f}".format(ai_center[0], ai_center[1], ai_base_radius, ai_initial_angle, ai_orientation, ai_parameter)))
     sys.exit(2)
   # involute_to_circle of center (0,0), radius 1 and initial_angle = 0 with the parameter u
   px0 = math.cos(u)+u*math.sin(u)
@@ -133,7 +134,7 @@ def search_point_of_involute_to_circle(ai_center, ai_base_radius, ai_initial_ang
   R = ai_altitude
   # check the paramter
   if(R<B):
-    print("ERR098: Error, the altitude {:0.2f} is smaller than the base_diameter {:0.2f}".format(R, B))
+    six.print_(("ERR098: Error, the altitude {:0.2f} is smaller than the base_diameter {:0.2f}".format(R, B)))
     sys.exit(2)
   ### method 1
   ## converge to P
@@ -234,17 +235,17 @@ def calc_low_level_gear_parameters(ai_param):
   # tooth height check
   #
   if(g_ks*(g_pr-g_dr)<0):
-    print("ERR985: Error, g_pr {:0.2f} and g_dr {:0.2f} are not in the correct order!".format(g_pr, g_dr))
+    six.print_(("ERR985: Error, g_pr {:0.2f} and g_dr {:0.2f} are not in the correct order!".format(g_pr, g_dr)))
     sys.exit(2)
   if(g_ks*(g_ar-g_pr)<0):
-    print("ERR986: Error, g_pr {:0.2f} and g_ar {:0.2f} are not in the correct order!".format(g_pr, g_ar))
+    six.print_(("ERR986: Error, g_pr {:0.2f} and g_ar {:0.2f} are not in the correct order!".format(g_pr, g_ar)))
     sys.exit(2)
   # involute resolution check
   if(g_irp<1):
-    print("ERR786: Error, g_irp {:d} must be equal or bigger than 1!".format(g_irp))
+    six.print_(("ERR786: Error, g_irp {:d} must be equal or bigger than 1!".format(g_irp)))
     sys.exit(2)
   if(g_irn<1):
-    print("ERR787: Error, g_irn {:d} must be equal or bigger than 1!".format(g_irn))
+    six.print_(("ERR787: Error, g_irn {:d} must be equal or bigger than 1!".format(g_irn)))
     sys.exit(2)
   ### calculation of the low level parameters
   r_low_parameters = ()
@@ -255,13 +256,13 @@ def calc_low_level_gear_parameters(ai_param):
     pi_module_angle = ai_param['pi_module_angle']
     # intersection of positive involute and the primitive circle
     if(g_brp>g_pr-radian_epsilon):
-      print("ERR987: Error, g_brp {:0.2f} is bigger than g_pr {:0.2f}!".format(g_brp, g_pr))
+      six.print_(("ERR987: Error, g_brp {:0.2f} is bigger than g_pr {:0.2f}!".format(g_brp, g_pr)))
       sys.exit(2)
     (ippu, ippa, ippx, ippy, ippti) = search_point_of_involute_to_circle((g_ox, g_oy), g_brp, 0, 1, g_pr, initial_step, radian_epsilon_2)
     #ai_param['low_positive_primitive_angle'] = ippa
     # intersection of negative involute and the primitive circle
     if(g_brn>g_pr-radian_epsilon):
-      print("ERR988: Error, g_brn {:0.2f} is bigger than g_pr {:0.2f}!".format(g_brp, g_pr))
+      six.print_(("ERR988: Error, g_brn {:0.2f} is bigger than g_pr {:0.2f}!".format(g_brp, g_pr)))
       sys.exit(2)
     (inpu, inpa, inpx, inpy, inpti) = search_point_of_involute_to_circle((g_ox, g_oy), g_brn, 0, -1, g_pr, initial_step, radian_epsilon_2)
     #ai_param['low_negative_primitive_angle'] = inpa
@@ -297,12 +298,12 @@ def calc_low_level_gear_parameters(ai_param):
     top_land = pi_module_angle*g_adp-(addendum_positive_involute+addendum_negative_involute)
     #print("dbg298: top_land", top_land) [bug] dxf-top_land is negative whereas this top_land is still positive [todo] fix it
     if(top_land*g_ar<radian_epsilon): # a bit stricter than 0
-      print("ERR989: Error, the top_land {:0.2f} is negative or too small!".format(top_land))
-      print("dbg553: g_pr {:0.3f}  g_brp {:0.3f}  g_brn {:0.3f}".format(g_pr, g_brp, g_brn))
+      six.print_(("ERR989: Error, the top_land {:0.2f} is negative or too small!".format(top_land)))
+      six.print_(("dbg553: g_pr {:0.3f}  g_brp {:0.3f}  g_brn {:0.3f}".format(g_pr, g_brp, g_brn)))
       sys.exit(2)
     bottom_land = pi_module_angle*(1-g_adp)-(dedendum_positive_involute+dedendum_negative_involute)
     if(bottom_land*g_dr<2.1*g_rbr): # a bit stricter than router_bit_radius
-      print("ERR990: Error, the bottom_land {:0.2f} is negative or too small compare to the router_bit_radius {:0.2f} ({:0.2f} < {:0.2f})!".format(bottom_land, g_rbr, bottom_land*g_dr, 2*g_rbr))
+      six.print_(("ERR990: Error, the bottom_land {:0.2f} is negative or too small compare to the router_bit_radius {:0.2f} ({:0.2f} < {:0.2f})!".format(bottom_land, g_rbr, bottom_land*g_dr, 2*g_rbr)))
       sys.exit(2)
     ai_param['top_land'] = top_land
     ai_param['bottom_land'] = bottom_land
@@ -370,17 +371,17 @@ def calc_low_level_gear_parameters(ai_param):
     #bottom_land_length = bottom_land * g_dr
     bottom_land_length = 2 * g_dr * math.sin(bottom_land/2)
     if((g_ks*i1_dtri>0)or(g_ks*i2_dtri<0)):
-      print("ERR234: Error, i1_dtri {:0.3f} >0 or i2_dtri {:0.3f} < 0".format(g_ks*i1_dtri, g_ks*i2_dtri))
+      six.print_(("ERR234: Error, i1_dtri {:0.3f} >0 or i2_dtri {:0.3f} < 0".format(g_ks*i1_dtri, g_ks*i2_dtri)))
       sys.exit(2)
     cos_i1_dtri = math.cos(i1_dtri)
     cos_i2_dtri = math.cos(i2_dtri)
     if((cos_i1_dtri<radian_epsilon)or(cos_i1_dtri<radian_epsilon)):
-      print("ERR632: Error, i1_dtri {:0.3f} or i2_dtri {:0.3f} are too closed to pi/2 or even bigger!".format(i1_dtri, i2_dtri))
+      six.print_(("ERR632: Error, i1_dtri {:0.3f} or i2_dtri {:0.3f} are too closed to pi/2 or even bigger!".format(i1_dtri, i2_dtri)))
       sys.exit(2)
     ABh = bottom_land_length-i1_thickness/cos_i1_dtri-i2_thickness/cos_i2_dtri # see documentation graphic of hollow optimization
     ## check bottom_land with g_stp and g_stn
     if(ABh<radian_epsilon):
-      print("ERR381: Error, the bottom {:0.3f} is too small because of g_stp {:0.3f} and g_stn {:0.3f}".format(ABh, g_stp, g_stn))
+      six.print_(("ERR381: Error, the bottom {:0.3f} is too small because of g_stp {:0.3f} and g_stn {:0.3f}".format(ABh, g_stp, g_stn)))
       sys.exit(2)
     a = math.pi/2-abs(i1_dtri) - g_ks * bottom_land/2
     b = math.pi/2-abs(i2_dtri) - g_ks * bottom_land/2
@@ -402,11 +403,11 @@ def calc_low_level_gear_parameters(ai_param):
       AI2 = ABh*math.sin(b)/math.sin(AIB)
       BI2 = ABh*math.sin(a)/math.sin(AIB)
       if(abs(AI2-AI)>radian_epsilon):
-        print("ERR972: Error, AI {:0.3f} and AI2 {:0.3f} are not equal".format(AI, AI2))
-        print("dbg647: a {:0.3f}  b {:0.3f}  AIB {:0.3f}  ABh {:0.3f}".format(a, b, AIB, ABh))
+        six.print_(("ERR972: Error, AI {:0.3f} and AI2 {:0.3f} are not equal".format(AI, AI2)))
+        six.print_(("dbg647: a {:0.3f}  b {:0.3f}  AIB {:0.3f}  ABh {:0.3f}".format(a, b, AIB, ABh)))
         sys.exit(2)
       if(abs(BI2-BI)>radian_epsilon):
-        print("ERR973: Error, BI {:0.3f} and BI2 {:0.3f} are not equal".format(BI, BI2))
+        six.print_(("ERR973: Error, BI {:0.3f} and BI2 {:0.3f} are not equal".format(BI, BI2)))
         sys.exit(2)
       # select the method for AI and BI
       AI = AI2
@@ -459,11 +460,11 @@ def calc_low_level_gear_parameters(ai_param):
     top_land = pi_module*g_adp-(positive_addendum+negative_addendum)
     bottom_land = pi_module*(1-g_adp)-(positive_dedendum+negative_dedendum)
     if(top_land<radian_epsilon):
-      print("ERR858: Error, the linear gear top-land {:0.3f} is negative or too small!".format(top_land))
-      print("dbg455: g_sp {:0.3f}  g_sn {:0.3f}".format(g_sp, g_sn))
+      six.print_(("ERR858: Error, the linear gear top-land {:0.3f} is negative or too small!".format(top_land)))
+      six.print_(("dbg455: g_sp {:0.3f}  g_sn {:0.3f}".format(g_sp, g_sn)))
       sys.exit(2)
     if(bottom_land<2*g_rbr+radian_epsilon):
-      print("ERR859: Error, the linear gear bottom-land {:0.3f} is too small compare to the gear_router_bit_radius {:0.3f}".format(bottom_land, g_rbr))
+      six.print_(("ERR859: Error, the linear gear bottom-land {:0.3f} is too small compare to the gear_router_bit_radius {:0.3f}".format(bottom_land, g_rbr)))
       sys.exit(2)
     ai_param['top_land'] = top_land
     ai_param['bottom_land'] = bottom_land
@@ -497,7 +498,7 @@ def calc_low_level_gear_parameters(ai_param):
     cos_p = math.cos(g_sp)
     cos_n = math.cos(g_sn)
     if((cos_p<radian_epsilon)or(cos_n<radian_epsilon)):
-      print("ERR334: Error, g_sp {:0.3f}  or g_sn {:0.3f} are too closed to pi/2 or even bigger!".format(cos_p, cos_n))
+      six.print_(("ERR334: Error, g_sp {:0.3f}  or g_sn {:0.3f} are too closed to pi/2 or even bigger!".format(cos_p, cos_n)))
       sys.exit(2)
     ABh = bottom_land - g_stp/cos_p - g_stn/cos_n
     a = math.pi/2-abs(g_sp)
@@ -527,7 +528,7 @@ def calc_low_level_gear_parameters(ai_param):
     info_txt += "top land:          \t{:0.3f} (mm)  \t{:0.2f} %\n".format(top_land, 100*top_land/pi_module)
     info_txt += "bottom land:       \t{:0.3f} (mm)  \t{:0.2f} %\n".format(bottom_land, 100*bottom_land/pi_module)
   else:
-    print("ERR740: Error, the gear_type {:s} doesn't exist!".format(g_type))
+    six.print_(("ERR740: Error, the gear_type {:s} doesn't exist!".format(g_type)))
     sys.exit(2)
   #return
   r_cllgp = (make_low_parameters, info_txt)
@@ -571,7 +572,7 @@ def involute_outline(ai_ox, ai_oy, ai_base_radius, ai_offset, ai_sign, ai_u_nb, 
     r_hollow_slope_A = ((p1x, p1y, 0), (p2x, p2y, ai_rbr))
     r_ti = p1t
   else:
-    print("ERR563: Error, the hollow end {:d} can only be 1 or -1".format(ai_he))
+    six.print_(("ERR563: Error, the hollow end {:d} can only be 1 or -1".format(ai_he)))
     sys.exit(2)
   #if(ai_dbg==0):
   #  print("dbg569: ai_dsl {:0.3f}  ai_hsl {:0.3f}  + {:0.3f}".format(ai_dsl, ai_hsl, ai_dsl + ai_hsl))
@@ -605,7 +606,7 @@ def half_hollow_outline(ai_tooth_angle, ai_sx, ai_sy, ai_si, ai_hrbr, ai_ham, ai
     tx = ai_ox + otl * math.cos(tox)
     ty = ai_oy + otl * math.sin(tox)
   else: # this case is very rare (maybe impossible because of the restriction on hrbr). So this code has not been tested yet!
-    print("dbg732: narrow half-hollow {:d}".format(fnl))
+    six.print_(("dbg732: narrow half-hollow {:d}".format(fnl)))
     ## P (identical with T)
     # angle poc
     pox = ai_tooth_angle - fnl * ai_ham
@@ -657,7 +658,7 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
   elif(gear_type=='i'):
     hgt = -1
   else:
-    print("ERR556: gear_type {:s} must be 'e' or 'i'".format(gear_type))
+    six.print_(("ERR556: gear_type {:s} must be 'e' or 'i'".format(gear_type)))
     sys.exit(2)
   # construct the final_outline
   r_final_outline = []
@@ -699,7 +700,7 @@ def gearwheel_profile_outline(ai_low_parameters, ai_angle_position):
     # check the optimization
     if(ho):
       if((abs(first_hollow_slope_A[1][0]-second_hollow_slope_A[0][0])>radian_epsilon)or(abs(first_hollow_slope_A[1][1]-second_hollow_slope_A[0][1])>radian_epsilon)):
-        print("ERR582: the hollow optimization intersection is wrong: x1 {:0.3f}   x2 {:0.3f}  y1 {:0.3f}   y2 {:0.3f}".format(first_hollow_slope_A[1][0], second_hollow_slope_A[0][0], first_hollow_slope_A[1][1], second_hollow_slope_A[0][1]))
+        six.print_(("ERR582: the hollow optimization intersection is wrong: x1 {:0.3f}   x2 {:0.3f}  y1 {:0.3f}   y2 {:0.3f}".format(first_hollow_slope_A[1][0], second_hollow_slope_A[0][0], first_hollow_slope_A[1][1], second_hollow_slope_A[0][1])))
         #hollow_A = []
         #hollow_A.extend(first_hollow_slope_A)
         #hollow_A.extend(second_hollow_slope_A)
@@ -849,7 +850,7 @@ def gearbar_profile_outline(ai_low_parameters, ai_tangential_position):
     l_negative_slope = slope_outline(g_ox, g_oy, g_bi, gb_n_offset, g_sn, -1, g_aln, g_dln, g_hln, g_stn, g_rbr, tangential_position+pi_module) # negative slope
     if(ho):
       if((abs(l_negative_slope[0][0]-l_positive_slope[1][0])>radian_epsilon)or(abs(l_negative_slope[0][1]-l_positive_slope[1][1])>radian_epsilon)):
-        print("ERR583: the gearbar hollow optimization intersection is wrong: x1 {:0.3f}   x2 {:0.3f}  y1 {:0.3f}   y2 {:0.3f}".format(l_positive_slope[1][0], l_negative_slope[0][0], l_positive_slope[1][1], l_negative_slope[0][1]))
+        six.print_(("ERR583: the gearbar hollow optimization intersection is wrong: x1 {:0.3f}   x2 {:0.3f}  y1 {:0.3f}   y2 {:0.3f}".format(l_positive_slope[1][0], l_negative_slope[0][0], l_positive_slope[1][1], l_negative_slope[0][1])))
         sys.exit(2)
     gearbar_A.extend(l_positive_slope)
     if(ho):
@@ -935,12 +936,12 @@ def calc_real_force_angle(ai_g1_type, ai_g1_pr, ai_g1_br, ai_g2_type, ai_g2_pr, 
     r_real_force_angle = math.acos(float(ai_g1_br+ai_g2_br)/(ai_g1_pr+ai_g2_pr+ai_aal))
   elif((ai_g1_type=='i')and(ai_g2_type=='e')): # i-e
     if(ai_g2_pr>ai_g1_pr):
-      print("ERR546: Error, the gearring radius {:0.3f} must be bigger gearwheel radius {:0.3f}".format(ai_g1_pr, ai_g2_pr))
+      six.print_(("ERR546: Error, the gearring radius {:0.3f} must be bigger gearwheel radius {:0.3f}".format(ai_g1_pr, ai_g2_pr)))
       sys.exit(2)
     r_real_force_angle = math.acos(float(ai_g1_br-ai_g2_br)/(ai_g1_pr-(ai_g2_pr+ai_aal)))
   elif((ai_g1_type=='e')and(ai_g2_type=='i')): # e-i
     if(ai_g1_pr>ai_g2_pr):
-      print("ERR547: Error, the gearring radius {:0.3f} must be bigger gearwheel radius {:0.3f}".format(ai_g2_pr, ai_g1_pr))
+      six.print_(("ERR547: Error, the gearring radius {:0.3f} must be bigger gearwheel radius {:0.3f}".format(ai_g2_pr, ai_g1_pr)))
       sys.exit(2)
     r_real_force_angle = math.acos(float(ai_g2_br-ai_g1_br)/(ai_g2_pr-(ai_g1_pr+ai_aal)))
   elif((ai_g1_type=='l')and(ai_g2_type=='e')): # l-e
@@ -948,7 +949,7 @@ def calc_real_force_angle(ai_g1_type, ai_g1_pr, ai_g1_br, ai_g2_type, ai_g2_pr, 
   elif((ai_g1_type=='e')and(ai_g2_type=='l')): # e-l
     r_real_force_angle = ai_g2_sa
   else:
-    print("ERR221: Error, the gear type combination {:s}-{:s} does not exist!".format(ai_g1_type, ai_g2_type))
+    six.print_(("ERR221: Error, the gear type combination {:s}-{:s} does not exist!".format(ai_g1_type, ai_g2_type)))
     sys.exit(2)
   return(r_real_force_angle)
 
@@ -1047,7 +1048,7 @@ def pre_g2_position_calculation(ai_g1_param, ai_g2_param, ai_aal, ai_g1g2_a, ai_
   # alternative for AB
   AB2 = math.sqrt((g2_ox-g1_ox)**2+(g2_oy-g1_oy)**2)
   if(abs(AB2-AB)>radian_epsilon):
-    print("ERR414: Error with the calculation of AB {:0.3f} or {:0.3f}".format(AB, AB2))
+    six.print_(("ERR414: Error with the calculation of AB {:0.3f} or {:0.3f}".format(AB, AB2)))
     sys.exit(2)
   # KL (see documentation  graphic gear_position.svg), used only with e-e, e-i and i-e
   KL_rp = math.sin(rfa_rp)*AB
@@ -1056,10 +1057,10 @@ def pre_g2_position_calculation(ai_g1_param, ai_g2_param, ai_aal, ai_g1g2_a, ai_
     KL_rp2 = math.sqrt(AB**2 - (g1_ks*g1_br_rp+g2_ks*g2_br_rp)**2) # kind of pythagor
     KL_rn2 = math.sqrt(AB**2 - (g1_ks*g1_br_rn+g2_ks*g2_br_rn)**2) # kind of pythagor
     if(abs(KL_rp2-KL_rp)>radian_epsilon):
-      print("ERR815: Error, KL_rp {:0.3f} and KL_rp2 {:0.3f} are too different!".format(KL_rp, KL_rp2))
+      six.print_(("ERR815: Error, KL_rp {:0.3f} and KL_rp2 {:0.3f} are too different!".format(KL_rp, KL_rp2)))
       sys.exit(2)
     if(abs(KL_rn2-KL_rn)>radian_epsilon):
-      print("ERR876: Error, KL_rn {:0.3f} and KL_rn2 {:0.3f} are too different!".format(KL_rn, KL_rn2))
+      six.print_(("ERR876: Error, KL_rn {:0.3f} and KL_rn2 {:0.3f} are too different!".format(KL_rn, KL_rn2)))
       sys.exit(2)
   # KE, BE, BD
   KE1_rp = 0 # default value for g_type = 'e' or 'i'
@@ -1219,7 +1220,7 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     ABC = 0
   elif(min_ABC+med_ABC<max_ABC):
     print("ERR478: Error of length in the triangle ABC")
-    print("dbg637: AB {:0.3f}  AC {:0.3f}  BC {:0.3f}".format(AB, AC, BC))
+    six.print_(("dbg637: AB {:0.3f}  AC {:0.3f}  BC {:0.3f}".format(AB, AC, BC)))
     sys.exit(20)
   else:
     # law of cosine (Al-Kashi) in ABC
@@ -1241,11 +1242,11 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     ABC = math.copysign(ABC, ABC2)
     # check BAC and BAC2
     if(abs(BAC2-BAC)>radian_epsilon_1000):
-      print("ERR689: Error in the calculation of BAC {:0.3f} or BAC2 {:0.3f} !".format(BAC, BAC2))
+      six.print_(("ERR689: Error in the calculation of BAC {:0.3f} or BAC2 {:0.3f} !".format(BAC, BAC2)))
       sys.exit(2)
     # check ABC and ABC2
     if(abs(ABC2-ABC)>radian_epsilon_1000):
-      print("ERR688: Error in the calculation of ABC {:0.3f} or ABC2 {:0.3f} !".format(ABC, ABC2))
+      six.print_(("ERR688: Error in the calculation of ABC {:0.3f} or ABC2 {:0.3f} !".format(ABC, ABC2)))
       sys.exit(2)
   #print("dbg334: BAC: {:0.3f}".format(BAC))
   #print("dbg335: ABC: {:0.3f}".format(ABC))
@@ -1255,7 +1256,7 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
   if((g1_type=='e')or(g1_type=='i')):
     g1_sra2 = rd*g1_ks*math.atan(g1_contact_u)
     if(abs(g1_sra2-g1_sra)>radian_epsilon_100):
-      print("ERR417: Error in calculation of g1_sra {:0.3f} or g1_sra2 {:0.3f}".format(g1_sra, g1_sra2))
+      six.print_(("ERR417: Error in calculation of g1_sra {:0.3f} or g1_sra2 {:0.3f}".format(g1_sra, g1_sra2)))
       sys.exit(2)
   ## speed of c1 (contact point of g1)
   # c1 speed
@@ -1279,10 +1280,10 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     if((g1_type=='e')or(g1_type=='i')):
       g2_contact_u1 = g1_ks*float(KL - g2_ks*g1_contact_u*g1_br)/g2_br
       if(abs(g2_contact_u2-g2_contact_u1)>radian_epsilon_10):
-        print("ERR331: Error in the calculation of g2_contact_u1 {:0.3f} or g2_contact_u2 {:0.3f}".format(g2_contact_u1, g2_contact_u2))
+        six.print_(("ERR331: Error in the calculation of g2_contact_u1 {:0.3f} or g2_contact_u2 {:0.3f}".format(g2_contact_u1, g2_contact_u2)))
         sys.exit(2)
       if(abs(g2_contact_u3-g2_contact_u1)>radian_epsilon_10):
-        print("ERR332: Error in the calculation of g2_contact_u1 {:0.3f} or g2_contact_u3 {:0.3f}".format(g2_contact_u1, g2_contact_u3))
+        six.print_(("ERR332: Error in the calculation of g2_contact_u1 {:0.3f} or g2_contact_u3 {:0.3f}".format(g2_contact_u1, g2_contact_u3)))
         sys.exit(2)
     g2_contact_u = g2_contact_u3 # select the method for g2_contact_u
     ## c2_position
@@ -1291,7 +1292,7 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     (c2x, c2y, t2i) = sample_of_gear_tooth_profile((g2_ox, g2_oy), g2_br, g2_position+g2_lo, -1*rd*g1_ks, 0, g2_contact_u)
     #print("dbg326: g2_position {:0.3f}  g2_lo {:0.3f}  g2_contact_u {:0.3f}  t2i {:0.3f}".format(g2_position, g2_lo, g2_contact_u, t2i))
     if(abs(math.fmod(ti-t2i+4.5*math.pi, math.pi) - 0.5*math.pi)>radian_epsilon_1000):
-      print("ERR874: Error, the tangents ti {:0.3f} and t2i {:0.3f} are not equal (modulo pi)".format(ti, t2i))
+      six.print_(("ERR874: Error, the tangents ti {:0.3f} and t2i {:0.3f} are not equal (modulo pi)".format(ti, t2i)))
       sys.exit(2)
     #print("dbg632: g2_ox {:0.3f}  g2_oy {:0.3f}  g2_br {:0.3f}".format(g2_ox, g2_oy, g2_br))
     ## speed of c2 (contact point of g2)
@@ -1301,8 +1302,8 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     # alternative
     c2_speed_tangential2 = rd*g1_ks*c2_speed_radial*g2_contact_u
     if(abs(c2_speed_tangential2-c2_speed_tangential)>radian_epsilon_10):
-      print("ERR336: Error in the calculation of c2_speed_tangential {:0.3f} or c2_speed_tangential2 {:0.3f}".format(c2_speed_tangential, c2_speed_tangential2))
-      print("dbg967: radian_epsilon_1000 {:0.6f}  radian_epsilon_100000 {:0.6f}".format(radian_epsilon_1000, radian_epsilon_100000))
+      six.print_(("ERR336: Error in the calculation of c2_speed_tangential {:0.3f} or c2_speed_tangential2 {:0.3f}".format(c2_speed_tangential, c2_speed_tangential2)))
+      six.print_(("dbg967: radian_epsilon_1000 {:0.6f}  radian_epsilon_100000 {:0.6f}".format(radian_epsilon_1000, radian_epsilon_100000)))
       sys.exit(2)
     g2_rotation_speed = float(c2_speed)/BC
   elif(g2_type=='l'): # linear-gear (aka gearbar)
@@ -1314,7 +1315,7 @@ def g2_position_calculation(ai_place_low_param, ai_rotation_direction, ai_g1_pos
     c2y = g2_oy + rd*BE2*math.sin(g2_bi-math.pi/2) + dc*math.sin(g2_bi-math.pi/2-rd*g2_sa)
     #print("dbg989: g2_position {:0.3f}   dc {:0.3f}".format(g2_position, dc))
     if(abs(math.fmod(ti - (g2_bi-1*rd*g2_sa)+4.5*math.pi, math.pi)-0.5*math.pi)>radian_epsilon_1000):
-      print("ERR875: Error, the tangents ti {:0.3f} and slope g2_sa {:0.3f} are not equal (modulo pi)".format(ti, g2_sa))
+      six.print_(("ERR875: Error, the tangents ti {:0.3f} and slope g2_sa {:0.3f} are not equal (modulo pi)".format(ti, g2_sa)))
       sys.exit(2)
     c2_speed_radial = c1_speed_radial
     c2_speed = float(c2_speed_radial)/math.cos(g2_sa)
@@ -1366,7 +1367,7 @@ def info_on_real_force_angle(ai_g1_param, ai_g2_param, ai_sys_param, ai_rotation
   elif(ai_rotation_direction==-1):
     rotation_name = 'Negative'
   else:
-    print("ERR663: Error, ai_rotation_direction {:d} can only be 1 or -1!".format(ai_rotation_direction))
+    six.print_(("ERR663: Error, ai_rotation_direction {:d} can only be 1 or -1!".format(ai_rotation_direction)))
     sys.exit(2)
   # get the interesting high-level parameters
   rd = ai_rotation_direction

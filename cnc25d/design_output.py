@@ -29,7 +29,8 @@ it provide macro that are commonly used to generate the output files of a design
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import importing_freecad
+from . import importing_freecad
+import six
 importing_freecad.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -54,11 +55,11 @@ from FreeCAD import Base
 #import svgwrite
 #from dxfwrite import DXFEngine
 # cnc25d
-import outline_backends
-import export_2d
-import design_help
-import cnc_outline
-import positioning
+from . import outline_backends
+from . import export_2d
+from . import design_help
+from . import cnc_outline
+from . import positioning
 
 
 ################################################################
@@ -114,21 +115,21 @@ def generate_output_file(ai_figure, ai_output_filename, ai_height, ai_info_txt='
       outline_backends.write_figure_in_svg(ai_figure, ai_output_filename)
     # FreeCAD
     elif(re.search('\.brep$', ai_output_filename)):
-      print("Generate with FreeCAD the BRep file {:s}".format(ai_output_filename))
+      six.print_(("Generate with FreeCAD the BRep file {:s}".format(ai_output_filename)))
       freecad_part = outline_backends.figure_to_freecad_25d_part(ai_figure, ai_height)
       freecad_part.exportBrep("{:s}".format(ai_output_filename))
-      print("Generate with FreeCAD the DXF file {:s}.dxf".format(ai_output_filename))
+      six.print_(("Generate with FreeCAD the DXF file {:s}.dxf".format(ai_output_filename)))
       # slice freecad_part  in the XY plan at a height of ai_height/2
       export_2d.export_to_dxf(freecad_part, Base.Vector(0,0,1), ai_height/2, "{:s}.dxf".format(ai_output_filename))
     elif(re.search('\.stl$', ai_output_filename)):
-      print("Generate with FreeCAD the STL file {:s}".format(ai_output_filename))
+      six.print_(("Generate with FreeCAD the STL file {:s}".format(ai_output_filename)))
       freecad_part = outline_backends.figure_to_freecad_25d_part(ai_figure, ai_height)
       freecad_part.exportStl("{:s}".format(ai_output_filename))
-      print("Generate with FreeCAD the DXF file {:s}.dxf".format(ai_output_filename))
+      six.print_(("Generate with FreeCAD the DXF file {:s}.dxf".format(ai_output_filename)))
       # slice freecad_part  in the XY plan at a height of ai_height/2
       export_2d.export_to_dxf(freecad_part, Base.Vector(0,0,1), ai_height/2, "{:s}.dxf".format(ai_output_filename))
     else:
-      print("ERR124: Error: the suffix of the filename {:s} is unknown. Try with suffix: .dxf, .svg, .brep or .stl".format(ai_output_filename))
+      six.print_(("ERR124: Error: the suffix of the filename {:s} is unknown. Try with suffix: .dxf, .svg, .brep or .stl".format(ai_output_filename)))
       sys.exit(2)
     # info_txt
     #if(ai_info_txt!=''):
@@ -147,15 +148,15 @@ def freecad_object_output_file(ai_freecad_object, ai_output_filename, ai_brep=Tr
   """
   if(ai_brep):
     brep_output_filename = "{:s}.brep".format(ai_output_filename)
-    print("Generate with FreeCAD the BRep file {:s}".format(brep_output_filename))
+    six.print_(("Generate with FreeCAD the BRep file {:s}".format(brep_output_filename)))
     ai_freecad_object.exportBrep(brep_output_filename)
   if(ai_stl):
     stl_output_filename = "{:s}.stl".format(ai_output_filename)
-    print("Generate with FreeCAD the STL file {:s}".format(stl_output_filename))
+    six.print_(("Generate with FreeCAD the STL file {:s}".format(stl_output_filename)))
     ai_freecad_object.exportStl(stl_output_filename)
   if(len(ai_slice_xyz)>0):
     if(len(ai_slice_xyz)!=9):
-      print("ERR150: Error, len(ai_slice_xyz) {:d} must be 9".format(len(ai_slice_xyz)))
+      six.print_(("ERR150: Error, len(ai_slice_xyz) {:d} must be 9".format(len(ai_slice_xyz))))
       sys.exit(2)
     size_x = ai_slice_xyz[0]
     size_y = ai_slice_xyz[1]
@@ -167,7 +168,7 @@ def freecad_object_output_file(ai_freecad_object, ai_output_filename, ai_brep=Tr
     slice_y = ai_slice_xyz[7]
     slice_z = ai_slice_xyz[8]
     dxf_output_filename = "{:s}_xyz_slices.dxf".format(ai_output_filename)
-    print("Slice with FreeCAD the 3D into the DXF file {:s}".format(dxf_output_filename))
+    six.print_(("Slice with FreeCAD the 3D into the DXF file {:s}".format(dxf_output_filename)))
     #print("dbg161: zero_x {:0.3f}  zero_y {:0.3f}  zero_z {:0.3f}".format(zero_x, zero_y, zero_z))
     ai_freecad_object.translate(Base.Vector(-1*zero_x, -1*zero_y, -1*zero_z))
     export_2d.export_xyz_to_dxf(ai_freecad_object, size_x, size_y, size_z, slice_x, slice_y, slice_z, dxf_output_filename)
@@ -176,7 +177,7 @@ def freecad_object_output_file(ai_freecad_object, ai_output_filename, ai_brep=Tr
 def generate_3d_assembly_output_file(ai_3d_conf, ai_output_filename, ai_brep=True, ai_stl=False, ai_slice_xyz=[]):
   """ implement the swith --output_file_basename for 3D assembly
   """
-  print("Compute with FreeCAD the 3D assembly {:s}".format(ai_output_filename))
+  six.print_(("Compute with FreeCAD the 3D assembly {:s}".format(ai_output_filename)))
   fc_assembly = figures_to_freecad_assembly(ai_3d_conf)
   freecad_object_output_file(fc_assembly, ai_output_filename, ai_brep, ai_stl, ai_slice_xyz)
   return(0)
@@ -237,7 +238,7 @@ def figures_to_freecad_assembly(ai_figure_assembly):
   fc_obj = []
   for i in range(obj_nb):
     if(len(ai_figure_assembly[i])!=11):
-      print("ERR219: Error len of ai_figure_assembly {:d} must be 11".format(len(ai_figure_assembly[i])))
+      six.print_(("ERR219: Error len of ai_figure_assembly {:d} must be 11".format(len(ai_figure_assembly[i]))))
       sys.exit(2)
     (part_figure, zero_x, zero_y, size_x, size_y, size_z, flip, orientation, translate_x, translate_y, translate_z) = ai_figure_assembly[i]
     part_figure_zero = rotate_and_translate_figure(part_figure, 0, 0, 0, -1*zero_x, -1*zero_y)

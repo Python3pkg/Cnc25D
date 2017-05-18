@@ -30,6 +30,7 @@ angles.py contains functions to convert angles from one system to an other
 ################################################################
 
 import math
+import six
 
 ################################################################
 # functions
@@ -53,7 +54,7 @@ def roll_pitch_to_pan_tilt(ai_a1, ai_a2):
       if(abs(sin_A)<1+radian_epsilon):
         sin_A = math.copysign(1, sin_A)
       else:
-        print("ERR053: Internal Error, sin_A {:0.3f}".format(sin_A))
+        six.print_(("ERR053: Internal Error, sin_A {:0.3f}".format(sin_A)))
         sys.exit(2)
     A = math.asin(sin_A)
     b1 = b1_sign*math.pi/2 - A

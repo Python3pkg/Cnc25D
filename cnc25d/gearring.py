@@ -30,7 +30,7 @@ You can also simulate or view of the gearring and get a DXF, SVG or BRep file.
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import cnc25d_api
+from . import cnc25d_api
 #cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -53,8 +53,9 @@ from FreeCAD import Base
 #import svgwrite
 #from dxfwrite import DXFEngine
 # cnc25d
-import gear_profile
-import gearwheel # gearwheel.marked_circle_crenel()
+from . import gear_profile
+from . import gearwheel # gearwheel.marked_circle_crenel()
+import six
 
 
 ################################################################
@@ -176,7 +177,7 @@ def gearring_constraint_check(c):
     gear_module = gear_profile_parameters['g1_param']['module']
   else: # no gear_profile, just a circle
     if(c['gear_primitive_diameter']<radian_epsilon):
-      print("ERR176: Error, the no-gear-profile circle outline diameter gear_primitive_diameter {:0.2f} is too small!".format(c['gear_primitive_diameter']))
+      six.print_(("ERR176: Error, the no-gear-profile circle outline diameter gear_primitive_diameter {:0.2f} is too small!".format(c['gear_primitive_diameter'])))
       sys.exit(2)
     c['g1_ix'] = c['center_position_x']
     c['g1_iy'] = c['center_position_y']
@@ -195,7 +196,7 @@ def gearring_constraint_check(c):
   c['holder_crenel_half_width'] = float(c['holder_crenel_width'])/2
   holder_crenel_with_wall_half_width = c['holder_crenel_half_width'] + c['holder_crenel_skin_width']
   if(c['holder_radius']<holder_crenel_with_wall_half_width):
-    print("ERR213: Error, holder_radius {:0.3f} must be bigger than holder_crenel_with_wall_half_width {:0.3f}".format(c['holder_radius'], holder_crenel_with_wall_half_width))
+    six.print_(("ERR213: Error, holder_radius {:0.3f} must be bigger than holder_crenel_with_wall_half_width {:0.3f}".format(c['holder_radius'], holder_crenel_with_wall_half_width)))
     sys.exit(2)
   c['holder_crenel_half_angle'] = math.asin(float(holder_crenel_with_wall_half_width)/c['holder_radius'])
   c['holder_crenel_x_position'] = math.sqrt((c['holder_radius'])**2 - (holder_crenel_with_wall_half_width)**2)
@@ -211,7 +212,7 @@ def gearring_constraint_check(c):
   # c['holder_crenel_height
   if(c['holder_crenel_number']>0):
     if((0.9*holder_side_straigth_length)<c['holder_sr']):
-      print("ERR218: Error, the holder-crenel-wall-side height is too small: holder_side_straigth_length {:0.3f}  holder_smoothing_radius {:0.3f}".format(holder_side_straigth_length, c['holder_sr']))
+      six.print_(("ERR218: Error, the holder-crenel-wall-side height is too small: holder_side_straigth_length {:0.3f}  holder_smoothing_radius {:0.3f}".format(holder_side_straigth_length, c['holder_sr'])))
       #print("dbg214: holder_radius, holder_crenel_x_position:", c['holder_radius'], c['holder_crenel_x_position'])
       #print("dbg215: holder_maximal_height, additional_holder_maximal_height:", holder_maximal_height, additional_holder_maximal_height)
       #print("dbg216: holder_crenel_skin_width, holder_maximal_height_plus:", c['holder_crenel_skin_width'], c['holder_maximal_height_plus'])
@@ -221,44 +222,44 @@ def gearring_constraint_check(c):
       sys.exit(2)
   # c['holder_crenel_position']
   if(c['holder_crenel_position']<c['holder_hole_radius']):
-    print("ERR211: Error, holder_crenel_position {:0.3f} is too small compare to holder_hole_radius {:0.3f}".format(c['holder_crenel_position'], c['holder_hole_radius']))
+    six.print_(("ERR211: Error, holder_crenel_position {:0.3f} is too small compare to holder_hole_radius {:0.3f}".format(c['holder_crenel_position'], c['holder_hole_radius'])))
     sys.exit(2)
   # c['holder_crenel_width']
   if(c['holder_crenel_width']<2.1*c['holder_crenel_rbr']):
-    print("ERR215: Error, holder_crenel_width {:0.3} is too small compare to holder_crenel_router_bit_radius {:0.3f}".format(c['holder_crenel_width'], c['holder_crenel_rbr']))
+    six.print_(("ERR215: Error, holder_crenel_width {:0.3} is too small compare to holder_crenel_router_bit_radius {:0.3f}".format(c['holder_crenel_width'], c['holder_crenel_rbr'])))
     sys.exit(2)
   # hollow_circle and holder-hole
   if(c['maximal_gear_profile_radius']>(c['holder_hole_position_radius']-c['holder_hole_radius'])):
-    print("ERR303: Error, holder-hole are too closed from the gear_hollow_circle: maximal_gear_profile_radius {:0.3f}  holder_hole_position_radius {:0.3f}  holder_hole_radius {:0.3f}".format(c['maximal_gear_profile_radius'], c['holder_hole_position_radius'], c['holder_hole_radius']))
+    six.print_(("ERR303: Error, holder-hole are too closed from the gear_hollow_circle: maximal_gear_profile_radius {:0.3f}  holder_hole_position_radius {:0.3f}  holder_hole_radius {:0.3f}".format(c['maximal_gear_profile_radius'], c['holder_hole_position_radius'], c['holder_hole_radius'])))
     sys.exit(2)
   # holder_hole_mark_nb
   if((c['holder_hole_mark_nb']<0)or(c['holder_hole_mark_nb']>c['holder_crenel_number'])):
-    print("ERR294: Error, holder_hole_mark_nb {:d} is out of its range 0..{:d}".format(c['holder_hole_mark_nb'], c['holder_crenel_number']))
+    six.print_(("ERR294: Error, holder_hole_mark_nb {:d} is out of its range 0..{:d}".format(c['holder_hole_mark_nb'], c['holder_crenel_number'])))
     sys.exit(2)
   # holder_double_hole
   c['holder_double_hole_radius'] = c['holder_double_hole_diameter']/2.0
   c['holder_double_hole_position_radius'] = c['holder_hole_position_radius'] + c['holder_double_hole_position']
   if(c['holder_double_hole_length']<0):
-    print("ERR304: Error, holder_double_hole_length {:0.3f} should be positive".format(c['holder_double_hole_length']))
+    six.print_(("ERR304: Error, holder_double_hole_length {:0.3f} should be positive".format(c['holder_double_hole_length'])))
     sys.exit(2)
   elif(c['holder_double_hole_length']>0):
     if(c['holder_double_hole_radius']==0):
-      print("ERR308: Error, holder_double_hole_length {:0.3f} is positive whereas holder_double_hole_radius is set to zero".format(c['holder_double_hole_length']))
+      six.print_(("ERR308: Error, holder_double_hole_length {:0.3f} is positive whereas holder_double_hole_radius is set to zero".format(c['holder_double_hole_length'])))
       sys.exit(2)
   if(c['holder_double_hole_position']!=0):
     if(c['holder_double_hole_radius']==0):
-      print("ERR319: Error, holder_double_hole_position {:0.3f} is set whereas holder_double_hole_radius is still set to zero".format(c['holder_double_hole_position']))
+      six.print_(("ERR319: Error, holder_double_hole_position {:0.3f} is set whereas holder_double_hole_radius is still set to zero".format(c['holder_double_hole_position'])))
       sys.exit(2)
   if(c['holder_double_hole_radius']<0):
-    print("ERR322: Error, holder_double_hole_radius {:0.3f} must be positive or null".format(c['holder_double_hole_radius']))
+    six.print_(("ERR322: Error, holder_double_hole_radius {:0.3f} must be positive or null".format(c['holder_double_hole_radius'])))
     sys.exit(2)
   elif(c['holder_double_hole_radius']>0):
     if(c['holder_double_hole_length']==0):
-      print("ERR326: Error, holder_double_hole_length must be positive when holder_double_hole_radius {:0.3f} is positive".format(c['holder_double_hole_radius']))
+      six.print_(("ERR326: Error, holder_double_hole_length must be positive when holder_double_hole_radius {:0.3f} is positive".format(c['holder_double_hole_radius'])))
       sys.exit(2)
   # holder_double_hole_mark_nb
   if((c['holder_double_hole_mark_nb']<0)or(c['holder_double_hole_mark_nb']>c['holder_crenel_number'])):
-    print("ERR333: Error, holder_double_hole_mark_nb {:d} is out of its range 0..{:d}".format(c['holder_double_hole_mark_nb'], c['holder_crenel_number']))
+    six.print_(("ERR333: Error, holder_double_hole_mark_nb {:d} is out of its range 0..{:d}".format(c['holder_double_hole_mark_nb'], c['holder_crenel_number'])))
     sys.exit(2)
   ## holder_hole_B
   holder_hole_B_radius = float(c['holder_hole_B_diameter'])/2
@@ -266,7 +267,7 @@ def gearring_constraint_check(c):
   c['holder_hole_B_crenel_list_bis'] = [ 0 for i in range(c['holder_crenel_number']) ]
   for i in range(len(c['holder_hole_B_crenel_list'])):
     if((int(c['holder_hole_B_crenel_list'][i])<0)or(int(c['holder_hole_B_crenel_list'][i])>=c['holder_crenel_number'])):
-      print("ERR286: Error, the holder_hole_B_crenel_list index {:s} is out of the range 0..{:d}".format(c['holder_hole_B_crenel_list'][i], c['holder_crenel_number']))
+      six.print_(("ERR286: Error, the holder_hole_B_crenel_list index {:s} is out of the range 0..{:d}".format(c['holder_hole_B_crenel_list'][i], c['holder_crenel_number'])))
       sys.exit(2)
     c['holder_hole_B_crenel_list_bis'][int(c['holder_hole_B_crenel_list'][i])] = 1
   #print("dbg358: holder_hole_B_crenel_list_bis:", c['holder_hole_B_crenel_list_bis'])
@@ -293,7 +294,7 @@ def gearring_constraint_check(c):
   #print("dbg378: holder_smoothing_radius_list:", c['holder_smoothing_radius_list'])
   #
   if(c['holder_crenel_number_cut']>c['holder_crenel_number']):
-    print("ERR288: Error, holder_crenel_number_cut {:d} must be smaller than holder_crenel_number {:d}".format(c['holder_crenel_number_cut'], c['holder_crenel_number']))
+    six.print_(("ERR288: Error, holder_crenel_number_cut {:d} must be smaller than holder_crenel_number {:d}".format(c['holder_crenel_number_cut'], c['holder_crenel_number'])))
     sys.exit(2)
   ###
   return(c)
@@ -351,7 +352,7 @@ def gearring_2d_construction(c):
   elif(c['holder_crenel_number']>0):
     angle_incr = 2*math.pi/c['holder_crenel_number']
     if((angle_incr-2*c['holder_crenel_half_angle'])<math.pi/10):
-      print("ERR369: Error, no enough space between the crenel: angle_incr {:0.3f}  holder_crenel_half_angle {:0.3f}".format(angle_incr, c['holder_crenel_half_angle']))
+      six.print_(("ERR369: Error, no enough space between the crenel: angle_incr {:0.3f}  holder_crenel_half_angle {:0.3f}".format(angle_incr, c['holder_crenel_half_angle'])))
       sys.exit(2)
     holder_A = []
     first_angle = c['holder_position_angle'] - c['holder_crenel_half_angle']

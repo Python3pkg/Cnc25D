@@ -71,7 +71,7 @@ Use it as an example of usage of the Cnc25D API when you want to create your own
 try: # when working with an installed Cnc25D package
   from cnc25d import cnc25d_api
 except:    # when working on the source files
-  import importing_cnc25d # give access to the cnc25d package
+  from . import importing_cnc25d # give access to the cnc25d package
   from cnc25d import cnc25d_api # import the Cnc25D API modules
 # add the FreeCAD library path to the search path
 cnc25d_api.importing_freecad()
@@ -81,7 +81,8 @@ from FreeCAD import Base
 #
 #import os, errno # to create the output directory
 import math # to get the pi number
-import Tkinter # to display the outline in a small GUI
+from six.moves import tkinter # to display the outline in a small GUI
+import six
 #import svgwrite
 #from dxfwrite import DXFEngine
 
@@ -181,7 +182,7 @@ my_curve_for_cnc = cnc25d_api.smooth_outline_b_curve(my_curve, radian_precision,
 
 ## display my_outline_for_cnc with Tkinter
 print("Display the outlines with Tkinter")
-tk_root = Tkinter.Tk()
+tk_root = tkinter.Tk()
 my_canvas = cnc25d_api.Two_Canvas(tk_root)
 # callback function for display_backend
 def sub_canvas_graphics(ai_rotation_direction, ai_angle_position):
@@ -206,7 +207,7 @@ del (my_canvas, tk_root) # because Tkinter will be used again later in this scri
 
 #
 l_output_dir = "test_output"
-print("Create the output directory: {:s}".format(l_output_dir))
+six.print_(("Create the output directory: {:s}".format(l_output_dir)))
 cnc25d_api.mkdir_p(l_output_dir)
 
 ################################################################
@@ -277,27 +278,27 @@ Part.show(my_assembly)
 ################################################################
 
 # my_part in 3D
-print("Generate {:s}/my_part.stl".format(l_output_dir))
+six.print_(("Generate {:s}/my_part.stl".format(l_output_dir)))
 my_part_solid.exportStl("{:s}/my_part.stl".format(l_output_dir))
-print("Generate {:s}/my_part.brep".format(l_output_dir))
+six.print_(("Generate {:s}/my_part.brep".format(l_output_dir)))
 my_part_solid.exportBrep("{:s}/my_part.brep".format(l_output_dir))
 #print("Generate {:s}/my_part.step".format(l_output_dir))
 #my_part_solid.exportStep("{:s}/my_part.step".format(l_output_dir))
 
 # my_part in 2D DXF
-print("Generate {:s}/my_part.dxf".format(l_output_dir))
+six.print_(("Generate {:s}/my_part.dxf".format(l_output_dir)))
 cnc25d_api.export_to_dxf(my_part_solid, Base.Vector(0,0,1), 1.0, "{:s}/my_part.dxf".format(l_output_dir)) # slice my_part in the XY plan at a height of 1.0
 
 # my_assembly in 3D
-print("Generate {:s}/my_assembly.stl".format(l_output_dir))
+six.print_(("Generate {:s}/my_assembly.stl".format(l_output_dir)))
 my_assembly.exportStl("{:s}/my_assembly.stl".format(l_output_dir))
-print("Generate {:s}/my_assembly.brep".format(l_output_dir))
+six.print_(("Generate {:s}/my_assembly.brep".format(l_output_dir)))
 my_assembly.exportBrep("{:s}/my_assembly.brep".format(l_output_dir))
 #print("Generate {:s}/my_assembly.step".format(l_output_dir))
 #my_assembly.exportStep("{:s}/my_assembly.step".format(l_output_dir))
 
 # my_assembly sliced and projected in 2D DXF
-print("Generate {:s}/my_assembly.dxf".format(l_output_dir))
+six.print_(("Generate {:s}/my_assembly.dxf".format(l_output_dir)))
 xy_slice_list = [ 0.1+20*i for i in range(12) ]
 xz_slice_list = [ 0.1+20*i for i in range(9) ]
 yz_slice_list = [ 0.1+20*i for i in range(9) ]
@@ -343,10 +344,10 @@ wfl_extrude_height = 20.0
 wfl_part = cnc25d_api.figure_to_freecad_25d_part(wfl_figure, wfl_extrude_height)
 
 # wfl_part in 3D BRep
-print("Generate {:s}/wfl_part.brep".format(l_output_dir))
+six.print_(("Generate {:s}/wfl_part.brep".format(l_output_dir)))
 wfl_part.exportBrep("{:s}/wfl_part.brep".format(l_output_dir))
 # wfl_part in 2D DXF
-print("Generate {:s}/wfl_part.dxf".format(l_output_dir))
+six.print_(("Generate {:s}/wfl_part.dxf".format(l_output_dir)))
 cnc25d_api.export_to_dxf(wfl_part, Base.Vector(0,0,1), wfl_extrude_height/2, "{:s}/wfl_part.dxf".format(l_output_dir)) # slice wfl_part in the XY plan at a height of wfl_extrude_height/2
 
 

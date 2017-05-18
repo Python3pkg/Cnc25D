@@ -30,7 +30,7 @@ sub-module of box_wood_frame.py
 
 #import importing_freecad
 #importing_freecad.importing_freecad()
-import cnc25d_api
+from . import cnc25d_api
 cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())

@@ -33,7 +33,8 @@ The function return a FreeCAD Part object of the assembled object.
 
 #import importing_freecad
 #importing_freecad.importing_freecad()
-import cnc25d_api
+from . import cnc25d_api
+import six
 cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -169,9 +170,9 @@ def box_wood_frame(ai_constraints):
   bwfdi = box_wood_frame_dictionary_init()
   bwf_c = bwfdi.copy()
   bwf_c.update(ai_constraints)
-  print("dbg155: bwf_c:", bwf_c)
-  if(len(bwf_c.viewkeys() & bwfdi.viewkeys()) != len(bwf_c.viewkeys() | bwfdi.viewkeys())): # check if the dictionary bwf_c has exactly all the keys compare to box_wood_frame_dictionary_init()
-    print("ERR157: Error, bwf_c has too much entries as {:s} or missing entries as {:s}".format(bwf_c.viewkeys() - bwfdi.viewkeys(), bwfdi.viewkeys() - bwf_c.viewkeys()))
+  six.print_(("dbg155: bwf_c:", bwf_c))
+  if(len(bwf_c & bwfdi) != len(bwf_c | bwfdi)): # check if the dictionary bwf_c has exactly all the keys compare to box_wood_frame_dictionary_init()
+    six.print_(("ERR157: Error, bwf_c has too much entries as {:s} or missing entries as {:s}".format(bwf_c - bwfdi, bwfdi - bwf_c)))
     sys.exit(2)
   #print("dbg164: new box_wood_frame constraints:")
   #for k in bwf_c.viewkeys():
@@ -895,7 +896,7 @@ def box_wood_frame(ai_constraints):
     elif(nai_plank_name=="slab58_front"):
       r_plank = slab_front(nai_cutting_extra)
     else:
-      print("ERR115: Error, the plank_name {:s} doesn't exist".format(nai_plank_name))
+      six.print_(("ERR115: Error, the plank_name {:s} doesn't exist".format(nai_plank_name)))
       sys.exit(2)
     return(r_plank)
   def place_plank_generic(nai_plank_name, nai_module_width, nai_cutting_extra, ai_flip, ai_orientation, ai_position_x, ai_position_y, ai_position_z):
@@ -1163,7 +1164,7 @@ def box_wood_frame(ai_constraints):
       elif(l_orientation=='yx'):
         l_inc_x = 1
       else:
-        print("ERR564: the l_orientation {:s} doesn't exist!".format(l_orientation))
+        six.print_(("ERR564: the l_orientation {:s} doesn't exist!".format(l_orientation)))
         sys.exit(2)
       for li in range(l_plank_desc[lp][3]):
         r_batch.append(place_plank_generic(lp, nai_module_width, nai_cutting_extra, 'i', l_orientation, l_pos_x, l_pos_y, ai_ini_z))
@@ -1477,7 +1478,7 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
 
   def fg_file_path(ai_output_dir, ai_file_name):
     r_file_path = "{:s}/{:s}".format(ai_output_dir, ai_file_name)
-    print("Generate the output file: {:s}".format(r_file_path))
+    six.print_(("Generate the output file: {:s}".format(r_file_path)))
     return(r_file_path)
 
   def fg_text_report(ai_file_idx, ai_file_name, ai_file_description, ai_size):
@@ -1593,7 +1594,7 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
         It returns a string that contains the file name list and their description.
     """
     bwf_log = box_wood_frame_text_report(ai_module_width, nai_args_in_txt)
-    print("{:s}".format(bwf_log))
+    six.print_(("{:s}".format(bwf_log)))
     l_text_report = bwf_log
     #print("dbg747: nai_output_file_basename:", nai_output_file_basename)
     if(nai_output_file_basename==""):
@@ -1738,7 +1739,7 @@ for plank section : plank_type_nb plank_nb total_length  : Accumulation: plank_t
     #r_bwf = frame_assembly(ai_module_width,ai_cutting_extra,0)
     #Part.show(r_bwf)
   else:
-    print("ERR736: Error, return_type {:s} is unknown".format(bwf_c['return_type']))
+    six.print_(("ERR736: Error, return_type {:s} is unknown".format(bwf_c['return_type'])))
     sys.exit(2)
   #r_bwf.exportStl("bwf_assembly.stl")
   #r_bwf = plank_tobo_diagonal(0)
@@ -1818,7 +1819,7 @@ def box_wood_frame_self_test():
   bwf_parser = box_wood_frame_add_argument(bwf_parser)
   for i in range(len(test_case_switch)):
     l_test_switch = test_case_switch[i][1]
-    print("{:2d} test case: '{:s}'\nwith switch: {:s}".format(i, test_case_switch[i][0], l_test_switch))
+    six.print_(("{:2d} test case: '{:s}'\nwith switch: {:s}".format(i, test_case_switch[i][0], l_test_switch)))
     l_args = l_test_switch.split()
     #print("dbg414: l_args:", l_args)
     st_args = bwf_parser.parse_args(l_args)

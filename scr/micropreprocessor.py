@@ -36,6 +36,7 @@ It doesn't work recursively. Included files are not checked for include statemen
 ##########################################################################
 
 import sys, re, os
+import six
 
 micropreprocessor_usage = """
 micropreprocessor.py usage:
@@ -79,15 +80,15 @@ def process_include(ai_txt, ai_input_dir):
         #print("dbg414: include_path:", include_path)
         #if(os.path.exists(include_path)):
         try:
-          print("include file {:s}".format(include_path))
+          six.print_(("include file {:s}".format(include_path)))
           ifh = open(include_path, 'r')
           r_out_txt += ifh.read()
           ifh.close()
         except:
-          print("ERR701: Error, the file {:s} doesn't exist at line {:d}!".format(include_path, line_nb))
+          six.print_(("ERR701: Error, the file {:s} doesn't exist at line {:d}!".format(include_path, line_nb)))
           sys.exit(1)
       else:
-        print("WARN015: Warning, ambigous include statment ignore at line %d"%line_nb)
+        six.print_(("WARN015: Warning, ambigous include statment ignore at line %d"%line_nb))
         r_out_txt += i_line
     else:
       r_out_txt += i_line 
@@ -103,12 +104,12 @@ def micropreprocessor(ai_args):
   main function of micropreprocessor.py
   """
   if(len(ai_args) != 1):
-    print("ERR233: Error, micropreprocessor takes exactly one argument. %d arguments given!"%len(ai_args))
+    six.print_(("ERR233: Error, micropreprocessor takes exactly one argument. %d arguments given!"%len(ai_args)))
     print(micropreprocessor_usage)
     sys.exit(1)
   input_filename = ai_args[0]
   if(not os.path.exists(input_filename)):
-    print("ERR774: Error, the input file {:s} doesn't exist!".format(input_filename))
+    six.print_(("ERR774: Error, the input file {:s} doesn't exist!".format(input_filename)))
     sys.exit(1)
   ifh = open(input_filename, 'r')
   input_content = ifh.read()
@@ -118,7 +119,7 @@ def micropreprocessor(ai_args):
   ofh = open(output_filename, 'w')
   ofh.write(output_content)
   ofh.close()
-  print("The outfile {:s} has been writen :)".format(output_filename))
+  six.print_(("The outfile {:s} has been writen :)".format(output_filename)))
 
 ##########################################################################
 # main

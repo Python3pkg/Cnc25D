@@ -29,7 +29,8 @@ The main function displays in a Tk-interface the motor-lid assembly, or generate
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import cnc25d_api
+from . import cnc25d_api
+import six
 cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -52,7 +53,7 @@ from FreeCAD import Base
 #import svgwrite
 #from dxfwrite import DXFEngine
 # cnc25d
-import axle_lid
+from . import axle_lid
 
 
 ################################################################
@@ -190,11 +191,11 @@ def motor_lid_constraint_check(c):
   if(c['smoothing_radius']==0):
     c['smoothing_radius'] = c['cnc_router_bit_radius']
   if(c['smoothing_radius']<c['cnc_router_bit_radius']):
-    print("ERR232: Error, smoothing_radius {:0.3f} is smaller than cnc_router_bit_radius {:0.3f}".format(c['smoothing_radius'], c['cnc_router_bit_radius']))
+    six.print_(("ERR232: Error, smoothing_radius {:0.3f} is smaller than cnc_router_bit_radius {:0.3f}".format(c['smoothing_radius'], c['cnc_router_bit_radius'])))
     sys.exit(2)
   ## holder-axis
   if((c['axle_B_place']!='small')and(c['axle_B_place']!='large')):
-    print("ERR236: Error, axle_B_place {:s} accept only 'small' or 'large'".format(c['axle_B_place']))
+    six.print_(("ERR236: Error, axle_B_place {:s} accept only 'small' or 'large'".format(c['axle_B_place'])))
     sys.exit(2)
   c['holder_crenel_number'] = c['holder_crenel_number']
   middle_crenel_1 = 0
@@ -218,7 +219,7 @@ def motor_lid_constraint_check(c):
     a_cab = math.asin(sin_a)
     a_AC = c['axle_B_angle'] + math.copysign(a_cab, c['axle_C_angle']) # angle (holder-axis, AC)
     if(l_AC<c['holder_radius']):
-      print("ERR245: l_AC {:0.3} is smaller than the holder_radius {:0.3f}".format(l_AC, c['holder_radius']))
+      six.print_(("ERR245: l_AC {:0.3} is smaller than the holder_radius {:0.3f}".format(l_AC, c['holder_radius'])))
       sys.exit(2)
   ### holder_A
   c['holder_A_axle_B_place'] = c['axle_B_place']
@@ -230,7 +231,7 @@ def motor_lid_constraint_check(c):
     c['axle_B_external_radius'] = 2*c['axle_B_radius']
   if(c['holder_A_axle_B_place'] != 'none'):
     if(c['axle_B_external_radius']<c['axle_B_radius']+radian_epsilon):
-      print("ERR262: Error, axle_B_external_radius {:0.3f} is smaller than axle_B_radius {:0.3f}".format(c['axle_B_external_radius'], c['axle_B_radius']))
+      six.print_(("ERR262: Error, axle_B_external_radius {:0.3f} is smaller than axle_B_radius {:0.3f}".format(c['axle_B_external_radius'], c['axle_B_radius'])))
       sys.exit(2)
   i_axle_lid = axle_lid.axle_lid()
   i_axle_lid.apply_external_constraint(holder_A_al2ml(c))
@@ -246,7 +247,7 @@ def motor_lid_constraint_check(c):
     c['axle_C_external_radius'] = 2*c['axle_C_hole_radius']
   if(c['holder_B_axle_B_place'] != 'none'):
     if(c['axle_C_external_radius']<c['axle_C_hole_radius']+radian_epsilon):
-      print("ERR280: Error, axle_C_external_radius {:0.3f} is too small compare to axle_C_hole_radius {:0.3f}".format(c['axle_C_external_radius'], c['axle_C_hole_radius']))
+      six.print_(("ERR280: Error, axle_C_external_radius {:0.3f} is too small compare to axle_C_hole_radius {:0.3f}".format(c['axle_C_external_radius'], c['axle_C_hole_radius'])))
       sys.exit(2)
   c['AC_length'] = l_AC
   c['AC_angle'] = a_AC
@@ -267,19 +268,19 @@ def motor_lid_constraint_check(c):
     c['fastening_BC_external_radius'] = 2*c['fastening_BC_hole_radius']
   if(c['fastening_BC_external_radius']>0):
     if(c['fastening_BC_external_radius']<c['fastening_BC_hole_radius']+radian_epsilon):
-      print("ERR367: Error, fastening_BC_external_radius {:0.3f} is too small compare to fastening_BC_hole_radius {:0.3f}".format(c['fastening_BC_external_radius'], c['fastening_BC_hole_radius']))
+      six.print_(("ERR367: Error, fastening_BC_external_radius {:0.3f} is too small compare to fastening_BC_hole_radius {:0.3f}".format(c['fastening_BC_external_radius'], c['fastening_BC_hole_radius'])))
       sys.exit(2)
     if(c['axle_B_central_radius']<c['axle_B_radius']+radian_epsilon):
-      print("ERR355: Error, axle_B_central_radius {:0.3f} is too small compare to axle_B_radius {:0.3f}".format(c['axle_B_central_radius'], c['axle_B_radius']))
+      six.print_(("ERR355: Error, axle_B_central_radius {:0.3f} is too small compare to axle_B_radius {:0.3f}".format(c['axle_B_central_radius'], c['axle_B_radius'])))
       sys.exit(2)
     if(c['fastening_BC_hole_radius']<radian_epsilon):
-      print("ERR324: Error, fastening_BC_hole_radius {:0.3f} is too small".format(c['fastening_BC_hole_radius']))
+      six.print_(("ERR324: Error, fastening_BC_hole_radius {:0.3f} is too small".format(c['fastening_BC_hole_radius'])))
       sys.exit(2)
     if((c['fastening_BC_external_radius']+c['fastening_BC_hole_radius'])>c['fastening_BC_bottom_position_radius']):
-      print("ERR327: Error, fastening_BC_bottom_position_radius {:0.3f} is too small compare to fastening_BC_external_radius {:0.3f} and fastening_BC_hole_radius {:0.3f}".format(c['fastening_BC_bottom_position_radius'], c['fastening_BC_external_radius'], c['fastening_BC_hole_radius']))
+      six.print_(("ERR327: Error, fastening_BC_bottom_position_radius {:0.3f} is too small compare to fastening_BC_external_radius {:0.3f} and fastening_BC_hole_radius {:0.3f}".format(c['fastening_BC_bottom_position_radius'], c['fastening_BC_external_radius'], c['fastening_BC_hole_radius'])))
       sys.exit(2)
     if((c['fastening_BC_external_radius']+c['fastening_BC_hole_radius'])>c['fastening_BC_top_position_radius']):
-      print("ERR330: Error, fastening_BC_top_position_radius {:0.3f} is too small compare to fastening_BC_external_radius {:0.3f} and fastening_BC_hole_radius {:0.3f}".format(c['fastening_BC_top_position_radius'], c['fastening_BC_external_radius'], c['fastening_BC_hole_radius']))
+      six.print_(("ERR330: Error, fastening_BC_top_position_radius {:0.3f} is too small compare to fastening_BC_external_radius {:0.3f} and fastening_BC_hole_radius {:0.3f}".format(c['fastening_BC_top_position_radius'], c['fastening_BC_external_radius'], c['fastening_BC_hole_radius'])))
       sys.exit(2)
   ###
   return(c)

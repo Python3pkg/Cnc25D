@@ -29,7 +29,8 @@ The main function displays in a Tk-interface the gimbal parts, or generates the 
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import cnc25d_api
+from . import cnc25d_api
+import six
 cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -52,9 +53,9 @@ from FreeCAD import Base
 #import svgwrite
 #from dxfwrite import DXFEngine
 # cnc25d
-import bell_bagel_assembly
-import cross_cube
-import angles
+from . import bell_bagel_assembly
+from . import cross_cube
+from . import angles
 
 
 ################################################################
@@ -110,7 +111,7 @@ def gimbal_constraint_check(c):
   ###
   if((c['bottom_angle']!=0)or(c['top_angle']!=0)):
     if((c['pan_angle']!=0)or(c['tilt_angle']!=0)):
-      print("ERR145: Error, roll-pitch angles {:0.3f} {:0.3f} and pan-tilt angles {:0.3f} {:0.3f} are set together".format(c['bottom_angle'], c['top_angle'], c['pan_angle'], c['tilt_angle']))
+      six.print_(("ERR145: Error, roll-pitch angles {:0.3f} {:0.3f} and pan-tilt angles {:0.3f} {:0.3f} are set together".format(c['bottom_angle'], c['top_angle'], c['pan_angle'], c['tilt_angle'])))
       sys.exit(2)
   if((c['pan_angle']!=0)or(c['tilt_angle']!=0)):
     (a1, a2) = angles.pan_tilt_to_roll_pitch(c['pan_angle'], c['tilt_angle'])
@@ -119,24 +120,24 @@ def gimbal_constraint_check(c):
   (b1, b2) = angles.roll_pitch_to_pan_tilt(c['bottom_angle'], c['top_angle'])
   (a1, a2) = angles.pan_tilt_to_roll_pitch(b1, b2)
   if((abs(c['bottom_angle']-a1)>radian_epsilon)or(abs(c['top_angle']-a2)>radian_epsilon)):
-    print("ERR154: Internal error in angle conversion: a1 {:0.3f} {:0.3f}  a2 {:0.3f} {:0.3f}".format(c['bottom_angle'], a1, c['top_angle'], a2))
+    six.print_(("ERR154: Internal error in angle conversion: a1 {:0.3f} {:0.3f}  a2 {:0.3f} {:0.3f}".format(c['bottom_angle'], a1, c['top_angle'], a2)))
     sys.exit(2)
   c['b3'] = angles.roll_pitch_pan_tilt_drift_angle(c['bottom_angle'], c['top_angle'])
   #
   if(abs(c['bottom_angle'])>0.7*math.pi):
-    print("ERR133: Error, bottom_angle {:0.3f} absolute value is too big".format(c['bottom_angle']))
+    six.print_(("ERR133: Error, bottom_angle {:0.3f} absolute value is too big".format(c['bottom_angle'])))
     sys.exit(2)
   if(abs(c['top_angle'])>0.7*math.pi):
-    print("ERR136: Error, top_angle {:0.3f} absolute value is too big".format(c['top_angle']))
+    six.print_(("ERR136: Error, top_angle {:0.3f} absolute value is too big".format(c['top_angle'])))
     sys.exit(2)
   if(abs(c['bottom_angle'])+abs(c['top_angle'])>1.1*math.pi):
-    print("ERR139: Error, bottom_angle {:0.3f} and top_angle {:0.3f} absolute values can not be so large at the same time".format(c['bottom_angle'], c['top_angle']))
+    six.print_(("ERR139: Error, bottom_angle {:0.3f} and top_angle {:0.3f} absolute values can not be so large at the same time".format(c['bottom_angle'], c['top_angle'])))
     sys.exit(2)
   # pan-tilt
   c['pan_angle'] = b1
   c['tilt_angle'] = b2
   if(c['tilt_angle']>0.6*math.pi):
-    print("ERR147: Error, tilt_angle {:0.3f} is to big".format(c['tilt_angle']))
+    six.print_(("ERR147: Error, tilt_angle {:0.3f} is to big".format(c['tilt_angle'])))
     sys.exit(2)
   return(c)
 

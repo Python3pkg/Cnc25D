@@ -30,7 +30,8 @@ You can also simulate or view of the split-gearwheel and get a DXF, SVG or BRep 
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import cnc25d_api
+from . import cnc25d_api
+import six
 cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -53,7 +54,7 @@ from FreeCAD import Base
 #import svgwrite
 #from dxfwrite import DXFEngine
 # cnc25d
-import gear_profile
+from . import gear_profile
 
 
 ################################################################
@@ -145,14 +146,14 @@ def split_gearwheel_constraint_check(c):
     c['split_rbr'] = c['cnc_router_bit_radius']
   # c['low_split_type']
   if(not c['low_split_type'] in ('circle', 'line')):
-    print("ERR216: Error, c['low_split_type'] {:s} is not valid!".format(c['low_split_type']))
+    six.print_(("ERR216: Error, c['low_split_type'] {:s} is not valid!".format(c['low_split_type'])))
     sys.exit(2)
   # c['high_split_type']
   if(not c['high_split_type'] in ('h', 'a')):
-    print("ERR220: Error, c['high_split_type'] {:s} is not valid!".format(c['high_split_type']))
+    six.print_(("ERR220: Error, c['high_split_type'] {:s} is not valid!".format(c['high_split_type'])))
     sys.exit(2)
   if(c['split_nb']<2):
-    print("ERR188: Error, split_nb {:d} must be equal or bigger than 2".format(c['split_nb']))
+    six.print_(("ERR188: Error, split_nb {:d} must be equal or bigger than 2".format(c['split_nb'])))
     sys.exit(2)
   #c['portion_angle'] = 2*math.pi/c['split_nb']
   c['portion_angle'] = math.pi/c['split_nb']
@@ -178,7 +179,7 @@ def split_gearwheel_constraint_check(c):
     g1_ia = gear_profile_parameters['g1_param']['initial_angle']
     g1_tl = gear_profile_parameters['g1_param']['top_land']
     if(c['portion_angle']<(1.1*g1_pma)):
-      print("ERR219: Error, portion_angle {:0.3f} is too small compare to the pi_module_angle {:0.3f}".format(c['portion_angle'], g1_pma))
+      six.print_(("ERR219: Error, portion_angle {:0.3f} is too small compare to the pi_module_angle {:0.3f}".format(c['portion_angle'], g1_pma)))
       sys.exit(2)
     # pre common calculation
     absolute_angle = []
@@ -235,7 +236,7 @@ def split_gearwheel_constraint_check(c):
     #print("dbg276: len(portion_gear_first_end) {:d}  len(portion_gear_last_end) {:d}".format(len(c['portion_gear_first_end']), len(c['portion_gear_last_end'])))
   else: # no gear_profile, just a circle
     if(c['gear_primitive_diameter']<radian_epsilon):
-      print("ERR885: Error, the no-gear-profile circle outline diameter c['gear_primitive_diameter'] {:0.2f} is too small!".format(c['gear_primitive_diameter']))
+      six.print_(("ERR885: Error, the no-gear-profile circle outline diameter c['gear_primitive_diameter'] {:0.2f} is too small!".format(c['gear_primitive_diameter'])))
       sys.exit(2)
     #gear_profile_B = (c['g1_ix'], c['g1_iy'], float(c['gear_primitive_diameter'])/2)
     c['minimal_gear_profile_radius'] = float(c['gear_primitive_diameter'])/2
@@ -243,7 +244,7 @@ def split_gearwheel_constraint_check(c):
     c['g1_iy'] = c['center_position_y']
     c['addendum_radius'] = float(c['gear_primitive_diameter'])/2 # for slice_xyz
     if(c['high_split_diameter']!=0):
-      print("WARN221: Warning, the setting high_split_diameter {:0.3f} should not be used when gear_tooth_nb=0".format(c['high_split_diameter']))
+      six.print_(("WARN221: Warning, the setting high_split_diameter {:0.3f} should not be used when gear_tooth_nb=0".format(c['high_split_diameter'])))
     c['high_split_radius'] = c['minimal_gear_profile_radius']
   # set default value (if set to zero) for high_split_diameter, low_hole_circle_diameter, high_hole_circle_diameter
   c['low_split_radius'] = c['low_split_diameter']/2.0
@@ -266,16 +267,16 @@ def split_gearwheel_constraint_check(c):
     c['high_hole_nb']=1
   # radial parameters
   if(c['low_hole_circle_radius']<(c['low_split_radius'] + c['low_hole_radius'])):
-    print("ERR230: Error, low_hole_circle_radius {:0.3f} is too small compare to low_split_radius {:0.3f} and low_hole_radius {:0.3f}".format(c['low_hole_circle_radius'], c['low_split_radius'], c['low_hole_radius']))
+    six.print_(("ERR230: Error, low_hole_circle_radius {:0.3f} is too small compare to low_split_radius {:0.3f} and low_hole_radius {:0.3f}".format(c['low_hole_circle_radius'], c['low_split_radius'], c['low_hole_radius'])))
     sys.exit(2)
   if(c['high_hole_circle_radius']<(c['low_hole_circle_radius'] + c['low_hole_radius'] + c['high_hole_radius'])):
-    print("ERR232: Error, high_hole_circle_radius {:0.3f} is too small compare to low_hole_circle_radius {:0.3f}, low_hole_radius {:0.3f} and high_hole_radius {:0.3f}".format(c['high_hole_circle_radius'], c['low_hole_circle_radius'], c['low_hole_radius'], c['high_hole_radius']))
+    six.print_(("ERR232: Error, high_hole_circle_radius {:0.3f} is too small compare to low_hole_circle_radius {:0.3f}, low_hole_radius {:0.3f} and high_hole_radius {:0.3f}".format(c['high_hole_circle_radius'], c['low_hole_circle_radius'], c['low_hole_radius'], c['high_hole_radius'])))
     sys.exit(2)
   if(c['high_split_radius']<(c['high_hole_circle_radius'] + c['high_hole_radius'])):
-    print("ERR236: Error, high_split_radius {:0.3f} is too small compare to high_hole_circle_radius {:0.3f} and high_hole_radius {:0.3f}".format(c['high_split_radius'], c['high_hole_circle_radius'], c['high_hole_radius']))
+    six.print_(("ERR236: Error, high_split_radius {:0.3f} is too small compare to high_hole_circle_radius {:0.3f} and high_hole_radius {:0.3f}".format(c['high_split_radius'], c['high_hole_circle_radius'], c['high_hole_radius'])))
     sys.exit(2)
   if(c['minimal_gear_profile_radius']<c['high_split_radius']):
-    print("ERR239: Error, minimal_gear_profile_radius {:0.3f} is smaller than high_split_radius {:0.3f}".format(c['minimal_gear_profile_radius'], c['high_split_radius']))
+    six.print_(("ERR239: Error, minimal_gear_profile_radius {:0.3f} is smaller than high_split_radius {:0.3f}".format(c['minimal_gear_profile_radius'], c['high_split_radius'])))
     sys.exit(2)
   # angular (or circumference) parameters
   low_hole_diameter_angle = math.asin(float(c['low_hole_radius'])/c['low_hole_circle_radius'])
@@ -283,10 +284,10 @@ def split_gearwheel_constraint_check(c):
   high_hole_diameter_angle = math.asin(float(c['high_hole_radius'])/c['high_hole_circle_radius'])
   c['high_hole_space_angle'] = c['portion_angle']/float(c['high_hole_nb'])
   if(c['low_hole_space_angle']<(2*low_hole_diameter_angle+radian_epsilon)):
-    print("ERR253: Error, low_hole_nb {:d} or low_hole_diameter {:0.3f} are too big!".format(c['low_hole_nb'], c['low_hole_diameter']))
+    six.print_(("ERR253: Error, low_hole_nb {:d} or low_hole_diameter {:0.3f} are too big!".format(c['low_hole_nb'], c['low_hole_diameter'])))
     sys.exit(2)
   if(c['high_hole_space_angle']<(2*high_hole_diameter_angle+radian_epsilon)):
-    print("ERR255: Error, high_hole_nb {:d} or high_hole_diameter {:0.3f} are too big!".format(c['high_hole_nb'], c['high_hole_diameter']))
+    six.print_(("ERR255: Error, high_hole_nb {:d} or high_hole_diameter {:0.3f} are too big!".format(c['high_hole_nb'], c['high_hole_diameter'])))
     sys.exit(2)
   ###
   return(c)
@@ -308,7 +309,7 @@ def split_gearwheel_2d_construction(c):
       #print("dbg335:  portion_gear_last_end[i]: {:0.3f}".format(c['portion_gear_last_end'][i]))
       #print("dbg336:  portion_gear_tooth_angle[i]: {:0.3f}".format(c['portion_gear_tooth_angle'][i]))
       if(c['portion_gear_tooth_nb'][i]<1):
-        print("ERR338: Error, for i {:d} portion_gear_tooth_nb {:d} smaller than 1".format(i, c['portion_gear_tooth_nb'][i]))
+        six.print_(("ERR338: Error, for i {:d} portion_gear_tooth_nb {:d} smaller than 1".format(i, c['portion_gear_tooth_nb'][i])))
         sys.exit(2)
       gp_c = c.copy()
       gp_c['gear_type'] = 'e'

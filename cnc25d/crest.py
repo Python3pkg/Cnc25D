@@ -29,7 +29,8 @@ The main function displays in a Tk-interface the crest part, or generates the de
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import cnc25d_api
+from . import cnc25d_api
+import six
 cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -52,8 +53,8 @@ import Part
 #import svgwrite
 #from dxfwrite import DXFEngine
 # cnc25d
-import cross_cube_sub
-import gear_profile
+from . import cross_cube_sub
+from . import gear_profile
 
 
 ################################################################
@@ -150,11 +151,11 @@ def crest_constraint_check(c):
   ### outline
   #gear_module
   if(c['gear_module']<radian_epsilon):
-    print("ERR194: Error, gear_module {:0.3f} must be strictly positive".format(c['gear_module']))
+    six.print_(("ERR194: Error, gear_module {:0.3f} must be strictly positive".format(c['gear_module'])))
     sys.exit(2)
   #virtual_tooth_nb
   if((c['virtual_tooth_nb']-3)*c['gear_module']<0.9*c['cube_width']):
-    print("ERR198: Error, virtual_tooth_nb {:d} is too small compare to gear_module {:0.3f} and cube_width {:0.3f}".format(c['virtual_tooth_nb'], c['gear_module'], c['cube_width']))
+    six.print_(("ERR198: Error, virtual_tooth_nb {:d} is too small compare to gear_module {:0.3f} and cube_width {:0.3f}".format(c['virtual_tooth_nb'], c['gear_module'], c['cube_width'])))
     sys.exit(2)
   gear_hollow_radius = (c['virtual_tooth_nb']-2)*c['gear_module']/2.0
   minimal_gear_portion_angle = 2*math.asin(c['cube_width']/(2.0*gear_hollow_radius))
@@ -162,45 +163,45 @@ def crest_constraint_check(c):
   #portion_tooth_nb
   gear_portion_angle = 2*math.pi*(c['portion_tooth_nb']+1)/c['virtual_tooth_nb']
   if(gear_portion_angle<minimal_gear_portion_angle):
-    print("ERR205: Error, portion_tooth_nb {:d} is too small compare to gear_module {:0.3f}, virtual_tooth_nb {:d} and cube_width {:0.3f}".format(c['portion_tooth_nb'], c['gear_module'], c['virtual_tooth_nb'], c['cube_width']))
+    six.print_(("ERR205: Error, portion_tooth_nb {:d} is too small compare to gear_module {:0.3f}, virtual_tooth_nb {:d} and cube_width {:0.3f}".format(c['portion_tooth_nb'], c['gear_module'], c['virtual_tooth_nb'], c['cube_width'])))
     sys.exit(2)
   if(gear_portion_angle>maximal_gear_portion_angle):
-    print("ERR208: Error, portion_tooth_nb {:d} is too big compare to gear_module {:0.3f}, virtual_tooth_nb {:d}, free_mounting_width {:0.3f} and cube_width {:0.3f}".format(c['portion_tooth_nb'], c['gear_module'], c['virtual_tooth_nb'], c['free_mounting_width'], c['cube_width']))
+    six.print_(("ERR208: Error, portion_tooth_nb {:d} is too big compare to gear_module {:0.3f}, virtual_tooth_nb {:d}, free_mounting_width {:0.3f} and cube_width {:0.3f}".format(c['portion_tooth_nb'], c['gear_module'], c['virtual_tooth_nb'], c['free_mounting_width'], c['cube_width'])))
     sys.exit(2)
   #free_mounting_width
   if(c['free_mounting_width']<max(c['face_B1_thickness'], c['face_B2_thickness'])+c['crest_cnc_router_bit_radius']):
-    print("ERR212: Error, free_mounting_width {:0.3f} is too small compare to face_B1_thickness {:0.3f}, face_B2_thickness {:0.3f} and crest_cnc_router_bit_radius {:0.3f}".format(c['free_mounting_width'], c['face_B1_thickness'], c['face_B2_thickness'], c['crest_cnc_router_bit_radius']))
+    six.print_(("ERR212: Error, free_mounting_width {:0.3f} is too small compare to face_B1_thickness {:0.3f}, face_B2_thickness {:0.3f} and crest_cnc_router_bit_radius {:0.3f}".format(c['free_mounting_width'], c['face_B1_thickness'], c['face_B2_thickness'], c['crest_cnc_router_bit_radius'])))
     sys.exit(2)
   if(c['free_mounting_width']+c['cube_width']/2.0>gear_hollow_radius):
-    print("ERR215: Error, free_mounting_width {:0.3f} is too big compare to cube_width {:0.3f} and gear_hollow_radius {:0.3f}".format(c['free_mounting_width'], c['cube_width'], gear_hollow_radius))
+    six.print_(("ERR215: Error, free_mounting_width {:0.3f} is too big compare to cube_width {:0.3f} and gear_hollow_radius {:0.3f}".format(c['free_mounting_width'], c['cube_width'], gear_hollow_radius)))
     sys.exit(2)
   ### crest_hollow
   #crest_hollow_leg_nb # possible values: 1(filled), 2(end-legs only), 3, 4 ...
   if(c['crest_hollow_leg_nb']<1):
-    print("ERR220: Error, crest_hollow_leg_nb {:d} must be bigger or equal to 1".format(c['crest_hollow_leg_nb']))
+    six.print_(("ERR220: Error, crest_hollow_leg_nb {:d} must be bigger or equal to 1".format(c['crest_hollow_leg_nb'])))
     sys.exit(2)
   #end_leg_width
   if(c['end_leg_width']<radian_epsilon):
-    print("ERR224: Error, end_leg_width {:0.3f} must be strictly positive".format(c['end_leg_width']))
+    six.print_(("ERR224: Error, end_leg_width {:0.3f} must be strictly positive".format(c['end_leg_width'])))
     sys.exit(2)
   if(c['end_leg_width']>0.7*2*math.pi*gear_hollow_radius*gear_portion_angle/c['crest_hollow_leg_nb']):
-    print("ERR228: Error, end_leg_width {:0.3f} is too big compare to gear_hollow_radius {:0.3f}, gear_portion_angle {:0.3f} and crest_hollow_leg_nb {:d}".format(c['end_leg_width'], gear_hollow_radius, gear_portion_angle, c['crest_hollow_leg_nb']))
+    six.print_(("ERR228: Error, end_leg_width {:0.3f} is too big compare to gear_hollow_radius {:0.3f}, gear_portion_angle {:0.3f} and crest_hollow_leg_nb {:d}".format(c['end_leg_width'], gear_hollow_radius, gear_portion_angle, c['crest_hollow_leg_nb'])))
     sys.exit(2)
   #middle_leg_width
   if(c['middle_leg_width']==0):
     c['middle_leg_width'] = c['end_leg_width']
   if(c['middle_leg_width']<radian_epsilon):
-    print("ERR232: Error, middle_leg_width {:0.3f} must be strictly positive".format(c['middle_leg_width']))
+    six.print_(("ERR232: Error, middle_leg_width {:0.3f} must be strictly positive".format(c['middle_leg_width'])))
     sys.exit(2)
   if(c['middle_leg_width']>0.7*2*math.pi*gear_hollow_radius*gear_portion_angle/c['crest_hollow_leg_nb']):
-    print("ERR235: Error, middle_leg_width {:0.3f} is too big compare to gear_hollow_radius {:0.3f}, gear_portion_angle {:0.3f} and crest_hollow_leg_nb {:d}".format(c['middle_leg_width'], gear_hollow_radius, gear_portion_angle, c['crest_hollow_leg_nb']))
+    six.print_(("ERR235: Error, middle_leg_width {:0.3f} is too big compare to gear_hollow_radius {:0.3f}, gear_portion_angle {:0.3f} and crest_hollow_leg_nb {:d}".format(c['middle_leg_width'], gear_hollow_radius, gear_portion_angle, c['crest_hollow_leg_nb'])))
     sys.exit(2)
   #crest_hollow_external_diameter
   c['crest_hollow_external_radius'] = c['crest_hollow_external_diameter']/2.0
   if(c['crest_hollow_external_radius']==0):
     c['crest_hollow_external_radius'] = gear_hollow_radius - 1.5*c['gear_module']
   if(c['crest_hollow_external_radius']>gear_hollow_radius):
-    print("ERR244: Error, crest_hollow_external_radius {:0.3f} is too big compare to gear_hollow_radius {:0.3f}".format(c['crest_hollow_external_radius'], gear_hollow_radius))
+    six.print_(("ERR244: Error, crest_hollow_external_radius {:0.3f} is too big compare to gear_hollow_radius {:0.3f}".format(c['crest_hollow_external_radius'], gear_hollow_radius)))
     sys.exit(2)
   #crest_hollow_internal_diameter
   c['crest_hollow_internal_radius'] = c['crest_hollow_internal_diameter']/2.0
@@ -208,16 +209,16 @@ def crest_constraint_check(c):
   if(c['crest_hollow_internal_radius']==0):
     c['crest_hollow_internal_radius'] = minimal_crest_hollow_internal_radius
   if(c['crest_hollow_internal_radius']<minimal_crest_hollow_internal_radius):
-    print("ERR252: Error, crest_hollow_internal_radius {:0.3f} must be bigger than minimal_crest_hollow_internal_radius {:0.3f}".format(c['crest_hollow_internal_radius'], minimal_crest_hollow_internal_radius))
+    six.print_(("ERR252: Error, crest_hollow_internal_radius {:0.3f} must be bigger than minimal_crest_hollow_internal_radius {:0.3f}".format(c['crest_hollow_internal_radius'], minimal_crest_hollow_internal_radius)))
     sys.exit(2)
   #floor_width
   if(c['floor_width']==0):
     c['floor_width'] = c['end_leg_width']
   if(c['floor_width']<radian_epsilon):
-    print("ERR257: Error, floor_width {:0.3f} must be strictly positive".format(c['floor_width']))
+    six.print_(("ERR257: Error, floor_width {:0.3f} must be strictly positive".format(c['floor_width'])))
     sys.exit(2)
   if(c['floor_width']+c['top_thickness']+c['height_margin']+c['axle_diameter']/2.0>gear_hollow_radius):
-    print("ERR260: Error, floor_width {:0.3f} is too big compare to top_thickness {:0.3f}, height_margin {:0.3f}, axle_diameter {:0.3f} and gear_hollow_radius {:0.3f}".format(c['floor_width'], c['top_thickness'], c['height_margin'], c['axle_diameter'], gear_hollow_radius))
+    six.print_(("ERR260: Error, floor_width {:0.3f} is too big compare to top_thickness {:0.3f}, height_margin {:0.3f}, axle_diameter {:0.3f} and gear_hollow_radius {:0.3f}".format(c['floor_width'], c['top_thickness'], c['height_margin'], c['axle_diameter'], gear_hollow_radius)))
     sys.exit(2)
   #crest_hollow_smoothing_radius
   max_leg_width = max(c['end_leg_width'], c['middle_leg_width'])
@@ -225,35 +226,35 @@ def crest_constraint_check(c):
   if(c['crest_hollow_smoothing_radius']==0):
     c['crest_hollow_smoothing_radius'] = min(0.5*maximal_crest_hollow_smoothing_radius, 0.2*abs(c['crest_hollow_external_radius']-c['crest_hollow_internal_radius']))
   if(c['crest_hollow_smoothing_radius']<c['crest_cnc_router_bit_radius']):
-    print("ERR267: Error, crest_hollow_smoothing_radius {:0.3f} must be bigger than crest_cnc_router_bit_radius {:0.3f}".format(c['crest_hollow_smoothing_radius'], c['crest_cnc_router_bit_radius']))
+    six.print_(("ERR267: Error, crest_hollow_smoothing_radius {:0.3f} must be bigger than crest_cnc_router_bit_radius {:0.3f}".format(c['crest_hollow_smoothing_radius'], c['crest_cnc_router_bit_radius'])))
     sys.exit(2)
   if(c['crest_hollow_smoothing_radius']>maximal_crest_hollow_smoothing_radius):
-    print("ERR270: Error, crest_hollow_smoothing_radius {:0.3f} must be smaller than maximal_crest_hollow_smoothing_radius {:0.3f}".format(c['crest_hollow_smoothing_radius'], maximal_crest_hollow_smoothing_radius))
+    six.print_(("ERR270: Error, crest_hollow_smoothing_radius {:0.3f} must be smaller than maximal_crest_hollow_smoothing_radius {:0.3f}".format(c['crest_hollow_smoothing_radius'], maximal_crest_hollow_smoothing_radius)))
     sys.exit(2)
   if(c['crest_hollow_external_radius']<c['crest_hollow_internal_radius']+2.5*c['crest_hollow_smoothing_radius']):
-    print("ERR265: Error, crest_hollow_external_radius {:0.3f} is too small compare to crest_hollow_internal_radius {:0.3f} and crest_hollow_smoothing_radius {:0.3f}".format(c['crest_hollow_external_radius'], c['crest_hollow_internal_radius'], c['crest_hollow_smoothing_radius']))
+    six.print_(("ERR265: Error, crest_hollow_external_radius {:0.3f} is too small compare to crest_hollow_internal_radius {:0.3f} and crest_hollow_smoothing_radius {:0.3f}".format(c['crest_hollow_external_radius'], c['crest_hollow_internal_radius'], c['crest_hollow_smoothing_radius'])))
     sys.exit(2)
   ### gear_holes
   #fastening_hole_diameter
   c['fastening_hole_radius'] = c['fastening_hole_diameter']/2.0
   #fastening_hole_position
   if(c['crest_hollow_external_radius'] + c['fastening_hole_position'] + c['fastening_hole_radius']>gear_hollow_radius):
-    print("ERR282: Error, fastening_hole_position {:0.3f} or fastening_hole_radius {:0.3f} are too big compare to crest_hollow_external_radius {:0.3f} and gear_hollow_radius {:0.3f}".format(c['fastening_hole_position'], c['fastening_hole_radius'], c['crest_hollow_external_radius'], gear_hollow_radius))
+    six.print_(("ERR282: Error, fastening_hole_position {:0.3f} or fastening_hole_radius {:0.3f} are too big compare to crest_hollow_external_radius {:0.3f} and gear_hollow_radius {:0.3f}".format(c['fastening_hole_position'], c['fastening_hole_radius'], c['crest_hollow_external_radius'], gear_hollow_radius)))
     sys.exit(2)
   #centring_hole_diameter
   c['centring_hole_radius'] = c['centring_hole_diameter']/2.0
   #centring_hole_distance
   if(c['centring_hole_distance']<2.1*c['centring_hole_radius']):
-    print("ERR288: Error, centring_hole_distance {:0.3f} is too small compare to centring_hole_radius {:0.3f}".format(c['centring_hole_distance'], c['centring_hole_radius']))
+    six.print_(("ERR288: Error, centring_hole_distance {:0.3f} is too small compare to centring_hole_radius {:0.3f}".format(c['centring_hole_distance'], c['centring_hole_radius'])))
     sys.exit(2)
   #centring_hole_position
   if(c['crest_hollow_external_radius'] + c['centring_hole_position'] + c['centring_hole_radius']>gear_hollow_radius):
-    print("ERR292: Error, centring_hole_position {:0.3f} or centring_hole_radius {:0.3f} are too big compare to crest_hollow_external_radius {:0.3f} and gear_hollow_radius {:0.3f}".format(c['centring_hole_position'], c['centring_hole_radius'], c['crest_hollow_external_radius'], gear_hollow_radius))
+    six.print_(("ERR292: Error, centring_hole_position {:0.3f} or centring_hole_radius {:0.3f} are too big compare to crest_hollow_external_radius {:0.3f} and gear_hollow_radius {:0.3f}".format(c['centring_hole_position'], c['centring_hole_radius'], c['crest_hollow_external_radius'], gear_hollow_radius)))
     sys.exit(2)
   ## part thickness
   #crest_thickness
   if(c['crest_thickness']<radian_epsilon):
-    print("ERR297: Error, crest_thickness {:0.3f} must be strictly positive".format(c['crest_thickness']))
+    six.print_(("ERR297: Error, crest_thickness {:0.3f} must be strictly positive".format(c['crest_thickness'])))
     sys.exit(2)
   ### manufacturing
   #crest_cnc_router_bit_radius
@@ -290,7 +291,7 @@ def crest_2d_construction(c):
   gear_profile_B = i_gear_profile.get_A_figure('first_gear')[0]
   # gear_profile check
   if(abs(gear_profile_B[0][1]-gear_profile_B[-1][-1])>radian_epsilon):
-    print("ERR335: Error, extremities of the gear_profile_B have different y-coordiante {:0.3f} {:0.3f}".format(gear_profile_B[0][1], gear_profile_B[-1][-1]))
+    six.print_(("ERR335: Error, extremities of the gear_profile_B have different y-coordiante {:0.3f} {:0.3f}".format(gear_profile_B[0][1], gear_profile_B[-1][-1])))
     sys.exit(2)
   # gear_profile extremity angle
   crest_gear_angle = math.atan2(gear_profile_B[0][1]-cy, gear_profile_B[0][0]-cx)
@@ -370,7 +371,7 @@ def crest_2d_construction(c):
       ia1 = in1_angles[i]
       ia2 = in2_angles[i]
       if((ea2-ea1)<2.1*smoothing_ex_half_angle):
-        print("ERR419: Error, crest_hollow_smoothing_radius {:0.3f} or crest_hollow_leg_nb {:d} are too big".format(chsr, chln))
+        six.print_(("ERR419: Error, crest_hollow_smoothing_radius {:0.3f} or crest_hollow_leg_nb {:d} are too big".format(chsr, chln)))
         sys.exit(2)
       hollow = []
       hollow.append((cx+cher*math.cos(ea1), cy+cher*math.sin(ea1), chsr))

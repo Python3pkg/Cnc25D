@@ -29,7 +29,8 @@ The main function displays in a Tk-interface the bagel parts, or generates the d
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import cnc25d_api
+from . import cnc25d_api
+import six
 cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -110,21 +111,21 @@ def bagel_constraint_check(c):
   # bagel_axle_diameter
   c['bagel_axle_radius'] = c['bagel_axle_diameter']/2.0
   if(c['bagel_axle_radius']<radian_epsilon):
-    print("ERR152: Error, bagel_axle_radius {:0.3f} is too small".format(c['bagel_axle_radius']))
+    six.print_(("ERR152: Error, bagel_axle_radius {:0.3f} is too small".format(c['bagel_axle_radius'])))
     sys.exit(2)
   # bagel_axle_internal_diameter
   c['bagel_axle_internal_radius'] = c['bagel_axle_internal_diameter']/2.0
   if(c['bagel_axle_internal_radius']==0):
     c['bagel_axle_internal_radius'] = 2*c['bagel_axle_radius']
   if(c['bagel_axle_internal_radius']<c['bagel_axle_radius']):
-    print("ERR159: Error, bagel_axle_internal_radius {:0.3f} must be bigger than bagel_axle_radius {:0.3f}".format(c['bagel_axle_internal_radius'], c['bagel_axle_radius']))
+    six.print_(("ERR159: Error, bagel_axle_internal_radius {:0.3f} must be bigger than bagel_axle_radius {:0.3f}".format(c['bagel_axle_internal_radius'], c['bagel_axle_radius'])))
     sys.exit(2)
   # bagel_axle_external_diameter
   c['bagel_axle_external_radius'] = c['bagel_axle_external_diameter']/2.0
   if(c['bagel_axle_external_radius']==0):
     c['bagel_axle_external_radius'] = 2*c['bagel_axle_internal_radius']
   if(c['bagel_axle_external_radius']<c['bagel_axle_internal_radius']+radian_epsilon):
-    print("ERR166: Error, bagel_axle_external_radius {:0.3f} must be bigger than bagel_axle_internal_radius {:0.3f}".format(c['bagel_axle_external_radius'], c['bagel_axle_internal_radius']))
+    six.print_(("ERR166: Error, bagel_axle_external_radius {:0.3f} must be bigger than bagel_axle_internal_radius {:0.3f}".format(c['bagel_axle_external_radius'], c['bagel_axle_internal_radius'])))
     sys.exit(2)
   # axle_hole_nb
   c['axle_hole_radius'] = 0.0
@@ -133,34 +134,34 @@ def bagel_constraint_check(c):
     # axle_hole_diameter
     c['axle_hole_radius'] = c['axle_hole_diameter']/2.0
     if(c['axle_hole_radius']<radian_epsilon):
-      print("ERR173: Error, axle_hole_radius {:0.3f} must be strictly positive".format(c['axle_hole_radius']))
+      six.print_(("ERR173: Error, axle_hole_radius {:0.3f} must be strictly positive".format(c['axle_hole_radius'])))
       sys.exit(2)
     # axle_hole_position_diameter
     c['axle_hole_position_radius'] = c['axle_hole_position_diameter']/2.0
     if(c['axle_hole_position_radius']==0.0):
       c['axle_hole_position_radius'] = (c['bagel_axle_internal_radius']+c['bagel_axle_external_radius'])/2.0
     if(c['axle_hole_position_radius'] < c['bagel_axle_internal_radius']+c['axle_hole_radius']+radian_epsilon):
-      print("ERR180: Error: axle_hole_position_radius {:0.3f} is too small compare to bagel_axle_internal_radius {:0.3f} and axle_hole_radius {:0.3f}".format(c['axle_hole_position_radius'], c['bagel_axle_internal_radius'], c['axle_hole_radius']))
+      six.print_(("ERR180: Error: axle_hole_position_radius {:0.3f} is too small compare to bagel_axle_internal_radius {:0.3f} and axle_hole_radius {:0.3f}".format(c['axle_hole_position_radius'], c['bagel_axle_internal_radius'], c['axle_hole_radius'])))
       sys.exit(2)
     if(c['axle_hole_position_radius'] > c['bagel_axle_external_radius']-c['axle_hole_radius']-radian_epsilon):
-      print("ERR183: Error: axle_hole_position_radius {:0.3f} is too big compare to bagel_axle_external_radius {:0.3f} and axle_hole_radius {:0.3f}".format(c['axle_hole_position_radius'], c['bagel_axle_external_radius'], c['axle_hole_radius']))
+      six.print_(("ERR183: Error: axle_hole_position_radius {:0.3f} is too big compare to bagel_axle_external_radius {:0.3f} and axle_hole_radius {:0.3f}".format(c['axle_hole_position_radius'], c['bagel_axle_external_radius'], c['axle_hole_radius'])))
       sys.exit(2)
     # axle_hole_angle
   # external_bagel_thickness
   if(c['external_bagel_thickness']<radian_epsilon):
-    print("ERR188: Error, external_bagel_thickness {:0.3f} is too small".format(c['external_bagel_thickness']))
+    six.print_(("ERR188: Error, external_bagel_thickness {:0.3f} is too small".format(c['external_bagel_thickness'])))
     sys.exit(2)
   # middle_bagel_thickness
   if(c['middle_bagel_thickness']<radian_epsilon):
-    print("ERR192: Error, middle_bagel_thickness {:0.3f} is too small".format(c['middle_bagel_thickness']))
+    six.print_(("ERR192: Error, middle_bagel_thickness {:0.3f} is too small".format(c['middle_bagel_thickness'])))
     sys.exit(2)
   # internal_bagel_thickness
   if(c['internal_bagel_thickness']<radian_epsilon):
-    print("ERR196: Error, internal_bagel_thickness {:0.3f} is too small".format(c['internal_bagel_thickness']))
+    six.print_(("ERR196: Error, internal_bagel_thickness {:0.3f} is too small".format(c['internal_bagel_thickness'])))
     sys.exit(2)
   # bagel_extra_cut_thickness
   if(abs(c['bagel_extra_cut_thickness'])>c['bagel_axle_radius']/2.0):
-    print("ERR212: Error, bagel_extra_cut_thickness {:0.3f} is too big compare to bagel_axle_radius {:0.3f}".format(c['bagel_extra_cut_thickness'], c['bagel_axle_radius']))
+    six.print_(("ERR212: Error, bagel_extra_cut_thickness {:0.3f} is too big compare to bagel_axle_radius {:0.3f}".format(c['bagel_extra_cut_thickness'], c['bagel_axle_radius'])))
     sys.exit(2)
   return(c)
 

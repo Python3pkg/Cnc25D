@@ -41,7 +41,7 @@ If you don't know which value to set to a constraint-parameter, just comment it.
 try: # when working with an installed Cnc25D package
   from cnc25d import cnc25d_api
 except:    # when working on the source files
-  import importing_cnc25d # give access to the cnc25d package
+  from . import importing_cnc25d # give access to the cnc25d package
   from cnc25d import cnc25d_api
 cnc25d_api.importing_freecad()
 

@@ -39,6 +39,7 @@ svg2txt_xsl = """
 from lxml import etree
 import sys
 import re
+import six
 
 #def transform(xmlPath, xslPath):
 def transform_svg2txt(xmlPath):
@@ -65,11 +66,11 @@ def transform_svg2txt(xmlPath):
 if __name__ == '__main__':
   #print("dbg101: sys.argv:", sys.argv)
   if(len(sys.argv)==1):
-    print("%s"%help_msg)
+    six.print_(("%s"%help_msg))
     print("Nothing done!\n")
   else:
     for f_svg in sys.argv[1:]:
-      print("Processing svg file: %s"%(f_svg))
+      six.print_(("Processing svg file: %s"%(f_svg)))
       f_txt = re.sub('\.svg','', f_svg) + ".txt"
       #print(transform_svg2txt('./s0101m.mul0.xml', './tipitaka-latn.xsl'))
       txt_content = transform_svg2txt(f_svg)
@@ -78,6 +79,6 @@ if __name__ == '__main__':
       output_file_handler = open(f_txt, 'w')
       output_file_handler.write(txt_content)
       output_file_handler.close()
-      print("and outputs text file: %s"%(f_txt))
+      six.print_(("and outputs text file: %s"%(f_txt)))
 
 

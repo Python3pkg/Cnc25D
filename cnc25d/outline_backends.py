@@ -28,14 +28,15 @@ outline_backends.py provides a common API to create lines, arcs and circles with
 # python behavior
 ################################################################
 
-from __future__ import division # to get float division
+ # to get float division
 
 
 ################################################################
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import importing_freecad
+from . import importing_freecad
+import six
 importing_freecad.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -52,12 +53,12 @@ import math
 import sys, argparse
 import svgwrite
 from dxfwrite import DXFEngine
-import Tkinter
+from six.moves import tkinter
 import time # for time.sleep to help Tkinter to finish properly
-import display_backend
-import cnc_outline # just used in figure_simple_display() for cnc_outline.outline_rotate, closed(), check_outline_format() and ideal_outline()
-import export_2d # just for test enhancement
-import design_help # just for get_effective_args() and mkdir_p
+from . import display_backend
+from . import cnc_outline # just used in figure_simple_display() for cnc_outline.outline_rotate, closed(), check_outline_format() and ideal_outline()
+from . import export_2d # just for test enhancement
+from . import design_help # just for get_effective_args() and mkdir_p
 
 
 ################################################################
@@ -80,7 +81,7 @@ def complete_circle(ai_center, ai_radius, ai_resolution):
   r_points = []
   # calculation of the angle resolution:
   if(ai_resolution<3):
-    print("ERR821: The ai_resolution is smaller than 3. Current ai_resolution = {:d}".format(ai_resolution))
+    six.print_(("ERR821: The ai_resolution is smaller than 3. Current ai_resolution = {:d}".format(ai_resolution)))
     sys.exit(2)
   #print("dbg424: ai_radius:", ai_radius)
   circle_resolution = int(ai_resolution * ai_radius) # circle resolution increase with the radius
@@ -124,7 +125,7 @@ def arc_3_points_to_radius_center_angles(ai_start, ai_middle, ai_end):
   lbc = math.sqrt((ptcx-ptbx)**2+(ptcy-ptby)**2)
   if(lab<length_epsilon):
     print("ERR811: Error, A and B are almost identical")
-    print("dbg559: pta={:0.2f} {:0.2f}  ptb={:0.2f} {:0.2f}  ptc={:0.2f} {:0.2f}".format(ptax, ptay, ptbx, ptby, ptcx, ptcy))
+    six.print_(("dbg559: pta={:0.2f} {:0.2f}  ptb={:0.2f} {:0.2f}  ptc={:0.2f} {:0.2f}".format(ptax, ptay, ptbx, ptby, ptcx, ptcy)))
     sys.exit(2)
   if(lbc<length_epsilon):
     print("ERR812: Error, B and C are almost identical")
@@ -231,7 +232,7 @@ def arc_of_circle(ai_start, ai_middle, ai_end, ai_resolution):
   ### real arc case
   # calculation of the angle resolution:
   if(ai_resolution<3):
-    print("ERR821: The ai_resolution is smaller than 3. Current ai_resolution = {:d}".format(ai_resolution))
+    six.print_(("ERR821: The ai_resolution is smaller than 3. Current ai_resolution = {:d}".format(ai_resolution)))
     sys.exit(2)
   #print("dbg414: arc radius: lia:", lia)
   circle_resolution = ai_resolution * lia # angle resolution increase with the radius
@@ -268,7 +269,7 @@ def outline_arc_line_with_freecad(ai_segments, ai_outline_closed):
   fc_outline = []
   for i in range(segment_nb-1):
     if((abs(ai_segments[i][-2]-ai_segments[i+1][-2])<length_epsilon)and(abs(ai_segments[i][-1]-ai_segments[i+1][-1])<length_epsilon)):
-      print("ERR264: Error, point of index {:d} and {:d} are identical. x {:0.5f}  y {:0.5f}".format(i,i+1, ai_segments[i][-2], ai_segments[i][-1]))
+      six.print_(("ERR264: Error, point of index {:d} and {:d} are identical. x {:0.5f}  y {:0.5f}".format(i,i+1, ai_segments[i][-2], ai_segments[i][-1])))
       #for j in range(segment_nb):
       #  print("dbg269: pt {:d}  x {:0.3f}  y {:0.3f}".format(j, ai_segments[j][-2], ai_segments[j][-1]))
       sys.exit(2)
@@ -458,7 +459,7 @@ def outline_circle(ai_center, ai_radius, ai_backend):
   #r_outline = ''
   # check the radius
   if(ai_radius<=0):
-    print("ERR409: Error, the radius {:0.3f} is negative or null!".format(ai_radius))
+    six.print_(("ERR409: Error, the radius {:0.3f} is negative or null!".format(ai_radius)))
     sys.exit(2)
   # select backend
   if(ai_backend=='freecad'):
@@ -506,7 +507,7 @@ def outline_arc_line(ai_segments, ai_backend):
   if(isinstance(ai_segments[0], (tuple, list))): # general outline
     # checks on ai_segments for general outline
     if(len(ai_segments)<2):
-      print("ERR509: Error, the segment list must contain at least 2 elements. Currently, len(ai_segments) = {:d}".format(len(ai_segments)))
+      six.print_(("ERR509: Error, the segment list must contain at least 2 elements. Currently, len(ai_segments) = {:d}".format(len(ai_segments))))
       sys.exit(2)
     # convert any format into format-B
     if(len(ai_segments[0])==3): # format-A or format-C
@@ -515,11 +516,11 @@ def outline_arc_line(ai_segments, ai_backend):
     else:
       outline_B = ai_segments
     if(len(outline_B[0])!=2):
-      print("ERR403: Error, the first element of the segment list must have 2 elements. Currently, len(outline_B[0]) = {:d}".format(len(outline_B[0])))
+      six.print_(("ERR403: Error, the first element of the segment list must have 2 elements. Currently, len(outline_B[0]) = {:d}".format(len(outline_B[0]))))
       sys.exit(2)
     for i in range(len(outline_B)):
       if((len(outline_B[i])!=2)and(len(outline_B[i])!=4)):
-        print("ERR405: Error, the length of the segment {:d} must be 2 or 4. Currently len(outline_B[i]) = {:d}".format(i, len(outline_B[i])))
+        six.print_(("ERR405: Error, the length of the segment {:d} must be 2 or 4. Currently len(outline_B[i]) = {:d}".format(i, len(outline_B[i]))))
         sys.exit(2)
     # check if the outline is closed
     outline_closed = False
@@ -537,8 +538,8 @@ def outline_arc_line(ai_segments, ai_backend):
       r_outline = outline_arc_line_with_tkinter(outline_B, outline_closed)
   else: # circle outline
     if(len(ai_segments)!=3):
-      print("ERR658: Error, circle outline must be a list of 3 floats (or int)! Current len: {:d}".format(len(ai_segments)))
-      print("dbg368: ai_segments:", ai_segments)
+      six.print_(("ERR658: Error, circle outline must be a list of 3 floats (or int)! Current len: {:d}".format(len(ai_segments))))
+      six.print_(("dbg368: ai_segments:", ai_segments))
       sys.exit(2)
     r_outline = outline_circle((ai_segments[0], ai_segments[1]), ai_segments[2], ai_backend)
   return(r_outline)
@@ -559,7 +560,7 @@ def figure_simple_display(ai_figure, ai_overlay_figure=[], ai_parameter_info="")
   i = 0
   for i_outline in ai_figure:
     if(cnc_outline.check_outline_format(i_outline)==2):
-      print("WARN441: Warning, the outline {:d} must be converted in format-B with ideal_outline()!".format(i))
+      six.print_(("WARN441: Warning, the outline {:d} must be converted in format-B with ideal_outline()!".format(i)))
       graphic_figure.append(cnc_outline.ideal_outline(i_outline, "figure_simple_display"))
     else:
       graphic_figure.append(i_outline)
@@ -569,13 +570,13 @@ def figure_simple_display(ai_figure, ai_overlay_figure=[], ai_parameter_info="")
   i = 0
   for i_outline in ai_overlay_figure:
     if(cnc_outline.check_outline_format(i_outline)==2):
-      print("WARN442: Warning, the overlay outline {:d} must be converted in format-B with ideal_outline()!".format(i))
+      six.print_(("WARN442: Warning, the overlay outline {:d} must be converted in format-B with ideal_outline()!".format(i)))
       overlay_figure.append(cnc_outline.ideal_outline(i_outline, "figure_simple_display_overlay"))
     else:
       overlay_figure.append(i_outline)
     i += 1
   # start GUI
-  tk_root = Tkinter.Tk()
+  tk_root = tkinter.Tk()
   fsd_canvas = Two_Canvas(tk_root)
   # callback function for display_backend
   def sub_fsd_canvas_graphics(ai_rotation_direction, ai_angle_position):
@@ -601,7 +602,7 @@ def figure_simple_display(ai_figure, ai_overlay_figure=[], ai_parameter_info="")
 def write_figure_in_svg(ai_figure, ai_filename):
   """ Generate the SVG file ai_filename from the figure ai_figure (list of format B outline)
   """
-  print("Generate with mozman svgwrite the SVG file {:s}".format(ai_filename))
+  six.print_(("Generate with mozman svgwrite the SVG file {:s}".format(ai_filename)))
   object_svg = svgwrite.Drawing(filename = ai_filename)
   for i_ol in ai_figure:
     svg_outline = outline_arc_line(i_ol, 'svgwrite')
@@ -613,7 +614,7 @@ def write_figure_in_svg(ai_figure, ai_filename):
 def write_figure_in_dxf(ai_figure, ai_filename):
   """ Generate the DXF file ai_filename from the figure ai_figure (list of format B outline)
   """
-  print("Generate with mozman dxfwrite the DXF file {:s}".format(ai_filename))
+  six.print_(("Generate with mozman dxfwrite the DXF file {:s}".format(ai_filename)))
   object_dxf = DXFEngine.drawing(ai_filename)
   #object_dxf.add_layer("my_dxf_layer")
   for i_ol in ai_figure:
@@ -646,7 +647,7 @@ def figure_to_freecad_25d_part(ai_figure, ai_extrude_height):
       #print("dbg663: outline with {:d} segments".format(len(ol)-1))
       if((ol[0][0]!=ol[-1][-2])or(ol[0][1]!=ol[-1][-1])):
         face_nwire = False
-        print("WARN504: Warning, the outline {:d} is not closed! Only wire can be extruded.".format(oli+1))
+        six.print_(("WARN504: Warning, the outline {:d} is not closed! Only wire can be extruded.".format(oli+1)))
   # create the FreeCAD part
   if(face_nwire): # generate a real solid part
     outer_face = Part.Face(Part.Wire(outline_arc_line(ai_figure[0], 'freecad').Edges))
@@ -751,7 +752,7 @@ def outline_arc_line_test1():
   Part.show(r_test_solid)
   # create the output directory
   l_output_dir = "test_output"
-  print("Create the output directory: {:s}".format(l_output_dir))
+  six.print_(("Create the output directory: {:s}".format(l_output_dir)))
   design_help.mkdir_p(l_output_dir)
   # backend svgwrite
   print("dbg702: test1 backend svgwrite")
@@ -783,7 +784,7 @@ def outline_arc_line_test1():
   object_dxf.save()
   # backend tkinter
   print("dbg704: test1 backend tkinter")
-  tk_root = Tkinter.Tk()
+  tk_root = tkinter.Tk()
   #my_canvas = display_backend.Two_Canvas(tk_root)
   my_canvas = Two_Canvas(tk_root)
   # callback function for display_backend
@@ -829,16 +830,16 @@ def outline_arc_line_test1():
   wfl_part = figure_to_freecad_25d_part(wfl_figure, wfl_extrude_height)
   
   # output file with mozman
-  print("Generate {:s}/obt1_with_mozman.svg".format(l_output_dir))
+  six.print_(("Generate {:s}/obt1_with_mozman.svg".format(l_output_dir)))
   write_figure_in_svg(wfl_figure, "{:s}/obt1_with_mozman.svg".format(l_output_dir))
-  print("Generate {:s}/obt1_with_mozman.dxf".format(l_output_dir))
+  six.print_(("Generate {:s}/obt1_with_mozman.dxf".format(l_output_dir)))
   write_figure_in_dxf(wfl_figure, "{:s}/obt1_with_mozman.dxf".format(l_output_dir))
 
   # wfl_part in 3D BRep
-  print("Generate {:s}/obt1_part.brep".format(l_output_dir))
+  six.print_(("Generate {:s}/obt1_part.brep".format(l_output_dir)))
   wfl_part.exportBrep("{:s}/obt1_part.brep".format(l_output_dir))
   # wfl_part in 2D DXF
-  print("Generate {:s}/obt1_part.dxf".format(l_output_dir))
+  six.print_(("Generate {:s}/obt1_part.dxf".format(l_output_dir)))
   export_2d.export_to_dxf(wfl_part, Base.Vector(0,0,1), wfl_extrude_height/2, "{:s}/obt1_part.dxf".format(l_output_dir)) # slice wfl_part in the XY plan at a height of wfl_extrude_height/2
   #
   r_test = 1

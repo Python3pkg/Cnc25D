@@ -28,7 +28,7 @@ small_geometry.py provides sub functions for cnc_cut_outline.py related to the E
 # python behavior
 ################################################################
 
-from __future__ import division # to get float division
+ # to get float division
 
 
 ################################################################
@@ -39,6 +39,7 @@ from __future__ import division # to get float division
 #
 import math
 import sys, argparse
+import six
 
 ################################################################
 # functions to be used by cnc_cut_outline.py
@@ -72,7 +73,7 @@ def arc_center_radius(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_error_msg_id):
   BC = math.sqrt((CX-BX)**2+(CY-BY)**2)
   AC = math.sqrt((CX-AX)**2+(CY-AY)**2)
   if((AB<radian_epsilon)or(BC<radian_epsilon)or(AC<radian_epsilon)):
-    print("ERR682: Error in {:s}, the three arc points ABC are too closed: AB={:0.2f} BC={:0.2f} AC={:0.2f}".format(ai_error_msg_id, AB, BC, AC))
+    six.print_(("ERR682: Error in {:s}, the three arc points ABC are too closed: AB={:0.2f} BC={:0.2f} AC={:0.2f}".format(ai_error_msg_id, AB, BC, AC)))
     sys.exit(2)
   # calculation of M and N
   MX = (AX+BX)/2
@@ -96,7 +97,7 @@ def arc_center_radius(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_error_msg_id):
   ixk = sin_f*(cos_e*MX+sin_e*MY)-sin_e*(cos_f*NX+sin_f*NY)
   iyk = cos_f*(cos_e*MX+sin_e*MY)-cos_e*(cos_f*NX+sin_f*NY)
   if((abs(ixl)<radian_epsilon)or(abs(iyl)<radian_epsilon)):
-    print("ERR947: Error in {:s}, ixl (= {:0.2f}) or iyl (= {:0.2f}) are too closed to zero!".format(ai_error_msg_id, ixl, iyl))
+    six.print_(("ERR947: Error in {:s}, ixl (= {:0.2f}) or iyl (= {:0.2f}) are too closed to zero!".format(ai_error_msg_id, ixl, iyl)))
     sys.exit(2)
   IX=ixk/ixl
   IY=iyk/iyl
@@ -105,11 +106,11 @@ def arc_center_radius(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_error_msg_id):
   IB = math.sqrt((BX-IX)**2+(BY-IY)**2)
   IC = math.sqrt((CX-IX)**2+(CY-IY)**2)
   if((abs(IB-IA)>radian_epsilon)or(abs(IC-IA)>radian_epsilon)):
-    print("ERR748: Error in {:s}, the calculation of the center of the arc A,B,C is wrong! IA={:0.2f} IB={:0.2f} IC={:0.2f}".format(ai_error_msg_id, IA, IB, IC))
-    print("dbg253: A= {:0.2f} {:0.2f}  B= {:0.2f} {:0.2f}  C= {:0.2f} {:0.2f}  I= {:0.2f} {:0.2f}".format(AX,AY,BX,BY,CX,CY,IX,IY))
-    print("dbg764: cos_e={:0.2f}  sin_e={:0.2f}  cos_f={:0.2f}  sin_f={:0.2f}".format(cos_e, sin_e, cos_f, sin_f))
-    print("dbg765: ixl={:0.2f} ixk={:0.2f} iyl={:0.2f} iyk={:0.2f}".format(ixl, ixk, iyl, iyk))
-    print("dbg766: MX={:0.2f} MY={:0.2f} NX={:0.2f} NY={:0.2f}".format(MX,MY,NX,NY))
+    six.print_(("ERR748: Error in {:s}, the calculation of the center of the arc A,B,C is wrong! IA={:0.2f} IB={:0.2f} IC={:0.2f}".format(ai_error_msg_id, IA, IB, IC)))
+    six.print_(("dbg253: A= {:0.2f} {:0.2f}  B= {:0.2f} {:0.2f}  C= {:0.2f} {:0.2f}  I= {:0.2f} {:0.2f}".format(AX,AY,BX,BY,CX,CY,IX,IY)))
+    six.print_(("dbg764: cos_e={:0.2f}  sin_e={:0.2f}  cos_f={:0.2f}  sin_f={:0.2f}".format(cos_e, sin_e, cos_f, sin_f)))
+    six.print_(("dbg765: ixl={:0.2f} ixk={:0.2f} iyl={:0.2f} iyk={:0.2f}".format(ixl, ixk, iyl, iyk)))
+    six.print_(("dbg766: MX={:0.2f} MY={:0.2f} NX={:0.2f} NY={:0.2f}".format(MX,MY,NX,NY)))
     sys.exit(2)
   # return
   r_arc_center_radius=(IX, IY, IA)
@@ -134,7 +135,7 @@ def arc_center_radius_angles(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_error_msg_id
   IB = math.sqrt((BX-IX)**2+(BY-IY)**2)
   IC = math.sqrt((CX-IX)**2+(CY-IY)**2)
   if((abs(IA-arc_radius)>radian_epsilon)or(abs(IB-arc_radius)>radian_epsilon)or(abs(IC-arc_radius)>radian_epsilon)):
-    print("ERR841: Error, in {:s}, I is not equidistant from A,B,C. arc_radius={:0.2f} IA={:0.2f} IB={:0.2f} IC={:0.2f}".format(ai_error_msg_id, arc_radius, IA, IB, IC))
+    six.print_(("ERR841: Error, in {:s}, I is not equidistant from A,B,C. arc_radius={:0.2f} IA={:0.2f} IB={:0.2f} IC={:0.2f}".format(ai_error_msg_id, arc_radius, IA, IB, IC)))
     sys.exit(2)
   # calculation of the angle u=(Ix, IA) , v=(Ix, IB), w=(Ix, IC), d=(Ix, ID) and e=(Ix, IE)
   u = math.atan2(AY-IY, AX-IX)
@@ -169,7 +170,7 @@ def triangulation(ai_A, ai_AC, ai_B, ai_BC, ai_D, ai_D_direction, ai_error_msg_i
   r_status = 0
   # check the arguments
   if((ai_AC<radian_epsilon)or(ai_BC<radian_epsilon)):
-    print("ERR965: Error in {:s}, the length ai_AC (={:0.2f}) or ai_BC (={:0.2f})".format(ai_error_msg_id, ai_AC, ai_BC))
+    six.print_(("ERR965: Error in {:s}, the length ai_AC (={:0.2f}) or ai_BC (={:0.2f})".format(ai_error_msg_id, ai_AC, ai_BC)))
     sys.exir(2)
   # interprete the arguments
   AX = ai_A[0]
@@ -183,14 +184,14 @@ def triangulation(ai_A, ai_AC, ai_B, ai_BC, ai_D, ai_D_direction, ai_error_msg_i
   # calculation of the length c=AB
   c = math.sqrt((BX-AX)**2+(BY-AY)**2)
   if(c<radian_epsilon):
-    print("ERR662: Error in {:s}, the length c (=AB={:0.2f}) is too small!".format(ai_error_msg_id, c))
+    six.print_(("ERR662: Error in {:s}, the length c (=AB={:0.2f}) is too small!".format(ai_error_msg_id, c)))
     sys.exit(2)
   # calculation of the angle A with the law of cosines
   #BAC = math.acos((b**2+c**2-a**2)/(2*b*c))
   cos_BAC = (b**2+c**2-a**2)/(2*b*c)
   if(abs(cos_BAC)>1):
-    print("ERR542: Error in {:s}, cos_BAC is out of [-1,1]! a={:0.2f} b={:0.2f} c={:0.2f} cos_BAC={:0.2f}".format(ai_error_msg_id, a, b, c, cos_BAC))
-    print("dbg652: AX={:0.2f} AY={:0.2f} BX={:0.2f} BY={:0.2f}".format(AX,AY,BX,BY))
+    six.print_(("ERR542: Error in {:s}, cos_BAC is out of [-1,1]! a={:0.2f} b={:0.2f} c={:0.2f} cos_BAC={:0.2f}".format(ai_error_msg_id, a, b, c, cos_BAC)))
+    six.print_(("dbg652: AX={:0.2f} AY={:0.2f} BX={:0.2f} BY={:0.2f}".format(AX,AY,BX,BY)))
     #sys.exit(2)
     r_status=2
     return((0,0,r_status))
@@ -201,7 +202,7 @@ def triangulation(ai_A, ai_AC, ai_B, ai_BC, ai_D, ai_D_direction, ai_error_msg_i
   xAD =  math.atan2(DY-AY, DX-AX) # atan2 avoid the problem of divided by zero
   BAD = math.fmod(xAD - xAB + 5*math.pi, 2*math.pi) - math.pi
   if(abs(BAD)<radian_epsilon):
-    print("WARN546: Warning in {:s}, the side of the triangulation is not clear! Use the ai_D_direction".format(ai_error_msg_id))
+    six.print_(("WARN546: Warning in {:s}, the side of the triangulation is not clear! Use the ai_D_direction".format(ai_error_msg_id)))
     DX1 = DX+5*radian_epsilon*math.cos(ai_D_direction)
     DY1 = DY+5*radian_epsilon*math.sin(ai_D_direction)
     xAD =  math.atan2(DY1-AY, DX1-AX) # atan2 avoid the problem of divided by zero
@@ -218,7 +219,7 @@ def triangulation(ai_A, ai_AC, ai_B, ai_BC, ai_D, ai_D_direction, ai_error_msg_i
   xBD = math.atan2(DY-BY, DX-BX)
   ABD = math.fmod(xBD - xBA + 5*math.pi, 2*math.pi) - math.pi
   if(abs(ABD)<radian_epsilon):
-    print("WARN547: Warning in {:s}, the side of the triangulation is not clear! Use the ai_D_direction".format(ai_error_msg_id))
+    six.print_(("WARN547: Warning in {:s}, the side of the triangulation is not clear! Use the ai_D_direction".format(ai_error_msg_id)))
     DX1 = DX+5*radian_epsilon*math.cos(ai_D_direction)
     DY1 = DY+5*radian_epsilon*math.sin(ai_D_direction)
     xBD = math.atan2(DY1-BY, DX1-BX)
@@ -227,20 +228,20 @@ def triangulation(ai_A, ai_AC, ai_B, ai_BC, ai_D, ai_D_direction, ai_error_msg_i
   CX2 = BX+a*math.cos(xBC)
   CY2 = BY+a*math.sin(xBC)
   if((abs(CX2-CX)>radian_epsilon)or(abs(CY2-CY)>radian_epsilon)):
-    print("ERR686: Error in {:s}, the coordinate of C seems wrong! CX={:0.2f} CX2={:0.2f} CY={:0.2f} CY2={:0.2f}".format(ai_error_msg_id, CX, CX2, CY, CY2))
-    print("dbg545: D {:0.2f} {:0.2f}  ai_D_direction {:0.2f}".format(DX,DY, ai_D_direction))
-    print("dbg512: BAC", BAC)
-    print("dbg513: xAB", xAB)
+    six.print_(("ERR686: Error in {:s}, the coordinate of C seems wrong! CX={:0.2f} CX2={:0.2f} CY={:0.2f} CY2={:0.2f}".format(ai_error_msg_id, CX, CX2, CY, CY2)))
+    six.print_(("dbg545: D {:0.2f} {:0.2f}  ai_D_direction {:0.2f}".format(DX,DY, ai_D_direction)))
+    six.print_(("dbg512: BAC", BAC))
+    six.print_(("dbg513: xAB", xAB))
     #print("dbg514: AD", AD)
-    print("dbg515: BAD", BAD)
-    print("dbg516: xAC", xAC)
-    print("dbg517: AX {:0.2f}  AY {:0.2f}  b {:0.2f}".format(AX,AY, b))
-    print("dbg522: ABC", ABC)
-    print("dbg523: xBA", xBA)
+    six.print_(("dbg515: BAD", BAD))
+    six.print_(("dbg516: xAC", xAC))
+    six.print_(("dbg517: AX {:0.2f}  AY {:0.2f}  b {:0.2f}".format(AX,AY, b)))
+    six.print_(("dbg522: ABC", ABC))
+    six.print_(("dbg523: xBA", xBA))
     #print("dbg524: BD", BD)
-    print("dbg525: ABD", ABD)
-    print("dbg526: xBC", xBC)
-    print("dbg527: BX {:0.2f}  BY {:0.2f}  a {:0.2f}".format(BX,BY, a))
+    six.print_(("dbg525: ABD", ABD))
+    six.print_(("dbg526: xBC", xBC))
+    six.print_(("dbg527: BX {:0.2f}  BY {:0.2f}  a {:0.2f}".format(BX,BY, a)))
     sys.exit(2)
   r_C = (CX,CY,r_status)
   return(r_C)
@@ -258,7 +259,7 @@ def line_equation(ai_A, ai_B, ai_error_msg_id):
   # calculation of the length AB
   lAB = math.sqrt((BX-AX)**2+(BY-AY)**2)
   if(lAB<radian_epsilon):
-    print("ERR261: Error, lAB {:0.3f} is too small".format(lAB))
+    six.print_(("ERR261: Error, lAB {:0.3f} is too small".format(lAB)))
     sys.exit(2)
   # calculation of the inclination of AB
   xAB = math.atan2(BY-AY, BX-AX)
@@ -351,11 +352,11 @@ def line_circle_intersection(ai_AB, ai_I, ai_R, ai_C, ai_D_direction, ai_error_m
   if(IP>ai_R):
     # This error might occur when the sign of the tangent is wrong because of calculation impression.
     # That's why, we need to report the error instead of stopping on this error
-    print("ERR672: Error in {:s}, the line and the circle have no intersection! IP={:0.2f}  ai_R={:0.2f}".format(ai_error_msg_id, IP, ai_R))
-    print("dbg611: ai_AB:", ai_AB)
-    print("dbg612: ai_I:", ai_I)
-    print("dbg613: ai_R:", ai_R)
-    print("dbg614: ai_C:", ai_C)
+    six.print_(("ERR672: Error in {:s}, the line and the circle have no intersection! IP={:0.2f}  ai_R={:0.2f}".format(ai_error_msg_id, IP, ai_R)))
+    six.print_(("dbg611: ai_AB:", ai_AB))
+    six.print_(("dbg612: ai_I:", ai_I))
+    six.print_(("dbg613: ai_R:", ai_R))
+    six.print_(("dbg614: ai_C:", ai_C))
     #sys.exit(2)
     line_circle_intersection_status=2
     r_line_circle_intersection = (0, 0, line_circle_intersection_status)
@@ -367,7 +368,7 @@ def line_circle_intersection(ai_AB, ai_I, ai_R, ai_C, ai_D_direction, ai_error_m
     cos_i = (C2X-PX)/C2P
     sin_i = (C2Y-PY)/C2P
     if(C2P<radian_epsilon):
-      print("WARN348: Warning in {:s}, C is too closed from the board to find the line_circle_intersection!".format(ai_error_msg_id))
+      six.print_(("WARN348: Warning in {:s}, C is too closed from the board to find the line_circle_intersection!".format(ai_error_msg_id)))
       xAB = math.atan2(a, -b)
       direction_correlation = math.fmod(ai_D_direction-xAB+5*math.pi, 2*math.pi)-math.pi
       direction_AB = math.copysign(1, direction_correlation)
@@ -402,7 +403,7 @@ def line_line_intersection(ai_AB, ai_CD, ai_error_msg_id):
   MY = 0
   determinant = a1*b2-a2*b1
   if(abs(determinant)<radian_epsilon):
-    print("WARN656: Warning in {:s}, the two lines are parallel!".format(ai_error_msg_id))
+    six.print_(("WARN656: Warning in {:s}, the two lines are parallel!".format(ai_error_msg_id)))
     line_line_intersection_status=2
   else:
     MX = (c2*b1-c1*b2)/determinant
@@ -437,7 +438,7 @@ def sub_smooth_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, a
   #r_outline = []
   smooth_status = 0
   if(abs(tangent_angle)<radian_epsilon):
-    print("WARN942: Warning in {:s}, the tangent_angle is too flat! the corner doesn't need to be smoothed.".format(ai_error_msg_id))
+    six.print_(("WARN942: Warning in {:s}, the tangent_angle is too flat! the corner doesn't need to be smoothed.".format(ai_error_msg_id)))
     #print("dbg441: ai_pre_point:", ai_pre_point)
     #print("dbg442: ai_current_point:", ai_current_point)
     #print("dbg443: ai_post_middle:", ai_post_middle)
@@ -482,26 +483,26 @@ def sub_smooth_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, a
     # when the angle is too sharp, the sign of the tangeant angle might be wrong because of calculation imprecition.
     # in this case, we use the method of try and retry
     if((line_circle_intersection_status==2)and(abs(tangent_angle)>math.pi-10*radian_epsilon)): # error then retry with -Q1_plus instead of Q1_plus
-      print("WARN682: Warning in {:s}, line_arc corner is smoothed with the other side because of a line_circle_intersection error!".format(ai_error_msg_id))
+      six.print_(("WARN682: Warning in {:s}, line_arc corner is smoothed with the other side because of a line_circle_intersection error!".format(ai_error_msg_id)))
       (QX,QY, ACkQ) = line_distance_point(ai_pre_point, ai_current_point, -Q1_plus*ai_router_bit_request, ai_error_msg_id)
       tmpCX = CX + JS*math.cos(xAC+math.pi)
       tmpCY = CY + JS*math.sin(xAC+math.pi)
       (SX,SY, line_circle_intersection_status) = line_circle_intersection((AClx, ACly, ACkQ), (JX,JY),JS, (tmpCX,tmpCY), D_direction, ai_error_msg_id)
     # end of the retry. Continue the normal calculation recipe
     if(line_circle_intersection_status==2):
-      print("WARN684: Warning in {:s}, corner is not smoothed because of a line_circle_intersection error!".format(ai_error_msg_id))
-      print("dbg681: ai_pre_point", ai_pre_point)
-      print("dbg683: ai_current_point", ai_current_point)
-      print("dbg684: ai_post_middle", ai_post_middle)
-      print("dbg685: ai_post_point", ai_post_point)
-      print("dbg686: ai_router_bit_request", ai_router_bit_request)
-      print("dbg623: AClx={:0.2f} ACly={:0.2f} ACkA={:0.2f} lAC={:0.2f} xAC={:0.2f}".format(AClx, ACly, ACkA, lAC, xAC))
-      print("dbg688: JX={:0.2f} JY={:0.2f} R2={:0.2f} uw2={:0.2f} u2={:0.2f}  w2={:0.2f}".format(JX, JY, R2, uw2, u2, w2))
-      print("dbg689: o2={:0.2f} o3={:0.2f}".format(o2,o3))
-      print("dbg691: tangent_angle", tangent_angle)
-      print("dbg692: JS={:0.2f}".format(JS))
-      print("dbg711: QX={:0.2f} QY={:0.2f} ACkQ={:0.2f}".format(QX,QY,ACkQ))
-      print("dbg693: in {:s}, xAC={:0.2f} R2={:0.2f} ai_router_bit_request={:0.2f}".format(ai_error_msg_id, xAC, R2, ai_router_bit_request))
+      six.print_(("WARN684: Warning in {:s}, corner is not smoothed because of a line_circle_intersection error!".format(ai_error_msg_id)))
+      six.print_(("dbg681: ai_pre_point", ai_pre_point))
+      six.print_(("dbg683: ai_current_point", ai_current_point))
+      six.print_(("dbg684: ai_post_middle", ai_post_middle))
+      six.print_(("dbg685: ai_post_point", ai_post_point))
+      six.print_(("dbg686: ai_router_bit_request", ai_router_bit_request))
+      six.print_(("dbg623: AClx={:0.2f} ACly={:0.2f} ACkA={:0.2f} lAC={:0.2f} xAC={:0.2f}".format(AClx, ACly, ACkA, lAC, xAC)))
+      six.print_(("dbg688: JX={:0.2f} JY={:0.2f} R2={:0.2f} uw2={:0.2f} u2={:0.2f}  w2={:0.2f}".format(JX, JY, R2, uw2, u2, w2)))
+      six.print_(("dbg689: o2={:0.2f} o3={:0.2f}".format(o2,o3)))
+      six.print_(("dbg691: tangent_angle", tangent_angle))
+      six.print_(("dbg692: JS={:0.2f}".format(JS)))
+      six.print_(("dbg711: QX={:0.2f} QY={:0.2f} ACkQ={:0.2f}".format(QX,QY,ACkQ)))
+      six.print_(("dbg693: in {:s}, xAC={:0.2f} R2={:0.2f} ai_router_bit_request={:0.2f}".format(ai_error_msg_id, xAC, R2, ai_router_bit_request)))
       #r_outline = [(ai_current_point[0], ai_current_point[1])]
       smooth_status = 2
       sys.exit(2)
@@ -551,11 +552,11 @@ def sub_smooth_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai_
   #r_outline = []
   smooth_status = 0
   if(abs(tangent_angle)<radian_epsilon):
-    print("WARN932: Warning in {:s}, the tangent_angle is too flat! the corner doesn't need to be smoothed.".format(ai_error_msg_id))
+    six.print_(("WARN932: Warning in {:s}, the tangent_angle is too flat! the corner doesn't need to be smoothed.".format(ai_error_msg_id)))
     #r_outline = [(ai_current_point[0], ai_current_point[1])]
     smooth_status = 2
   elif(abs(tangent_angle)>math.pi-radian_epsilon):
-    print("WARN933: Warning in {:s}, the tangent_angle is too sharp! the corner cannot be smoothed.".format(ai_error_msg_id))
+    six.print_(("WARN933: Warning in {:s}, the tangent_angle is too sharp! the corner cannot be smoothed.".format(ai_error_msg_id)))
     #r_outline = [(ai_current_point[0], ai_current_point[1])]
     smooth_status = 2
   else:
@@ -583,7 +584,7 @@ def sub_smooth_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai_
     #print("dbg693: bisector_angle {:0.2f}  D_direction {:0.2f}".format(bisector_angle, D_direction))
     (SX,SY, triangulation_status) = triangulation((IX,IY),IS,(JX,JY),JS,(CX,CY), D_direction, ai_error_msg_id)
     if(triangulation_status==2):
-      print("WARN693: Warning in {:s}, corner is not smoothed because of a triangulation error!".format(ai_error_msg_id))
+      six.print_(("WARN693: Warning in {:s}, corner is not smoothed because of a triangulation error!".format(ai_error_msg_id)))
       #print("dbg681: ai_pre_point", ai_pre_point)
       #print("dbg682: ai_pre_middle", ai_pre_middle)
       #print("dbg683: ai_current_point", ai_current_point)
@@ -632,13 +633,13 @@ def sub_enlarge_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, 
   MKX=0; MKY=0; GX=0; GY=0; HX=0; HY=0; NLX=0; NLY=0; enlarge_type_request_1=0; enlarge_type_request_2=0
   (SX, SY, UX, UY, xSU, xSJ, router_bit_arc_uw, smooth_status) = sub_smooth_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id)
   if(smooth_status!=1):
-    print("ERR977: Error in {:s}, the sub smooth corner get an error!".format(ai_error_msg_id))
+    six.print_(("ERR977: Error in {:s}, the sub smooth corner get an error!".format(ai_error_msg_id)))
     sys.exit(2)
     enlarge_status = 2
   else:
     #print("dbg553: router_bit_arc_uw:", router_bit_arc_uw)
     if(abs(router_bit_arc_uw)>math.pi):
-      print("ERR877: Error in {:s}, the sub smooth corner is englobed!".format(ai_error_msg_id))
+      six.print_(("ERR877: Error in {:s}, the sub smooth corner is englobed!".format(ai_error_msg_id)))
       sys.exit(2)
       enlarge_status = 2
     elif(abs(router_bit_arc_uw)<radian_epsilon):
@@ -652,7 +653,7 @@ def sub_enlarge_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, 
       (SClx, SCly, SCkS, lSC, xSC) = line_equation((SX,SY), (CX,CY), ai_error_msg_id)
       (FX,FY, line_circle_intersection_status) = line_circle_intersection((SClx, SCly, SCkS), (CX,CY),ai_router_bit_request, (SX,SY), xSC+math.pi, ai_error_msg_id)
       if(line_circle_intersection_status==2):
-        print("ERR739: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id))
+        six.print_(("ERR739: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id)))
         sys.exit(2)
       (GX,GY, SCkG) = line_distance_point((FX,FY), (CX,CY), -1*corner_orientation*ai_router_bit_request, ai_error_msg_id)
       (HX,HY, SCkH) = line_distance_point((FX,FY), (CX,CY),  1*corner_orientation*ai_router_bit_request, ai_error_msg_id)
@@ -665,13 +666,13 @@ def sub_enlarge_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, 
 
       #print("dbg321: MX={:0.2f}  MY={:0.2f}  line_circle_intersection={:0.2f}".format(MX, MY, line_circle_intersection_status))
       if(line_line_intersection_status==2):
-        print("ERR736: Error in {:s} with the line_line_intersection_status!".format(ai_error_msg_id))
+        six.print_(("ERR736: Error in {:s} with the line_line_intersection_status!".format(ai_error_msg_id)))
         sys.exit(2)
         enlarge_status = 2
       (NX,NY, line_circle_intersection_status) = line_circle_intersection((SClx, SCly, SCkH), (JX,JY),R2, ((HX+SX)/2,(HY+SY)/2), xSC+math.pi, ai_error_msg_id)
       #print("dbg322: NX={:0.2f}  NY={:0.2f}  line_circle_intersection={:0.2f}".format(NX, NY, line_circle_intersection_status))
       if(line_circle_intersection_status==2):
-        print("ERR733: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id))
+        six.print_(("ERR733: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id)))
         #print("dbg513: G={:0.2f} {:0.2f}  H={:0.2f} {:0.2f}".format(GX, GY, HX, HY))
         sys.exit(2)
         enlarge_status = 2
@@ -704,7 +705,7 @@ def sub_enlarge_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, 
         (KX,KY, line_circle_intersection_status) = line_circle_intersection((AClx, ACly, ACkC), (FX,FY),ai_router_bit_request, (GX, GY), xSC+math.pi, ai_error_msg_id)
 
         if(line_circle_intersection==2):
-          print("ERR536: Error in {:s} with the triangulation_status!".format(ai_error_msg_id))
+          six.print_(("ERR536: Error in {:s} with the triangulation_status!".format(ai_error_msg_id)))
           sys.exit(2)
         MKX = KX
         MKY = KY
@@ -712,14 +713,14 @@ def sub_enlarge_corner_line_arc(ai_pre_point, ai_current_point, ai_post_middle, 
       if(NH_deep>0):
         (LX,LY, triangulation_status) = triangulation((JX,JY),R2, (FX,FY),ai_router_bit_request, (HX,HY), xSC+math.pi, ai_error_msg_id)
         if(triangulation_status==2):
-          print("ERR533: Error in {:s} with the triangulation_status!".format(ai_error_msg_id))
+          six.print_(("ERR533: Error in {:s} with the triangulation_status!".format(ai_error_msg_id)))
           sys.exit(2)
         NLX = LX
         NLY = LY
         enlarge_type_request_2 = 2
       lMN=math.sqrt((NLX-MKX)**2+(NLY-MKY)**2)
       if(lMN<radian_epsilon):
-        print("WARN667: Warning in {:s}, the angle is too flat to be enlarged!".format(ai_error_msg_id))
+        six.print_(("WARN667: Warning in {:s}, the angle is too flat to be enlarged!".format(ai_error_msg_id)))
         enlarge_type_request_1 = 1
         enlarge_type_request_2 = 1
   # return
@@ -748,16 +749,16 @@ def sub_enlarge_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai
   (SX, SY, xSI, xSJ, router_bit_arc_uw, smooth_status) = sub_smooth_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai_post_middle, ai_post_point, ai_router_bit_request, ai_error_msg_id)
   enlarge_status = 0
   if(smooth_status==2):
-    print("ERR927: Error in {:s}, the sub smooth corner gets an error!".format(ai_error_msg_id))
+    six.print_(("ERR927: Error in {:s}, the sub smooth corner gets an error!".format(ai_error_msg_id)))
     sys.exit(2)
   else:
     #print("dbg553: router_bit_arc_uw:", router_bit_arc_uw)
     if(abs(router_bit_arc_uw)>math.pi):
-      print("ERR887: Error in {:s}, the sub smooth corner is englobed!".format(ai_error_msg_id))
+      six.print_(("ERR887: Error in {:s}, the sub smooth corner is englobed!".format(ai_error_msg_id)))
       sys.exit(2)
       enlarge_status = 2
     elif(abs(router_bit_arc_uw)<radian_epsilon):
-      print("WARN877: Error in {:s}, the corner is too flat to be enlarged with this router_bit radius!".format(ai_error_msg_id))
+      six.print_(("WARN877: Error in {:s}, the corner is too flat to be enlarged with this router_bit radius!".format(ai_error_msg_id)))
       enlarge_status = 2
       enlarge_type_request_1 = 1
       enlarge_type_request_2 = 1
@@ -767,7 +768,7 @@ def sub_enlarge_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai
       (SClx, SCly, SCkS, lSC, xSC) = line_equation((SX,SY), (CX,CY), ai_error_msg_id)
       (FX,FY, line_circle_intersection_status) = line_circle_intersection((SClx, SCly, SCkS), (CX,CY),ai_router_bit_request, (SX,SY), xSC+math.pi, ai_error_msg_id)
       if(line_circle_intersection_status==2):
-        print("ERR639: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id))
+        six.print_(("ERR639: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id)))
         sys.exit(2)
       (GX,GY, SCkG) = line_distance_point((FX,FY), (CX,CY), -1*corner_orientation*ai_router_bit_request, ai_error_msg_id)
       (HX,HY, SCkH) = line_distance_point((FX,FY), (CX,CY),  1*corner_orientation*ai_router_bit_request, ai_error_msg_id)
@@ -776,12 +777,12 @@ def sub_enlarge_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai
       (MX,MY, line_circle_intersection_status) = line_circle_intersection((SClx, SCly, SCkG), (IX,IY),R1, ((GX+SX)/2,(GY+SY)/2), xSC+math.pi, ai_error_msg_id)
       #print("dbg321: MX={:0.2f}  MY={:0.2f}  line_circle_intersection={:0.2f}".format(MX, MY, line_circle_intersection_status))
       if(line_circle_intersection_status==2):
-        print("ERR636: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id))
+        six.print_(("ERR636: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id)))
         sys.exit(2)
       (NX,NY, line_circle_intersection_status) = line_circle_intersection((SClx, SCly, SCkH), (JX,JY),R2, ((HX+SX)/2,(HY+SY)/2), xSC+math.pi, ai_error_msg_id)
       #print("dbg322: NX={:0.2f}  NY={:0.2f}  line_circle_intersection={:0.2f}".format(NX, NY, line_circle_intersection_status))
       if(line_circle_intersection_status==2):
-        print("ERR633: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id))
+        six.print_(("ERR633: Error in {:s} with the line_circle_intersection_status!".format(ai_error_msg_id)))
         #print("dbg513: G={:0.2f} {:0.2f}  H={:0.2f} {:0.2f}".format(GX, GY, HX, HY))
         #sys.exit(2)
         enlarge_status = 2
@@ -812,7 +813,7 @@ def sub_enlarge_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai
       if(MG_deep>0):
         (KX,KY, triangulation_status) = triangulation((IX,IY),R1,(FX,FY),ai_router_bit_request,(GX,GY), xSC+math.pi, ai_error_msg_id)
         if(triangulation_status==2):
-          print("ERR536: Error in {:s} with the triangulation_status!".format(ai_error_msg_id))
+          six.print_(("ERR536: Error in {:s} with the triangulation_status!".format(ai_error_msg_id)))
           sys.exit(2)
         MKX = KX
         MKY = KY
@@ -820,14 +821,14 @@ def sub_enlarge_corner_arc_arc(ai_pre_point, ai_pre_middle, ai_current_point, ai
       if(NH_deep>0):
         (LX,LY, triangulation_status) = triangulation((JX,JY),R2,(FX,FY),ai_router_bit_request,(HX,HY), xSC+math.pi, ai_error_msg_id)
         if(triangulation_status==2):
-          print("ERR533: Error in {:s} with the triangulation_status!".format(ai_error_msg_id))
+          six.print_(("ERR533: Error in {:s} with the triangulation_status!".format(ai_error_msg_id)))
           sys.exit(2)
         NLX = LX
         NLY = LY
         enlarge_type_request_2 = 2
       lMN=math.sqrt((NLX-MKX)**2+(NLY-MKY)**2)
       if(lMN<radian_epsilon):
-        print("WARN667: Warning in {:s}, the angle is too flat to be enlarged!".format(ai_error_msg_id))
+        six.print_(("WARN667: Warning in {:s}, the angle is too flat to be enlarged!".format(ai_error_msg_id)))
         enlarge_type_request_1 = 1
         enlarge_type_request_2 = 1
   # return
@@ -858,7 +859,7 @@ def curve_arc(ai_AX, ai_AY, ai_CX, ai_CY, ai_At, ai_router_bit_request, ai_error
   # O intersection of (OI) and (OA). It's the center of the arc
   (OX, OY, line_line_intersection_status) = line_line_intersection((OIlx, OIly, OIk),(OAlx, OAly, OAk), ai_error_msg_id)
   if(line_line_intersection_status==2):
-    print("ERR374: Error in {:s}, the tangent and AC are collinear!".format(ai_error_msg_id))
+    six.print_(("ERR374: Error in {:s}, the tangent and AC are collinear!".format(ai_error_msg_id)))
     sys.exit(2)
   # verification of the distance OA and OC
   lOA = math.sqrt((ai_AX-OX)**2+(ai_AY-OY)**2)
@@ -868,10 +869,10 @@ def curve_arc(ai_AX, ai_AY, ai_CX, ai_CY, ai_At, ai_router_bit_request, ai_error
   #print("dbg356: IX={:0.2f}  IY={:0.2f}".format(IX, IY))
   #print("dbg357: OX={:0.2f}  OY={:0.2f}".format(OX, OY))
   if(abs(lOC-lOA)>radian_epsilon):
-    print("ERR375: Error in {:s}, O is not equidistant from A and C! lOA={:0.2f} l_OC={:0.2f}".format(ai_error_msg_id, lOA, lOC))
+    six.print_(("ERR375: Error in {:s}, O is not equidistant from A and C! lOA={:0.2f} l_OC={:0.2f}".format(ai_error_msg_id, lOA, lOC)))
     sys.exit(2)
   if(lOA<ai_router_bit_request):
-    print("WARN446: Warning in {:s}, the radius_of_curvature is smaller than the router_bit_request! lOA={:0.2f} rbr={:0.2f}".format(ai_error_msg_id, lOA, ai_router_bit_request))
+    six.print_(("WARN446: Warning in {:s}, the radius_of_curvature is smaller than the router_bit_request! lOA={:0.2f} rbr={:0.2f}".format(ai_error_msg_id, lOA, ai_router_bit_request)))
   # calculation of the angle (Ox, OA)
   xOA = math.atan2((ai_AY-OY)/lOA, (ai_AX-OX)/lOA)
   # calculation of the angle (Ox, OC)
@@ -885,7 +886,7 @@ def curve_arc(ai_AX, ai_AY, ai_CX, ai_CY, ai_At, ai_router_bit_request, ai_error
   else:
     AOC = -1*math.fmod(xOA-xOC+4*math.pi, 2*math.pi)
   if(abs(AOC)<radian_epsilon):
-    print("WARN776: Warning in {:s}, the angle AOC is really small!".format(ai_error_msg_id))
+    six.print_(("WARN776: Warning in {:s}, the angle AOC is really small!".format(ai_error_msg_id)))
   # calculation of B
   xOB = xOA + AOC/2
   BX = OX+lOA*math.cos(xOB)
@@ -914,17 +915,17 @@ def unstable_smooth_outline_b_curve(ai_polyline, ai_initial_tangent, ai_precisio
   if((ai_polyline[0][0]==ai_polyline[-1][-2])and(ai_polyline[0][1]==ai_polyline[-1][-1])):
   #if((abs(ai_polyline[0][0]-ai_polyline[-1][-2])<radian_epsilon)and(abs(ai_polyline[0][1]==ai_polyline[-1][-1])<radian_epsilon)):
     outline_closed = True
-    print("WARN994: Warning in {:s}, the curve to smooth is closed and this will be ignored by the unstable_smooth_curve() function".format(ai_error_msg_id))
+    six.print_(("WARN994: Warning in {:s}, the curve to smooth is closed and this will be ignored by the unstable_smooth_curve() function".format(ai_error_msg_id)))
   # number of corners and segments
   point_nb = len(ai_polyline)
   # check the outline point number
   if(point_nb<2):
-    print("ERR209: Error in {:s}, the number of points must be bigger than 2. Currently: {:d}".format(ai_error_msg_id, point_nb))
+    six.print_(("ERR209: Error in {:s}, the number of points must be bigger than 2. Currently: {:d}".format(ai_error_msg_id, point_nb)))
     sys.exit(2)
   # check if the first point is valid
   first_point_len = len(ai_polyline[0])
   if(first_point_len!=2):
-    print("ERR219: Error in {:s}, the first-point of ai_polyline must have exactly 2 elements. Currently: {:d}".format(ai_error_msg_id, first_point_len))
+    six.print_(("ERR219: Error in {:s}, the first-point of ai_polyline must have exactly 2 elements. Currently: {:d}".format(ai_error_msg_id, first_point_len)))
     sys.exit(2)
   # processing initialization
   ti = ai_initial_tangent
@@ -937,7 +938,7 @@ def unstable_smooth_outline_b_curve(ai_polyline, ai_initial_tangent, ai_precisio
     # check the validity of the new segment
     segment_len = len(ai_polyline[i+1])
     if(segment_len!=2):
-      print("ERR229: Error in {:s}, the ai_polyline segment length must be exactly 2. Currently: {:d}".format(i_error_msg_id, segment_len))
+      six.print_(("ERR229: Error in {:s}, the ai_polyline segment length must be exactly 2. Currently: {:d}".format(i_error_msg_id, segment_len)))
       sys.exit(2)
     # geometrical data
     AX = ai_polyline[i][0]
@@ -949,19 +950,19 @@ def unstable_smooth_outline_b_curve(ai_polyline, ai_initial_tangent, ai_precisio
     iAC = math.atan2((CY-AY)/lAC, (CX-AX)/lAC)
     rti = math.fmod(ti-iAC+5*math.pi, 2*math.pi)-math.pi # angle (AC, tangent) between [-pi,pi]
     if(abs(rti)>math.pi-radian_epsilon):
-      print("ERR239: Error in {:s}, AC and the tangent Ti are collinear and in opposite direction. iAC={:0.2f}  ti={:0.2f}".format(i_error_msg_id, iAC, ti))
+      six.print_(("ERR239: Error in {:s}, AC and the tangent Ti are collinear and in opposite direction. iAC={:0.2f}  ti={:0.2f}".format(i_error_msg_id, iAC, ti)))
       sys.exit(2)
     if(abs(rti)>math.pi/3):
-      print("WARN249: Warning in {:s}, AC and the tangent Ti are doing a large angle. Add itermediate points to remove this warning. iAC={:0.2f}  ti={:0.2f}".format(i_error_msg_id, iAC, ti))
+      six.print_(("WARN249: Warning in {:s}, AC and the tangent Ti are doing a large angle. Add itermediate points to remove this warning. iAC={:0.2f}  ti={:0.2f}".format(i_error_msg_id, iAC, ti)))
     if(abs(rti)<radian_epsilon):
-      print("WARN259: Warning in {:s}, AC and the tangent Ti are almost identical. A line is generated for this segment. iAC={:0.2f}  ti={:0.2f}".format(i_error_msg_id, iAC, ti))
+      six.print_(("WARN259: Warning in {:s}, AC and the tangent Ti are almost identical. A line is generated for this segment. iAC={:0.2f}  ti={:0.2f}".format(i_error_msg_id, iAC, ti)))
       r_outline.append([CX, CY]) # create a line-segment
       ti = iAC
     else:
       (BX, BY, nti) = curve_arc(AX, AY, CX, CY, ti, ai_router_bit_request, i_error_msg_id)
       r_outline.append([BX, BY, CX, CY]) # create an arc-segment
       ti = nti
-  print("dbg536: the last tangent inclination ti: {:0.2f}".format(ti))
+  six.print_(("dbg536: the last tangent inclination ti: {:0.2f}".format(ti)))
   # return
   return(r_outline)
 
@@ -987,12 +988,12 @@ def sub_smooth_outline_c_curve(ai_polyline, ai_precision, ai_router_bit_request,
   point_nb = len(ai_polyline)
   # check the outline point number
   if(point_nb<2):
-    print("ERR609: Error in {:s}, the number of points must be bigger than 2. Currently: {:d}".format(ai_error_msg_id, point_nb))
+    six.print_(("ERR609: Error in {:s}, the number of points must be bigger than 2. Currently: {:d}".format(ai_error_msg_id, point_nb)))
     sys.exit(2)
   # check if the first point is valid
   first_point_len = len(ai_polyline[0])
   if(first_point_len!=3):
-    print("ERR619: Error in {:s}, the first-point of ai_polyline must have exactly 3 elements. Currently: {:d}".format(ai_error_msg_id, first_point_len))
+    six.print_(("ERR619: Error in {:s}, the first-point of ai_polyline must have exactly 3 elements. Currently: {:d}".format(ai_error_msg_id, first_point_len)))
     sys.exit(2)
   # processing initialization
   r_outline = []
@@ -1004,7 +1005,7 @@ def sub_smooth_outline_c_curve(ai_polyline, ai_precision, ai_router_bit_request,
     # check the validity of the new segment
     segment_len = len(ai_polyline[i+1])
     if(segment_len!=3):
-      print("ERR629: Error in {:s}, the ai_polyline segment length must be exactly 3. Currently: {:d}".format(i_error_msg_id, segment_len))
+      six.print_(("ERR629: Error in {:s}, the ai_polyline segment length must be exactly 3. Currently: {:d}".format(i_error_msg_id, segment_len)))
       sys.exit(2)
     # geometrical data
     AX = ai_polyline[i][0]
@@ -1030,34 +1031,34 @@ def sub_smooth_outline_c_curve(ai_polyline, ai_precision, ai_router_bit_request,
     ECk = -1*(EClx*EX+ECly*EY)
     # check if the segment must be an arc or a line
     if(abs(AtAE)>math.pi/2):
-      print("ERR639: Error in {:s}, the angle between AC and the tangent xAt is larger than pi/2. It doesn't look like a feasible curbe. xAC={:0.2f}  xAt={:0.2f}".format(i_error_msg_id, xAC, xAt))
+      six.print_(("ERR639: Error in {:s}, the angle between AC and the tangent xAt is larger than pi/2. It doesn't look like a feasible curbe. xAC={:0.2f}  xAt={:0.2f}".format(i_error_msg_id, xAC, xAt)))
       sys.exit(2)
     if(abs(EtEA)>math.pi/2):
-      print("ERR638: Error in {:s}, the angle between EC and the tangent et is larger than pi/2. It doesn't look like a feasible curbe. xEC={:0.2f}  xEt={:0.2f}".format(i_error_msg_id, xEC, xEt))
+      six.print_(("ERR638: Error in {:s}, the angle between EC and the tangent et is larger than pi/2. It doesn't look like a feasible curbe. xEC={:0.2f}  xEt={:0.2f}".format(i_error_msg_id, xEC, xEt)))
       sys.exit(2)
     if(abs(AtAE)>math.pi/3):
-      print("WARN649: Warning in {:s}, AC and the tangent xAt are doing a large angle. Add itermediate points to remove this warning. xAC={:0.2f}  xAt={:0.2f}".format(i_error_msg_id, xAC, xAt))
+      six.print_(("WARN649: Warning in {:s}, AC and the tangent xAt are doing a large angle. Add itermediate points to remove this warning. xAC={:0.2f}  xAt={:0.2f}".format(i_error_msg_id, xAC, xAt)))
     if(abs(EtEA)>math.pi/3):
-      print("WARN648: Warning in {:s}, EC and the tangent xEt are doing a large angle. Add itermediate points to remove this warning. xEC={:0.2f}  xEt={:0.2f}".format(i_error_msg_id, xEC, xEt))
+      six.print_(("WARN648: Warning in {:s}, EC and the tangent xEt are doing a large angle. Add itermediate points to remove this warning. xEC={:0.2f}  xEt={:0.2f}".format(i_error_msg_id, xEC, xEt)))
     if((abs(AtAE)<radian_epsilon)or(abs(EtEA)<radian_epsilon)):
-      print("WARN659: Warning in {:s}, (xAC, xAt) or (xEC, xEt) are almost identical. A line is generated for this segment. xAC={:0.2f}  xAt={:0.2f} xEC={:0.2f}  xEt={:0.2f} ".format(i_error_msg_id, xAC, xAt, xEC, xEt))
+      six.print_(("WARN659: Warning in {:s}, (xAC, xAt) or (xEC, xEt) are almost identical. A line is generated for this segment. xAC={:0.2f}  xAt={:0.2f} xEC={:0.2f}  xEt={:0.2f} ".format(i_error_msg_id, xAC, xAt, xEC, xEt)))
       r_outline.append((EX, EY)) # create a line-segment
     elif((AtAE*EtEA)>0):
-      print("WARN669: Warning in {:s}, xAt and xEt are not one the side of (AE). It look like an inflexion. A line is generated for this segment. xAC={:0.2f}  xAt={:0.2f} xEC={:0.2f} xEt={:0.2f} ".format(i_error_msg_id, xAC, xAt, xEC, xEt))
+      six.print_(("WARN669: Warning in {:s}, xAt and xEt are not one the side of (AE). It look like an inflexion. A line is generated for this segment. xAC={:0.2f}  xAt={:0.2f} xEC={:0.2f} xEt={:0.2f} ".format(i_error_msg_id, xAC, xAt, xEC, xEt)))
       r_outline.append((EX, EY)) # create a line-segment
     else:
       # C intersection of (AC) and (EC). it is the junction point between the two arcs
       (CX, CY, line_line_intersection_status) = line_line_intersection((AClx, ACly, ACk),(EClx, ECly, ECk), ai_error_msg_id)
       if(line_line_intersection_status==2):
-        print("ERR324: Error in {:s}, AC and EC are collinear!".format(ai_error_msg_id))
+        six.print_(("ERR324: Error in {:s}, AC and EC are collinear!".format(ai_error_msg_id)))
         sys.exit(2)
       (BX, BY, xCt) = curve_arc(AX, AY, CX, CY, xAt, ai_router_bit_request, i_error_msg_id)
       if(abs(math.fmod(xCt-xAE+5*math.pi, 2*math.pi)-math.pi)>radian_epsilon):
-        print("ERR325: Error in {:s}, the first arc tangent in C is not parallel to AE! xCt={:0.2f} xAE={:0.2f}".format(ai_error_msg_id, xCt, xAE))
+        six.print_(("ERR325: Error in {:s}, the first arc tangent in C is not parallel to AE! xCt={:0.2f} xAE={:0.2f}".format(ai_error_msg_id, xCt, xAE)))
         sys.exit(2)
       (DX, DY, xEt2) = curve_arc(CX, CY, EX, EY, xAE, ai_router_bit_request, i_error_msg_id)
       if(abs(math.fmod(xEt2-xEt+5*math.pi, 2*math.pi)-math.pi)>radian_epsilon):
-        print("ERR326: Error in {:s}, the second arc tangent in E is different from xEt! xEt={:0.2f} xEt2={:0.2f}".format(ai_error_msg_id, xEt, xEt2))
+        six.print_(("ERR326: Error in {:s}, the second arc tangent in E is different from xEt! xEt={:0.2f} xEt2={:0.2f}".format(ai_error_msg_id, xEt, xEt2)))
         sys.exit(2)
       r_outline.append((BX, BY, CX, CY)) # create the first arc-segment
       r_outline.append((DX, DY, EX, EY)) # create the second arc-segment

@@ -43,6 +43,7 @@ it provides functions that complete the bare_design class to create design scrip
 import math
 import sys
 import re
+import six
 #import argparse
 #from datetime import datetime
 #import os, errno
@@ -75,7 +76,7 @@ def check(constraint_dict={}, error_id="ERR000", error_msg='', constraint_dict_n
       msg_introduction = "Warning on"
     #print("ERR073: Error on {:s} with:".format(error_msg))
     error_msg_without_dict = re.sub("'\]", " ", re.sub("{:s}\['".format(constraint_dict_name), " ", error_msg))
-    print("{:s}: {:s} {:s} with:".format(error_id, msg_introduction, error_msg_without_dict))
+    six.print_(("{:s}: {:s} {:s} with:".format(error_id, msg_introduction, error_msg_without_dict)))
     var_list = re.findall("{:s}\['\w+'\]".format(constraint_dict_name), error_msg)
     #print("dbg075: var_list:", var_list)
     for d_item in var_list:
@@ -83,7 +84,7 @@ def check(constraint_dict={}, error_id="ERR000", error_msg='', constraint_dict_n
       #d_key = re.sub("^.*\['(\w+)'\]$", "\1", d_item)
       #print("dbg078: d_key:", d_key)
       d_val = constraint_dict[d_key]
-      print("{:s}['{:s}'] = {:s}".format(constraint_dict_name, d_key, str(d_val)))
+      six.print_(("{:s}['{:s}'] = {:s}".format(constraint_dict_name, d_key, str(d_val))))
     if(not warning_nerror):
       sys.exit(2)
     else:

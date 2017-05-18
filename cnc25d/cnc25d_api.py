@@ -29,16 +29,16 @@ to be used by the design examples or external scripts
 # import
 ################################################################
 
-import importing_freecad
-import cnc_outline
-import outline_backends
-import positioning
-import export_2d
-import design_output
-import design_help
-import bare_design
-import design_frontend
-import draw_2d_frontend
+from . import importing_freecad
+from . import cnc_outline
+from . import outline_backends
+from . import positioning
+from . import export_2d
+from . import design_output
+from . import design_help
+from . import bare_design
+from . import design_frontend
+from . import draw_2d_frontend
 
 ################################################################
 # api function alias

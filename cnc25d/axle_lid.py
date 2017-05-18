@@ -29,7 +29,8 @@ The main function displays in a Tk-interface the axle-lid assembly, or generates
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import cnc25d_api
+from . import cnc25d_api
+import six
 cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -52,7 +53,7 @@ from FreeCAD import Base
 #import svgwrite
 #from dxfwrite import DXFEngine
 # cnc25d
-import gearring
+from . import gearring
 
 ################################################################
 # inheritance from gearring
@@ -225,19 +226,19 @@ def axle_lid_constraint_check(c):
   #  print("ERR141: Error, cnc_router_bit_radius {:0.3f} is bigger than axle_hole_radius {:0.3f}".format(c['cnc_router_bit_radius'], c['axle_hole_radius']))
   #  sys.exit(2)
   if(c['axle_hole_radius']>c['central_radius']-radian_epsilon):
-    print("ERR144: Error, axle_hole_radius {:0.3f} is bigger than central_radius {:0.3f}".format(c['axle_hole_radius'], c['central_radius']))
+    six.print_(("ERR144: Error, axle_hole_radius {:0.3f} is bigger than central_radius {:0.3f}".format(c['axle_hole_radius'], c['central_radius'])))
     sys.exit(2)
   if(c['central_radius']>c['clearance_radius']-radian_epsilon):
-    print("ERR147: Error, central_radius {:0.3f} is bigger than clearance_radius {:0.3f}".format(c['central_radius'], c['clearance_radius']))
+    six.print_(("ERR147: Error, central_radius {:0.3f} is bigger than clearance_radius {:0.3f}".format(c['central_radius'], c['clearance_radius'])))
     sys.exit(2)
   if(c['clearance_radius']>c['holder_radius']-radian_epsilon):
-    print("ERR151: Error, clearance_radius {:0.3f} is bigger than the holder_radius {:0.3f}".format(c['clearance_radius'], c['holder_radius']))
+    six.print_(("ERR151: Error, clearance_radius {:0.3f} is bigger than the holder_radius {:0.3f}".format(c['clearance_radius'], c['holder_radius'])))
     sys.exit(2)
   if(c['annulus_holder_axle_hole_radius']>c['clearance_radius']):
-    print("ERR159: Error, annulus_holder_axle_hole_radius {:0.3f} is bigger than clearance_radius {:0.3f}".format(c['annulus_holder_axle_hole_radius'], c['clearance_radius']))
+    six.print_(("ERR159: Error, annulus_holder_axle_hole_radius {:0.3f} is bigger than clearance_radius {:0.3f}".format(c['annulus_holder_axle_hole_radius'], c['clearance_radius'])))
     sys.exit(2)
   if(c['holder_crenel_number']<4):
-    print("ERR154: Error, holder_crenel_number {:d} is smaller than 4".format(c['holder_crenel_number']))
+    six.print_(("ERR154: Error, holder_crenel_number {:d} is smaller than 4".format(c['holder_crenel_number'])))
     sys.exit(2)
   c['middle_crenel_1'] = 0
   c['middle_crenel_2'] = int(c['holder_crenel_number']/2)
@@ -267,22 +268,22 @@ def axle_lid_constraint_check(c):
     c['leg_hole_distance'] = 2*(2*c['leg_hole_radius'] + c['leg_hole_length'])
   if(c['leg_type'] != 'none'):
     if((c['leg_type'] != 'rear') and (c['leg_type'] != 'side')):
-      print("ERR536: Error, leg_type {:s} set to an unknow value. Possible values: 'none', 'rear' or 'side'".format(c['leg_type']))
+      six.print_(("ERR536: Error, leg_type {:s} set to an unknow value. Possible values: 'none', 'rear' or 'side'".format(c['leg_type'])))
       sys.exit(2)
     if(c['leg_length']<=0):
-      print("ERR539: Error, leg_length {:0.3f} must be strictly positive".format(c['leg_length']))
+      six.print_(("ERR539: Error, leg_length {:0.3f} must be strictly positive".format(c['leg_length'])))
       sys.exit(2)
     if(c['toe_length']<c['leg_hole_radius']):
-      print("ERR543: Error, toe_length {:0.3f} is smaller than leg_hole_radius {:0.3f}".format(c['toe_length'], c['leg_hole_radius']))
+      six.print_(("ERR543: Error, toe_length {:0.3f} is smaller than leg_hole_radius {:0.3f}".format(c['toe_length'], c['leg_hole_radius'])))
       sys.exit(2)
     #if(c['foot_length']<c['leg_hole_radius']):
     #  print("ERR543: Error, foot_length {:0.3f} is smaller than leg_hole_radius {:0.3f}".format(c['foot_length'], c['leg_hole_radius']))
     #  sys.exit(2)
     if(c['leg_hole_distance']<2*c['leg_hole_radius']+c['leg_hole_length']):
-      print("ERR549: Error, leg_hole_distance {:0.3f} is too small compare to leg_hole_radius {:0.3f} and leg_hole_length {:0.3f}".format(c['leg_hole_distance'], c['leg_hole_radius'], c['leg_hole_length']))
+      six.print_(("ERR549: Error, leg_hole_distance {:0.3f} is too small compare to leg_hole_radius {:0.3f} and leg_hole_length {:0.3f}".format(c['leg_hole_distance'], c['leg_hole_radius'], c['leg_hole_length'])))
       sys.exit(2)
     if(c['leg_border_length']<c['leg_hole_radius']):
-      print("ERR552: Error, leg_border_length {:0.3f} is smaller than leg_hole_radius {:0.3f}".format(c['leg_border_length'], c['leg_hole_radius']))
+      six.print_(("ERR552: Error, leg_border_length {:0.3f} is smaller than leg_hole_radius {:0.3f}".format(c['leg_border_length'], c['leg_hole_radius'])))
       sys.exit(2)
   ### axle_B
   c['output_axle_B_internal_radius'] = c['output_axle_B_internal_diameter']/2.0
@@ -464,27 +465,27 @@ def axle_lid_2d_construction(c):
   ### axle_B
   if(c['output_axle_B_place'] != 'none'):
     if((c['output_axle_B_place'] != 'small')and(c['output_axle_B_place'] != 'large')):
-      print("ERR442: Error, output_axle_B_place {:s} is unknown. Possible values: 'none', 'small' or 'large'".format(c['output_axle_B_place']))
+      six.print_(("ERR442: Error, output_axle_B_place {:s} is unknown. Possible values: 'none', 'small' or 'large'".format(c['output_axle_B_place'])))
       sys.exit(2)
     if(c['output_axle_distance']<=0.0):
-      print("ERR445: Error, output_axle_distance {:0.3f} must be positive".format(c['output_axle_distance']))
+      six.print_(("ERR445: Error, output_axle_distance {:0.3f} must be positive".format(c['output_axle_distance'])))
       sys.exit(2)
     if(c['output_axle_B_external_radius'] == 0):
       c['output_axle_B_external_radius'] = 2*c['output_axle_B_internal_radius']
     if(c['output_axle_B_external_radius']<=c['output_axle_B_internal_radius']):
-      print("ERR452: Error, output_axle_B_external_radius {:0.3f} is null or smaller than output_axle_B_internal_radius {:0.3f}".format(c['output_axle_B_external_radius'], c['output_axle_B_internal_radius']))
+      six.print_(("ERR452: Error, output_axle_B_external_radius {:0.3f} is null or smaller than output_axle_B_internal_radius {:0.3f}".format(c['output_axle_B_external_radius'], c['output_axle_B_internal_radius'])))
       sys.exit(2)
     if(c['output_axle_B_crenel_number']>0):
       if(c['output_axle_B_crenel_radius']<radian_epsilon):
-        print("ERR460: Error, output_axle_B_crenel_radius {:0.3f} is too small".format(c['output_axle_B_crenel_radius']))
+        six.print_(("ERR460: Error, output_axle_B_crenel_radius {:0.3f} is too small".format(c['output_axle_B_crenel_radius'])))
         sys.exit(2)
       if(c['output_axle_B_crenel_position_radius'] == 0):
         c['output_axle_B_crenel_position_radius'] = (c['output_axle_B_internal_radius'] + c['output_axle_B_external_radius'])/2.0
       if(c['output_axle_B_crenel_position_radius']<(c['output_axle_B_internal_radius']+c['output_axle_B_crenel_radius'])):
-        print("ERR460: Error, output_axle_B_crenel_position_radius {:0.3f} is too small compare to output_axle_B_internal_radius {:0.3f} and output_axle_B_crenel_radius {:0.3f}".format(c['output_axle_B_crenel_position_radius'], c['output_axle_B_internal_radius'], c['output_axle_B_crenel_radius']))
+        six.print_(("ERR460: Error, output_axle_B_crenel_position_radius {:0.3f} is too small compare to output_axle_B_internal_radius {:0.3f} and output_axle_B_crenel_radius {:0.3f}".format(c['output_axle_B_crenel_position_radius'], c['output_axle_B_internal_radius'], c['output_axle_B_crenel_radius'])))
         sys.exit(2)
       if(c['output_axle_B_crenel_position_radius']>(c['output_axle_B_external_radius']-c['output_axle_B_crenel_radius'])):
-        print("ERR463: Error, output_axle_B_crenel_position_radius {:0.3f} is too big compare to output_axle_B_external_radius {:0.3f} and output_axle_B_crenel_radius {:0.3f}".format(c['output_axle_B_crenel_position_radius'], c['output_axle_B_external_radius'], c['output_axle_B_crenel_radius']))
+        six.print_(("ERR463: Error, output_axle_B_crenel_position_radius {:0.3f} is too big compare to output_axle_B_external_radius {:0.3f} and output_axle_B_crenel_radius {:0.3f}".format(c['output_axle_B_crenel_position_radius'], c['output_axle_B_external_radius'], c['output_axle_B_crenel_radius'])))
         sys.exit(2)
     ## calculation of the angle (DCE)
     ABC = (c['middle_crenel_2'] - c['middle_crenel_1'] - 1) * c['crenel_portion_angle'] / 2.0 - c['holder_crenel_half_angle']
@@ -495,7 +496,7 @@ def axle_lid_2d_construction(c):
     AC1 = math.sqrt(AB**2 + BC**2 - 2*AB*BC*math.cos(ABC1))
     cos_ACB1 = ((AC1**2+BC**2-AB**2)/(2*AC1*BC))
     if((cos_ACB1<radian_epsilon)or(cos_ACB1>1-radian_epsilon)):
-      print("ERR474: Error, cos_ACB1 {:0.3f} is out of the range 0..1".format(cos_ACB1))
+      six.print_(("ERR474: Error, cos_ACB1 {:0.3f} is out of the range 0..1".format(cos_ACB1)))
       sys.exit(2)
     ACB1 = math.acos(cos_ACB1)
     DC = c['output_axle_B_external_radius']
@@ -539,10 +540,10 @@ def axle_lid_2d_construction(c):
     # external_axle_B_half_angle
     external_axle_B_half_angle = math.atan(float(input_axle_B_external_radius)/c['holder_radius'])
     if(first_angle>c['output_axle_B_angle']-external_axle_B_half_angle):
-      print("ERR500: Error, first_angle {:0.3f} too big compare to output_axle_B_angle {:0.3f} and external_axle_B_half_angle {:0.3f}".format(first_angle, c['output_axle_B_angle'], external_axle_B_half_angle))
+      six.print_(("ERR500: Error, first_angle {:0.3f} too big compare to output_axle_B_angle {:0.3f} and external_axle_B_half_angle {:0.3f}".format(first_angle, c['output_axle_B_angle'], external_axle_B_half_angle)))
       sys.exit(2)
     if(last_angle<c['output_axle_B_angle']+external_axle_B_half_angle):
-      print("ERR503: Error, last_angle {:0.3f} too small compare to output_axle_B_angle {:0.3f} and external_axle_B_half_angle {:0.3f}".format(last_angle, c['output_axle_B_angle'], external_axle_B_half_angle))
+      six.print_(("ERR503: Error, last_angle {:0.3f} too small compare to output_axle_B_angle {:0.3f} and external_axle_B_half_angle {:0.3f}".format(last_angle, c['output_axle_B_angle'], external_axle_B_half_angle)))
       sys.exit(2)
     holder_A = []
     # first point

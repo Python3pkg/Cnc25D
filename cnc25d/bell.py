@@ -29,7 +29,8 @@ The main function displays in a Tk-interface the bell piece, or generates the de
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import cnc25d_api
+from . import cnc25d_api
+import six
 cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -52,7 +53,7 @@ import Part
 #import svgwrite
 #from dxfwrite import DXFEngine
 # cnc25d
-import bell_outline
+from . import bell_outline
 
 
 ################################################################
@@ -222,7 +223,7 @@ def bell_constraint_check(c):
   radian_epsilon = math.pi/1000
   # axle_internal_diameter
   if(c['axle_internal_diameter']<radian_epsilon):
-    print("ERR333: Error, axle_internal_diameter {:0.3f} is too small".format(c['axle_internal_diameter']))
+    six.print_(("ERR333: Error, axle_internal_diameter {:0.3f} is too small".format(c['axle_internal_diameter'])))
     sys.exit(2)
   c['axle_internal_radius'] = c['axle_internal_diameter']/2.0
   # axle_external_diameter
@@ -230,37 +231,37 @@ def bell_constraint_check(c):
   if(c['axle_external_radius']==0):
     c['axle_external_radius'] = 2*c['axle_internal_radius']
   if(c['axle_external_radius']<c['axle_internal_radius']+radian_epsilon):
-    print("ERR340: Error, axle_external_radius {:0.3f} must be bigger than axle_internal_radius {:0.3f}".format(c['axle_external_radius'], c['axle_internal_radius']))
+    six.print_(("ERR340: Error, axle_external_radius {:0.3f} must be bigger than axle_internal_radius {:0.3f}".format(c['axle_external_radius'], c['axle_internal_radius'])))
     sys.exit(2)
   # leg_length
   if(c['leg_length']<c['axle_internal_radius']):
-    print("ERR346: Error, leg_length {:0.3f} must be bigger than axle_internal_radius {:0.3f}".format(c['leg_length'], c['axle_internal_radius']))
+    six.print_(("ERR346: Error, leg_length {:0.3f} must be bigger than axle_internal_radius {:0.3f}".format(c['leg_length'], c['axle_internal_radius'])))
     sys.exit(2)
   # bell_face_height
   if(c['bell_face_height']<radian_epsilon):
-    print("ERR350: Error, bell_face_height {:0.3f} must be strictly positive".format(c['bell_face_height']))
+    six.print_(("ERR350: Error, bell_face_height {:0.3f} must be strictly positive".format(c['bell_face_height'])))
     sys.exit(2)
   # bell_face_width
   if(c['bell_face_width']<2*c['axle_external_radius']):
-    print("ERR354: Error, bell_face_width {:0.3f} is too small compare too axle_external_radius {:0.3f}".format(c['bell_face_width'], c['axle_external_radius']))
+    six.print_(("ERR354: Error, bell_face_width {:0.3f} is too small compare too axle_external_radius {:0.3f}".format(c['bell_face_width'], c['axle_external_radius'])))
     sys.exit(2)
   # base_diameter
   c['base_radius'] = c['base_diameter']/2.0
   if(c['base_radius']<c['bell_face_width']/10.0*math.sqrt(5**2+1.5**2)):
-    print("ERR357: Error, base_radius {:0.3f} is too small compare to bell_face_width {:0.3f}".format(c['base_radius'], c['bell_face_width']))
+    six.print_(("ERR357: Error, base_radius {:0.3f} is too small compare to bell_face_width {:0.3f}".format(c['base_radius'], c['bell_face_width'])))
     sys.exit(2)
   # face_thickness
   if(c['face_thickness']<radian_epsilon):
-    print("ERR358: Error, face_thickness {:0.3f} must be strictly positive".format(c['face_thickness']))
+    six.print_(("ERR358: Error, face_thickness {:0.3f} must be strictly positive".format(c['face_thickness'])))
     sys.exit(2)
   if(c['face_thickness']>c['bell_face_width']/5.0):
-    print("ERR361: Error, face_thickness {:0.3f} is too big compare to bell_face_width {:0.3f}".format(c['face_thickness'], c['bell_face_width']))
+    six.print_(("ERR361: Error, face_thickness {:0.3f} is too big compare to bell_face_width {:0.3f}".format(c['face_thickness'], c['bell_face_width'])))
     sys.exit(2)
   # side_thickness
   if(c['side_thickness']==0.0):
     c['side_thickness'] = c['face_thickness']
   if(c['side_thickness']>c['bell_face_width']/5.0):
-    print("ERR367: Error, side_thickness {:0.3f} is too big compare to bell_face_width {:0.3f}".format(c['side_thickness'], c['bell_face_width']))
+    six.print_(("ERR367: Error, side_thickness {:0.3f} is too big compare to bell_face_width {:0.3f}".format(c['side_thickness'], c['bell_face_width'])))
     sys.exit(2)
   # base_thickness
   if(c['base_thickness']==0.0):
@@ -272,198 +273,198 @@ def bell_constraint_check(c):
     # axle_hole_diameter
     c['axle_hole_radius'] = c['axle_hole_diameter']/2.0
     if(c['axle_hole_radius']<radian_epsilon):
-      print("ERR370: Error, axle_hole_radius {:0.3f} must be strictly positive".format(c['axle_hole_radius']))
+      six.print_(("ERR370: Error, axle_hole_radius {:0.3f} must be strictly positive".format(c['axle_hole_radius'])))
       sys.exit(2)
     # axle_hole_position_diameter
     c['axle_hole_position_radius'] = c['axle_hole_position_diameter']/2.0
     if(c['axle_hole_position_radius']==0.0):
       c['axle_hole_position_radius'] = (c['axle_internal_radius']+c['axle_external_radius'])/2.0
     if(c['axle_hole_position_radius'] < c['axle_internal_radius']+c['axle_hole_radius']+radian_epsilon):
-      print("ERR378: Error: axle_hole_position_radius {:0.3f} is too small compare to axle_internal_radius {:0.3f} and axle_hole_radius {:0.3f}".format(c['axle_hole_position_radius'], c['axle_internal_radius'], c['axle_hole_radius']))
+      six.print_(("ERR378: Error: axle_hole_position_radius {:0.3f} is too small compare to axle_internal_radius {:0.3f} and axle_hole_radius {:0.3f}".format(c['axle_hole_position_radius'], c['axle_internal_radius'], c['axle_hole_radius'])))
       sys.exit(2)
     if(c['axle_hole_position_radius'] > c['axle_external_radius']-c['axle_hole_radius']-radian_epsilon):
-      print("ERR381: Error: axle_hole_position_radius {:0.3f} is too big compare to axle_external_radius {:0.3f} and axle_hole_radius {:0.3f}".format(c['axle_hole_position_radius'], c['axle_external_radius'], c['axle_hole_radius']))
+      six.print_(("ERR381: Error: axle_hole_position_radius {:0.3f} is too big compare to axle_external_radius {:0.3f} and axle_hole_radius {:0.3f}".format(c['axle_hole_position_radius'], c['axle_external_radius'], c['axle_hole_radius'])))
       sys.exit(2)
     # axle_hole_angle
   # leg_spare_width
   if(c['leg_spare_width'] > (c['bell_face_width']-2*c['axle_external_radius'])/2.0+radian_epsilon):
-    print("ERR385: Error, leg_spare_width {:0.3f} is too big compare to bell_face_width {:0.3f} and axle_external_radius {:0.3f}".format(c['leg_spare_width'], c['bell_face_width'], c['axle_external_radius']))
+    six.print_(("ERR385: Error, leg_spare_width {:0.3f} is too big compare to bell_face_width {:0.3f} and axle_external_radius {:0.3f}".format(c['leg_spare_width'], c['bell_face_width'], c['axle_external_radius'])))
     sys.exit(2)
   # leg_smoothing_radius
   if(c['leg_smoothing_radius']<c['bell_cnc_router_bit_radius']):
-    print("ERR389: Error, leg_smoothing_radius {:0.3f} must be bigger than bell_cnc_router_bit_radius {:0.3f}".format(c['leg_smoothing_radius'], c['bell_cnc_router_bit_radius']))
+    six.print_(("ERR389: Error, leg_smoothing_radius {:0.3f} must be bigger than bell_cnc_router_bit_radius {:0.3f}".format(c['leg_smoothing_radius'], c['bell_cnc_router_bit_radius'])))
     sys.exit(2)
   if(c['leg_smoothing_radius']<c['leg_spare_width']):
-    print("ERR403: Error, leg_smoothing_radius {:0.3f} must be bigger than leg_spare_width {:0.3f}".format(c['leg_smoothing_radius'], c['leg_spare_width']))
+    six.print_(("ERR403: Error, leg_smoothing_radius {:0.3f} must be bigger than leg_spare_width {:0.3f}".format(c['leg_smoothing_radius'], c['leg_spare_width'])))
     sys.exit(2)
   if(c['leg_smoothing_radius']>c['leg_length']):
-    print("ERR392: Error, leg_smoothing_radius {:0.3f} must be bigger than leg_length {:0.3f}".format(c['leg_smoothing_radius'], c['leg_length']))
+    six.print_(("ERR392: Error, leg_smoothing_radius {:0.3f} must be bigger than leg_length {:0.3f}".format(c['leg_smoothing_radius'], c['leg_length'])))
     sys.exit(2)
   # motor_hole_diameter
   c['motor_hole_radius'] = c['motor_hole_diameter']/2.0
   if(c['motor_hole_radius']>0.0):
     # motor_hole_x_distance
     if(c['motor_hole_x_distance']<2*c['motor_hole_radius']+radian_epsilon):
-      print("ERR399: Error, motor_hole_x_distance {:0.3f} is too small compare to motor_hole_radius {:0.3f}".format(c['motor_hole_x_distance'], c['motor_hole_radius']))
+      six.print_(("ERR399: Error, motor_hole_x_distance {:0.3f} is too small compare to motor_hole_radius {:0.3f}".format(c['motor_hole_x_distance'], c['motor_hole_radius'])))
       sys.exit(2)
     if(c['motor_hole_x_distance']>c['bell_face_width']-2*c['side_thickness']-2*c['motor_hole_radius']-radian_epsilon):
-      print("ERR402: Error, motor_hole_x_distance {:0.3f} is too big compare to bell_face_width {:0.3f}, side_thickness {:0.3f} and motor_hole_radius {:0.3f}".format(c['motor_hole_x_distance'], c['bell_face_width'], c['side_thickness'], c['motor_hole_radius']))
+      six.print_(("ERR402: Error, motor_hole_x_distance {:0.3f} is too big compare to bell_face_width {:0.3f}, side_thickness {:0.3f} and motor_hole_radius {:0.3f}".format(c['motor_hole_x_distance'], c['bell_face_width'], c['side_thickness'], c['motor_hole_radius'])))
       sys.exit(2)
     # motor_hole_z_distance
     if(c['motor_hole_z_distance']<2*c['motor_hole_radius']+radian_epsilon):
-      print("ERR406: Error, motor_hole_z_distance {:0.3f} is too small compare to motor_hole_radius {:0.3f}".format(c['motor_hole_z_distance'], c['motor_hole_radius']))
+      six.print_(("ERR406: Error, motor_hole_z_distance {:0.3f} is too small compare to motor_hole_radius {:0.3f}".format(c['motor_hole_z_distance'], c['motor_hole_radius'])))
       sys.exit(2)
     if(c['motor_hole_z_distance']>c['bell_face_height']+c['leg_length']-2*c['motor_hole_radius']-radian_epsilon):
-      print("ERR409: Error, motor_hole_z_distance {:0.3f} is too big compare to bell_face_height {:0.3f}, leg_length {:0.3f} and motor_hole_radius {:0.3f}".format(c['motor_hole_z_distance'], c['bell_face_height'], c['leg_length'], c['motor_hole_radius']))
+      six.print_(("ERR409: Error, motor_hole_z_distance {:0.3f} is too big compare to bell_face_height {:0.3f}, leg_length {:0.3f} and motor_hole_radius {:0.3f}".format(c['motor_hole_z_distance'], c['bell_face_height'], c['leg_length'], c['motor_hole_radius'])))
       sys.exit(2)
     # motor_hole_z_position
     if(c['motor_hole_z_position']<c['motor_hole_radius']+radian_epsilon):
-      print("ERR413: Error, motor_hole_z_position {:0.3f} is too small compare to motor_hole_radius {:0.3f}".format(c['motor_hole_z_position'], c['motor_hole_radius']))
+      six.print_(("ERR413: Error, motor_hole_z_position {:0.3f} is too small compare to motor_hole_radius {:0.3f}".format(c['motor_hole_z_position'], c['motor_hole_radius'])))
       sys.exit(2)
     if(c['motor_hole_z_position']>c['bell_face_height']+c['leg_length']-c['motor_hole_z_distance']-2*c['motor_hole_radius']-radian_epsilon):
-      print("ERR416: Error, motor_hole_z_distance {:0.3f} is too big compare to bell_face_height {:0.3f}, leg_length {:0.3f}, motor_hole_z_distance {:0.3f} and motor_hole_radius {:0.3f}".format(c['motor_hole_z_distance'], c['bell_face_height'], c['leg_length'], c['motor_hole_z_distance'], c['motor_hole_radius']))
+      six.print_(("ERR416: Error, motor_hole_z_distance {:0.3f} is too big compare to bell_face_height {:0.3f}, leg_length {:0.3f}, motor_hole_z_distance {:0.3f} and motor_hole_radius {:0.3f}".format(c['motor_hole_z_distance'], c['bell_face_height'], c['leg_length'], c['motor_hole_z_distance'], c['motor_hole_radius'])))
       sys.exit(2)
   # int_buttress_x_length
   if(c['int_buttress_x_length']>(c['bell_face_width']-2*c['side_thickness'])/3.0):
-    print("ERR426: Error, int_buttress_x_length {:0.3f} is too big compare to bell_face_width {:0.3f} and side_thickness {:0.3f}".format(c['int_buttress_x_length'], c['bell_face_width'], c['side_thickness']))
+    six.print_(("ERR426: Error, int_buttress_x_length {:0.3f} is too big compare to bell_face_width {:0.3f} and side_thickness {:0.3f}".format(c['int_buttress_x_length'], c['bell_face_width'], c['side_thickness'])))
     sys.exit(2)
   if(c['int_buttress_x_length']>0):
     # int_buttress_z_width
     if(c['int_buttress_z_width']<3*c['bell_cnc_router_bit_radius']):
-      print("ERR431: Error, int_buttress_z_width {:0.3f} is too small compare to bell_cnc_router_bit_radius {:0.3f}".format(c['int_buttress_z_width'], c['bell_cnc_router_bit_radius']))
+      six.print_(("ERR431: Error, int_buttress_z_width {:0.3f} is too small compare to bell_cnc_router_bit_radius {:0.3f}".format(c['int_buttress_z_width'], c['bell_cnc_router_bit_radius'])))
       sys.exit(2)
     if(c['int_buttress_z_width']>c['bell_face_height']/5.0):
-      print("ERR434: Error, int_buttress_z_width {:0.3f} is too big compare to bell_face_height {:0.3f}".format(c['int_buttress_z_width'], c['bell_face_height']))
+      six.print_(("ERR434: Error, int_buttress_z_width {:0.3f} is too big compare to bell_face_height {:0.3f}".format(c['int_buttress_z_width'], c['bell_face_height'])))
       sys.exit(2)
     # int_buttress_z_distance
     if(c['int_buttress_z_distance']<c['int_buttress_z_width']+radian_epsilon):
-      print("ERR438: Error, int_buttress_z_distance {:0.3f} must be bigger than int_buttress_z_width {:0.3f}".format(c['int_buttress_z_distance'], c['int_buttress_z_width']))
+      six.print_(("ERR438: Error, int_buttress_z_distance {:0.3f} must be bigger than int_buttress_z_width {:0.3f}".format(c['int_buttress_z_distance'], c['int_buttress_z_width'])))
       sys.exit(2)
     if(c['int_buttress_z_distance']>c['bell_face_height']-2*c['int_buttress_z_width']-radian_epsilon):
-      print("ERR441: Error, int_buttress_z_distance {:0.3f} is too big compare to bell_face_height {:0.3f} and int_buttress_z_width {:0.3f}".format(c['int_buttress_z_distance'], c['bell_face_height'], c['int_buttress_z_width']))
+      six.print_(("ERR441: Error, int_buttress_z_distance {:0.3f} is too big compare to bell_face_height {:0.3f} and int_buttress_z_width {:0.3f}".format(c['int_buttress_z_distance'], c['bell_face_height'], c['int_buttress_z_width'])))
       sys.exit(2)
     # int_buttress_x_position
     if(c['int_buttress_x_position']>c['bell_face_width']/2.0-c['face_thickness']-c['int_buttress_x_length']):
-      print("ERR445: Error, int_buttress_x_position {:0.3f} is too big compare to bell_face_width {:0.3f}, face_thickness {:0.3f} and int_buttress_x_length {:0.3f}".format(c['int_buttress_x_position'], c['bell_face_width'], c['face_thickness'], c['int_buttress_x_length']))
+      six.print_(("ERR445: Error, int_buttress_x_position {:0.3f} is too big compare to bell_face_width {:0.3f}, face_thickness {:0.3f} and int_buttress_x_length {:0.3f}".format(c['int_buttress_x_position'], c['bell_face_width'], c['face_thickness'], c['int_buttress_x_length'])))
       sys.exit(2)
     # int_buttress_z_position
     if(c['int_buttress_z_position']>c['bell_face_height']-c['int_buttress_z_distance']-c['int_buttress_z_width']-radian_epsilon):
-      print("ERR448: int_buttress_z_position {:0.3f} is too big compare to bell_face_height {:0.3f}, int_buttress_z_distance {:0.3f} and int_buttress_z_width {:0.3f}".format(c['int_buttress_z_position'], c['bell_face_height'], c['int_buttress_z_distance'], c['int_buttress_z_width']))
+      six.print_(("ERR448: int_buttress_z_position {:0.3f} is too big compare to bell_face_height {:0.3f}, int_buttress_z_distance {:0.3f} and int_buttress_z_width {:0.3f}".format(c['int_buttress_z_position'], c['bell_face_height'], c['int_buttress_z_distance'], c['int_buttress_z_width'])))
       sys.exit(2)
     # int_buttress_int_corner_length
     if(c['int_buttress_int_corner_length']>c['int_buttress_x_position']):
-      print("ERR453: Error, int_buttress_int_corner_length {:0.3f} must be smaller than int_buttress_x_position {:0.3f}".format(c['int_buttress_int_corner_length'], c['int_buttress_x_position']))
+      six.print_(("ERR453: Error, int_buttress_int_corner_length {:0.3f} must be smaller than int_buttress_x_position {:0.3f}".format(c['int_buttress_int_corner_length'], c['int_buttress_x_position'])))
       sys.exit(2)
     # int_buttress_ext_corner_length
     if(c['int_buttress_ext_corner_length']>c['bell_face_width']/2.0-c['face_thickness']-c['int_buttress_x_length']-c['int_buttress_x_position']):
-      print("ERR457: Error, int_buttress_ext_corner_length {:0.3f} is too big comapre to bell_face_width {:0.3f}, face_thickness {:0.3f}, int_buttress_x_length {:0.3f} and int_buttress_x_position {:0.3f}".format(c['int_buttress_ext_corner_length'], c['bell_face_width'], c['face_thickness'], c['int_buttress_x_length'], c['int_buttress_x_position']))
+      six.print_(("ERR457: Error, int_buttress_ext_corner_length {:0.3f} is too big comapre to bell_face_width {:0.3f}, face_thickness {:0.3f}, int_buttress_x_length {:0.3f} and int_buttress_x_position {:0.3f}".format(c['int_buttress_ext_corner_length'], c['bell_face_width'], c['face_thickness'], c['int_buttress_x_length'], c['int_buttress_x_position'])))
       sys.exit(2)
     # int_buttress_bump_length
     if(c['int_buttress_bump_length']>c['int_buttress_x_position']+c['int_buttress_x_length']):
-      print("ERR461: Error, int_buttress_bump_length {:0.3f} is too big compare to int_buttress_x_position {:0.3f} and int_buttress_x_length {:0.3f}".format(c['int_buttress_bump_length'], c['int_buttress_x_position'], c['int_buttress_x_length']))
+      six.print_(("ERR461: Error, int_buttress_bump_length {:0.3f} is too big compare to int_buttress_x_position {:0.3f} and int_buttress_x_length {:0.3f}".format(c['int_buttress_bump_length'], c['int_buttress_x_position'], c['int_buttress_x_length'])))
       sys.exit(2)
     # int_buttress_arc_height
     if(abs(c['int_buttress_arc_height'])>c['int_buttress_x_length']):
-      print("ERR465: Error, int_buttress_arc_height {:0.3f} absolute value must be smaller than int_buttress_x_length {:0.3f}".format(c['int_buttress_arc_height'], c['int_buttress_x_length']))
+      six.print_(("ERR465: Error, int_buttress_arc_height {:0.3f} absolute value must be smaller than int_buttress_x_length {:0.3f}".format(c['int_buttress_arc_height'], c['int_buttress_x_length'])))
       sys.exit(2)
     # int_buttress_smoothing_radius
     if(c['int_buttress_smoothing_radius']>c['int_buttress_bump_length']):
-      print("ERR469: Error, int_buttress_smoothing_radius {:0.3f} must be smaller than int_buttress_bump_length {:0.3f}".format(c['int_buttress_smoothing_radius'], c['int_buttress_bump_length']))
+      six.print_(("ERR469: Error, int_buttress_smoothing_radius {:0.3f} must be smaller than int_buttress_bump_length {:0.3f}".format(c['int_buttress_smoothing_radius'], c['int_buttress_bump_length'])))
       sys.exit(2)
   # ext_buttress_z_length
   if(c['ext_buttress_z_length']>c['bell_face_height']/3.0):
-    print("ERR473: Error, ext_buttress_z_length {:0.3f} is too big compare to bell_face_height {:0.3f}".format(c['ext_buttress_z_length'], c['bell_face_height']))
+    six.print_(("ERR473: Error, ext_buttress_z_length {:0.3f} is too big compare to bell_face_height {:0.3f}".format(c['ext_buttress_z_length'], c['bell_face_height'])))
     sys.exit(2)
   if(c['ext_buttress_z_length']>0):
     # ext_buttress_x_width
     if(c['ext_buttress_x_width']<3*c['bell_cnc_router_bit_radius']):
-      print("ERR478: Error, ext_buttress_x_width {:0.3f} is too small compare to bell_cnc_router_bit_radius {:0.3f}".format(c['ext_buttress_x_width'], c['bell_cnc_router_bit_radius']))
+      six.print_(("ERR478: Error, ext_buttress_x_width {:0.3f} is too small compare to bell_cnc_router_bit_radius {:0.3f}".format(c['ext_buttress_x_width'], c['bell_cnc_router_bit_radius'])))
       sys.exit(2)
     if(c['ext_buttress_x_width']>c['bell_face_width']/5.0):
-      print("ERR481: Error, ext_buttress_x_width {:0.3f} is too big compare to bell_face_width {:0.3f}".format(c['ext_buttress_x_width'], c['bell_face_width']))
+      six.print_(("ERR481: Error, ext_buttress_x_width {:0.3f} is too big compare to bell_face_width {:0.3f}".format(c['ext_buttress_x_width'], c['bell_face_width'])))
       sys.exit(2)
     # ext_buttress_x_distance
     if(c['ext_buttress_x_distance']<radian_epsilon):
-      print("ERR485: Error, ext_buttress_x_distance {:0.3f} must be strictly positive".format(c['ext_buttress_x_distance']))
+      six.print_(("ERR485: Error, ext_buttress_x_distance {:0.3f} must be strictly positive".format(c['ext_buttress_x_distance'])))
       sys.exit(2)
     if(c['ext_buttress_x_distance']>c['bell_face_width']-2*c['ext_buttress_x_width']-2*c['face_thickness']):
-      print("ERR488: Error, ext_buttress_x_distance {:0.3f} is too big compare to bell_face_width {:0.3f} ext_buttress_x_width {:0.3f} and face_thickness {:0.3f}".format(c['ext_buttress_x_distance'], c['bell_face_width'], c['ext_buttress_x_width'], c['face_thickness']))
+      six.print_(("ERR488: Error, ext_buttress_x_distance {:0.3f} is too big compare to bell_face_width {:0.3f} ext_buttress_x_width {:0.3f} and face_thickness {:0.3f}".format(c['ext_buttress_x_distance'], c['bell_face_width'], c['ext_buttress_x_width'], c['face_thickness'])))
       sys.exit(2)
     # ext_buttress_z_position
     if(c['ext_buttress_z_position']>c['bell_face_height']+c['leg_length']-c['ext_buttress_z_length']):
-      print("ERR490: Error, ext_buttress_z_position {:0.3f} is too big compare to bell_face_height {:0.3f}, leg_length {:0.3f} and ext_buttress_z_length {:0.3f}".format(c['ext_buttress_z_position'], c['bell_face_height'], c['leg_length'], c['ext_buttress_z_length']))
+      six.print_(("ERR490: Error, ext_buttress_z_position {:0.3f} is too big compare to bell_face_height {:0.3f}, leg_length {:0.3f} and ext_buttress_z_length {:0.3f}".format(c['ext_buttress_z_position'], c['bell_face_height'], c['leg_length'], c['ext_buttress_z_length'])))
       sys.exit(2)
     # ext_buttress_y_length
     if(c['ext_buttress_y_length']>c['base_radius']-c['bell_face_width']/2.0):
-      print("ERR499: Error, ext_buttress_y_length {:0.3f} is too big compare to base_radius {:0.3f} and bell_face_width {:0.3f}".format(c['ext_buttress_y_length'], c['base_radius'], c['bell_face_width']))
+      six.print_(("ERR499: Error, ext_buttress_y_length {:0.3f} is too big compare to base_radius {:0.3f} and bell_face_width {:0.3f}".format(c['ext_buttress_y_length'], c['base_radius'], c['bell_face_width'])))
       sys.exit(2)
     # ext_buttress_y_position
     if(math.sqrt((c['ext_buttress_x_distance']/2.0+c['ext_buttress_x_width'])**2+(c['bell_face_width']/2.0+c['ext_buttress_y_position']+c['ext_buttress_y_length'])**2)>c['base_radius']):
-      print("ERR502: Error, ext_buttress_y_position {:0.3f} is too big compare to ext_buttress_x_distance {:0.3f}, ext_buttress_x_width {:0.3f}, bell_face_width {:0.3f}, ext_buttress_y_length {:0.3f} and base_radius {:0.3f}".format(c['ext_buttress_y_position'], c['ext_buttress_x_distance'], c['ext_buttress_x_width'], c['bell_face_width'], c['ext_buttress_y_length'], c['base_radius']))
+      six.print_(("ERR502: Error, ext_buttress_y_position {:0.3f} is too big compare to ext_buttress_x_distance {:0.3f}, ext_buttress_x_width {:0.3f}, bell_face_width {:0.3f}, ext_buttress_y_length {:0.3f} and base_radius {:0.3f}".format(c['ext_buttress_y_position'], c['ext_buttress_x_distance'], c['ext_buttress_x_width'], c['bell_face_width'], c['ext_buttress_y_length'], c['base_radius'])))
       sys.exit(2)
     # ext_buttress_face_int_corner_length
     if(c['ext_buttress_face_int_corner_length']>c['ext_buttress_z_position']):
-      print("ERR507: Error, ext_buttress_face_int_corner_length {:0.3f} must be smaller than ext_buttress_z_position {:0.3f}".format(c['ext_buttress_face_int_corner_length'], c['ext_buttress_z_position']))
+      six.print_(("ERR507: Error, ext_buttress_face_int_corner_length {:0.3f} must be smaller than ext_buttress_z_position {:0.3f}".format(c['ext_buttress_face_int_corner_length'], c['ext_buttress_z_position'])))
       sys.exit(2)
     # ext_buttress_face_ext_corner_length
     if(c['ext_buttress_face_ext_corner_length']>c['bell_face_height']+c['leg_length']-c['ext_buttress_z_length']):
-      print("ext_buttress_face_ext_corner_length {:0.3f} is too big compare to bell_face_height {:0.3f}, leg_length {:0.3f} and ext_buttress_z_length {:0.3f}".format(c['ext_buttress_face_ext_corner_length'], c['bell_face_height'], c['leg_length'], c['ext_buttress_z_length']))
+      six.print_(("ext_buttress_face_ext_corner_length {:0.3f} is too big compare to bell_face_height {:0.3f}, leg_length {:0.3f} and ext_buttress_z_length {:0.3f}".format(c['ext_buttress_face_ext_corner_length'], c['bell_face_height'], c['leg_length'], c['ext_buttress_z_length'])))
       sys.exit(2)
     # ext_buttress_face_bump_length
     if(c['ext_buttress_face_bump_length']>c['ext_buttress_y_position']+c['ext_buttress_y_length']):
-      print("ERR515: Error, ext_buttress_face_bump_length {:0.3f} is too big compare to ext_buttress_y_position {:0.3f} and ext_buttress_y_length {:0.3f}".format(c['ext_buttress_face_bump_length'], c['ext_buttress_y_position'], c['ext_buttress_y_length']))
+      six.print_(("ERR515: Error, ext_buttress_face_bump_length {:0.3f} is too big compare to ext_buttress_y_position {:0.3f} and ext_buttress_y_length {:0.3f}".format(c['ext_buttress_face_bump_length'], c['ext_buttress_y_position'], c['ext_buttress_y_length'])))
       sys.exit(2)
     # ext_buttress_base_int_corner_length
     if(c['ext_buttress_base_int_corner_length']>c['ext_buttress_y_position']):
-      print("ERR519: Error, ext_buttress_base_int_corner_length {:0.3f} must be smaller than ext_buttress_y_position {:0.3f}".format(c['ext_buttress_base_int_corner_length'], c['ext_buttress_y_position']))
+      six.print_(("ERR519: Error, ext_buttress_base_int_corner_length {:0.3f} must be smaller than ext_buttress_y_position {:0.3f}".format(c['ext_buttress_base_int_corner_length'], c['ext_buttress_y_position'])))
       sys.exit(2)
     # ext_buttress_base_ext_corner_length
     if(c['ext_buttress_base_ext_corner_length']>c['base_radius']-(c['bell_face_width']/2.0+c['ext_buttress_y_position']+c['ext_buttress_y_length'])):
-      print("ERR523: Error, ext_buttress_base_ext_corner_length {:0.3f} is too big compare to base_radius {:0.3f}, bell_face_width {:0.3f}, ext_buttress_y_position {:0.3f} and ext_buttress_y_length {:0.3f}".format(c['ext_buttress_base_ext_corner_length'], c['base_radius'], c['bell_face_width'], c['ext_buttress_y_position'], c['ext_buttress_y_length']))
+      six.print_(("ERR523: Error, ext_buttress_base_ext_corner_length {:0.3f} is too big compare to base_radius {:0.3f}, bell_face_width {:0.3f}, ext_buttress_y_position {:0.3f} and ext_buttress_y_length {:0.3f}".format(c['ext_buttress_base_ext_corner_length'], c['base_radius'], c['bell_face_width'], c['ext_buttress_y_position'], c['ext_buttress_y_length'])))
       sys.exit(2)
     # ext_buttress_base_bump_length
     if(c['ext_buttress_base_bump_length']>c['ext_buttress_z_position']+c['ext_buttress_z_length']):
-      print("ERR527: Error, ext_buttress_base_bump_length {:0.3f} is too big compare to ext_buttress_z_position {:0.3f} and ext_buttress_z_length {:0.3f}".format(c['ext_buttress_base_bump_length'], c['ext_buttress_z_position'], c['ext_buttress_z_length']))
+      six.print_(("ERR527: Error, ext_buttress_base_bump_length {:0.3f} is too big compare to ext_buttress_z_position {:0.3f} and ext_buttress_z_length {:0.3f}".format(c['ext_buttress_base_bump_length'], c['ext_buttress_z_position'], c['ext_buttress_z_length'])))
       sys.exit(2)
     # ext_buttress_arc_height
     if(abs(c['ext_buttress_arc_height'])>max(c['ext_buttress_z_length'], c['ext_buttress_y_length'])):
-      print("ERR531: Error, ext_buttress_arc_height {:0.3f} absolute value is too big compare to ext_buttress_z_length {:0.3f} and ext_buttress_y_length {:0.3f}".format(c['ext_buttress_arc_height'], c['ext_buttress_z_length'], c['ext_buttress_y_length']))
+      six.print_(("ERR531: Error, ext_buttress_arc_height {:0.3f} absolute value is too big compare to ext_buttress_z_length {:0.3f} and ext_buttress_y_length {:0.3f}".format(c['ext_buttress_arc_height'], c['ext_buttress_z_length'], c['ext_buttress_y_length'])))
       sys.exit(2)
     # ext_buttress_smoothing_radius
     if(c['ext_buttress_smoothing_radius']>max(c['ext_buttress_face_bump_length'], c['ext_buttress_base_bump_length'])):
-      print("ERR535: Error, ext_buttress_smoothing_radius {:0.3f} is too big compare to ext_buttress_face_bump_length {:0.3f} and ext_buttress_base_bump_length {:0.3f}".format(c['ext_buttress_smoothing_radius'], c['ext_buttress_face_bump_length'], c['ext_buttress_base_bump_length']))
+      six.print_(("ERR535: Error, ext_buttress_smoothing_radius {:0.3f} is too big compare to ext_buttress_face_bump_length {:0.3f} and ext_buttress_base_bump_length {:0.3f}".format(c['ext_buttress_smoothing_radius'], c['ext_buttress_face_bump_length'], c['ext_buttress_base_bump_length'])))
       sys.exit(2)
   # hollow_z_height
   if(c['hollow_z_height']>c['bell_face_height']):
-    print("ERR539: Error, hollow_z_height {:0.3f} must be smaller than bell_face_height {:0.3f}".format(c['hollow_z_height'], c['bell_face_height']))
+    six.print_(("ERR539: Error, hollow_z_height {:0.3f} must be smaller than bell_face_height {:0.3f}".format(c['hollow_z_height'], c['bell_face_height'])))
     sys.exit(2)
   # hollow_y_width
   if(c['hollow_y_width']<2*c['bell_cnc_router_bit_radius']):
-    print("ERR543: Error, hollow_y_width {:0.3f} is too small compare to bell_cnc_router_bit_radius {:0.3f}".format(c['hollow_y_width'], c['bell_cnc_router_bit_radius']))
+    six.print_(("ERR543: Error, hollow_y_width {:0.3f} is too small compare to bell_cnc_router_bit_radius {:0.3f}".format(c['hollow_y_width'], c['bell_cnc_router_bit_radius'])))
     sys.exit(2)
   if(c['hollow_y_width']>c['bell_face_width']-2*c['face_thickness']):
-    print("ERR546: Error, hollow_y_width {:0.3f} is too big compare to bell_face_width {:0.3f} and face_thickness {:0.3f}".format(c['hollow_y_width'], c['bell_face_width'], c['face_thickness']))
+    six.print_(("ERR546: Error, hollow_y_width {:0.3f} is too big compare to bell_face_width {:0.3f} and face_thickness {:0.3f}".format(c['hollow_y_width'], c['bell_face_width'], c['face_thickness'])))
     sys.exit(2)
   # hollow_spare_width
   if(c['hollow_spare_width']>c['bell_face_width']/2-c['face_thickness']-c['hollow_y_width']/2.0):
-    print("ERR550: Error, hollow_spare_width {:0.3f} is too big compare to bell_face_width {:0.3f}, face_thickness {:0.3f} and hollow_y_width {:0.3f}".format(c['hollow_spare_width'], c['bell_face_width'], c['face_thickness'], c['hollow_y_width']))
+    six.print_(("ERR550: Error, hollow_spare_width {:0.3f} is too big compare to bell_face_width {:0.3f}, face_thickness {:0.3f} and hollow_y_width {:0.3f}".format(c['hollow_spare_width'], c['bell_face_width'], c['face_thickness'], c['hollow_y_width'])))
     sys.exit(2)
   # base_hole_nb
   if(c['base_hole_nb']>0):
     # base_hole_diameter
     c['base_hole_radius'] = c['base_hole_diameter']/2.0
     if(c['base_hole_radius']<radian_epsilon):
-      print("ERR556: Error, base_hole_radius {:0.3f} must be strictly positive".format(c['base_hole_radius']))
+      six.print_(("ERR556: Error, base_hole_radius {:0.3f} must be strictly positive".format(c['base_hole_radius'])))
       sys.exit(2)
     # base_hole_position_diameter
     c['base_hole_position_radius'] = c['base_hole_position_diameter']/2.0
     if(c['base_hole_position_radius']==0):
       c['base_hole_position_radius'] = c['base_radius'] - 2*c['base_hole_radius']
     if(c['base_hole_position_radius']<c['bell_face_width']/2.0):
-      print("ERR564: Error, base_hole_position_radius {:0.3f} is too small compare to bell_face_width {:0.3f}".format(c['base_hole_position_radius'], c['bell_face_width']))
+      six.print_(("ERR564: Error, base_hole_position_radius {:0.3f} is too small compare to bell_face_width {:0.3f}".format(c['base_hole_position_radius'], c['bell_face_width'])))
       sys.exit(2)
     if(c['base_hole_position_radius']>c['base_radius']-c['base_hole_radius']):
-      print("ERR567: Error, base_hole_position_radius {:0.3f} is too big compare to base_radius {:0.3f} and base_hole_radius {:0.3f}".format(c['base_hole_position_radius'], c['base_radius'], c['base_hole_radius']))
+      six.print_(("ERR567: Error, base_hole_position_radius {:0.3f} is too big compare to base_radius {:0.3f} and base_hole_radius {:0.3f}".format(c['base_hole_position_radius'], c['base_radius'], c['base_hole_radius'])))
       sys.exit(2)
     # base_hole_angle
   # y_hole_diameter
@@ -471,68 +472,68 @@ def bell_constraint_check(c):
   if(c['y_hole_radius']>0):
     # y_hole_z_top_position
     if(abs(c['y_hole_z_top_position'])>c['bell_face_height']):
-      print("ERR575: Error, y_hole_z_top_position {:0.3f} absolute value is too big compare to bell_face_height {:0.3f}".format(c['y_hole_z_top_position'], c['bell_face_height']))
+      six.print_(("ERR575: Error, y_hole_z_top_position {:0.3f} absolute value is too big compare to bell_face_height {:0.3f}".format(c['y_hole_z_top_position'], c['bell_face_height'])))
       sys.exit(2)
     if(c['y_hole_z_top_position']>0):
       if(c['y_hole_z_top_position']<c['int_buttress_z_width']+c['y_hole_radius']):
-        print("ERR580: Error, positive y_hole_z_top_position {:0.3f} is too small compare to int_buttress_z_width {:0.3f} and y_hole_radius {:0.3f}".format(c['y_hole_z_top_position'], c['int_buttress_z_width'], c['y_hole_radius']))
+        six.print_(("ERR580: Error, positive y_hole_z_top_position {:0.3f} is too small compare to int_buttress_z_width {:0.3f} and y_hole_radius {:0.3f}".format(c['y_hole_z_top_position'], c['int_buttress_z_width'], c['y_hole_radius'])))
         sys.exit(2)
     else:
       if(c['y_hole_z_top_position']>-1*c['y_hole_radius']):
-        print("ERR584: Error, negative y_hole_z_top_position {:0.3f} must be smaller than y_hole_radius {:0.3f}".format(c['y_hole_z_top_position'], -1*c['y_hole_radius']))
+        six.print_(("ERR584: Error, negative y_hole_z_top_position {:0.3f} must be smaller than y_hole_radius {:0.3f}".format(c['y_hole_z_top_position'], -1*c['y_hole_radius'])))
         sys.exit(2)
     # y_hole_z_bottom_position
     if(abs(c['y_hole_z_bottom_position'])>c['bell_face_height']):
-      print("ERR575: Error, y_hole_z_bottom_position {:0.3f} absolute value is too big compare to bell_face_height {:0.3f}".format(c['y_hole_z_bottom_position'], c['bell_face_height']))
+      six.print_(("ERR575: Error, y_hole_z_bottom_position {:0.3f} absolute value is too big compare to bell_face_height {:0.3f}".format(c['y_hole_z_bottom_position'], c['bell_face_height'])))
       sys.exit(2)
     if(c['y_hole_z_bottom_position']>0):
       if(c['y_hole_z_bottom_position']<c['int_buttress_z_width']+c['y_hole_radius']):
-        print("ERR580: Error, positive y_hole_z_bottom_position {:0.3f} is too small compare to int_buttress_z_width {:0.3f} and y_hole_radius {:0.3f}".format(c['y_hole_z_bottom_position'], c['int_buttress_z_width'], c['y_hole_radius']))
+        six.print_(("ERR580: Error, positive y_hole_z_bottom_position {:0.3f} is too small compare to int_buttress_z_width {:0.3f} and y_hole_radius {:0.3f}".format(c['y_hole_z_bottom_position'], c['int_buttress_z_width'], c['y_hole_radius'])))
         sys.exit(2)
     else:
       if(c['y_hole_z_bottom_position']>-1*c['y_hole_radius']):
-        print("ERR584: Error, negative y_hole_z_bottom_position {:0.3f} must be smaller than y_hole_radius {:0.3f}".format(c['y_hole_z_bottom_position'], -1*c['y_hole_radius']))
+        six.print_(("ERR584: Error, negative y_hole_z_bottom_position {:0.3f} must be smaller than y_hole_radius {:0.3f}".format(c['y_hole_z_bottom_position'], -1*c['y_hole_radius'])))
         sys.exit(2)
     # y_hole_x_position
     if(c['y_hole_x_position']<c['y_hole_radius']):
-      print("ERR588: Error, y_hole_x_position {:0.3f} is too small compare to y_hole_radius {:0.3f}".format(c['y_hole_x_position'], c['y_hole_radius']))
+      six.print_(("ERR588: Error, y_hole_x_position {:0.3f} is too small compare to y_hole_radius {:0.3f}".format(c['y_hole_x_position'], c['y_hole_radius'])))
       sys.exit(2)
     if(c['y_hole_x_position']>c['bell_face_width']/2.0-c['side_thickness']):
-      print("ERR591: Error, y_hole_x_position {:0.3f} is too big compare to bell_face_width {:0.3f} and side_thickness {:0.3f}".format(c['y_hole_x_position'], c['bell_face_width'], c['side_thickness']))
+      six.print_(("ERR591: Error, y_hole_x_position {:0.3f} is too big compare to bell_face_width {:0.3f} and side_thickness {:0.3f}".format(c['y_hole_x_position'], c['bell_face_width'], c['side_thickness'])))
       sys.exit(2)
   # x_hole_diameter
   c['x_hole_radius'] = c['x_hole_diameter']/2.0
   if(c['x_hole_radius']>0):
     # x_hole_z_top_position
     if(abs(c['x_hole_z_top_position'])>c['bell_face_height']):
-      print("ERR598: Error, x_hole_z_top_position {:0.3f} absolute value is too big compare to bell_face_height {:0.3f}".format(c['x_hole_z_top_position'], c['bell_face_height']))
+      six.print_(("ERR598: Error, x_hole_z_top_position {:0.3f} absolute value is too big compare to bell_face_height {:0.3f}".format(c['x_hole_z_top_position'], c['bell_face_height'])))
       sys.exit(2)
     if(c['x_hole_z_top_position']>0):
       if(c['x_hole_z_top_position']<c['int_buttress_z_width']+c['x_hole_radius']):
-        print("ERR580: Error, positive x_hole_z_top_position {:0.3f} is too small compare to int_buttress_z_width {:0.3f} and x_hole_radius {:0.3f}".format(c['x_hole_z_top_position'], c['int_buttress_z_width'], c['x_hole_radius']))
+        six.print_(("ERR580: Error, positive x_hole_z_top_position {:0.3f} is too small compare to int_buttress_z_width {:0.3f} and x_hole_radius {:0.3f}".format(c['x_hole_z_top_position'], c['int_buttress_z_width'], c['x_hole_radius'])))
         sys.exit(2)
     else:
       if(c['x_hole_z_top_position']>-1*c['x_hole_radius']):
-        print("ERR584: Error, negative x_hole_z_top_position {:0.3f} must be smaller than x_hole_radius {:0.3f}".format(c['x_hole_z_top_position'], -1*c['x_hole_radius']))
+        six.print_(("ERR584: Error, negative x_hole_z_top_position {:0.3f} must be smaller than x_hole_radius {:0.3f}".format(c['x_hole_z_top_position'], -1*c['x_hole_radius'])))
         sys.exit(2)
     # x_hole_z_bottom_position
     if(abs(c['x_hole_z_bottom_position'])>c['bell_face_height']):
-      print("ERR598: Error, x_hole_z_bottom_position {:0.3f} absolute value is too big compare to bell_face_height {:0.3f}".format(c['x_hole_z_bottom_position'], c['bell_face_height']))
+      six.print_(("ERR598: Error, x_hole_z_bottom_position {:0.3f} absolute value is too big compare to bell_face_height {:0.3f}".format(c['x_hole_z_bottom_position'], c['bell_face_height'])))
       sys.exit(2)
     if(c['x_hole_z_bottom_position']>0):
       if(c['x_hole_z_bottom_position']<c['int_buttress_z_width']+c['x_hole_radius']):
-        print("ERR580: Error, positive x_hole_z_bottom_position {:0.3f} is too small compare to int_buttress_z_width {:0.3f} and x_hole_radius {:0.3f}".format(c['x_hole_z_bottom_position'], c['int_buttress_z_width'], c['x_hole_radius']))
+        six.print_(("ERR580: Error, positive x_hole_z_bottom_position {:0.3f} is too small compare to int_buttress_z_width {:0.3f} and x_hole_radius {:0.3f}".format(c['x_hole_z_bottom_position'], c['int_buttress_z_width'], c['x_hole_radius'])))
         sys.exit(2)
     else:
       if(c['x_hole_z_bottom_position']>-1*c['x_hole_radius']):
-        print("ERR584: Error, negative x_hole_z_bottom_position {:0.3f} must be smaller than x_hole_radius {:0.3f}".format(c['x_hole_z_bottom_position'], -1*c['x_hole_radius']))
+        six.print_(("ERR584: Error, negative x_hole_z_bottom_position {:0.3f} must be smaller than x_hole_radius {:0.3f}".format(c['x_hole_z_bottom_position'], -1*c['x_hole_radius'])))
         sys.exit(2)
     # x_hole_y_position
     if(c['x_hole_y_position']<c['x_hole_radius']):
-      print("ERR588: Error, x_hole_y_position {:0.3f} is too small compare to x_hole_radius {:0.3f}".format(c['x_hole_y_position'], c['x_hole_radius']))
+      six.print_(("ERR588: Error, x_hole_y_position {:0.3f} is too small compare to x_hole_radius {:0.3f}".format(c['x_hole_y_position'], c['x_hole_radius'])))
       sys.exit(2)
     if(c['x_hole_y_position']>c['bell_face_width']/2.0-c['side_thickness']):
-      print("ERR591: Error, x_hole_y_position {:0.3f} is too big compare to bell_face_width {:0.3f} and side_thickness {:0.3f}".format(c['x_hole_y_position'], c['bell_face_width'], c['side_thickness']))
+      six.print_(("ERR591: Error, x_hole_y_position {:0.3f} is too big compare to bell_face_width {:0.3f} and side_thickness {:0.3f}".format(c['x_hole_y_position'], c['bell_face_width'], c['side_thickness'])))
       sys.exit(2)
   # z_hole_diameter
   c['z_hole_radius'] = c['z_hole_diameter']/2.0
@@ -542,18 +543,18 @@ def bell_constraint_check(c):
     c['z_hole_external_radius'] = 2*c['z_hole_radius']
   # z_hole_position_length
   if(c['z_hole_position_length']<math.sqrt(2)*c['z_hole_radius']):
-    print("ERR623: Error, z_hole_position_length {:0.3f} is too small compare to z_hole_radius {:0.3f}".format(c['z_hole_position_length'], c['z_hole_radius']))
+    six.print_(("ERR623: Error, z_hole_position_length {:0.3f} is too small compare to z_hole_radius {:0.3f}".format(c['z_hole_position_length'], c['z_hole_radius'])))
     sys.exit(2)
   if(c['z_hole_position_length']>c['bell_face_width']/2.0):
-    print("ERR626: Error, z_hole_position_length {:0.3f} is too big compare to bell_face_width {:0.3f}".format(c['z_hole_position_length'], c['bell_face_width']))
+    six.print_(("ERR626: Error, z_hole_position_length {:0.3f} is too big compare to bell_face_width {:0.3f}".format(c['z_hole_position_length'], c['bell_face_width'])))
     sys.exit(2)
   # bell_cnc_router_bit_radius
   if(c['bell_cnc_router_bit_radius']>min(c['face_thickness'], c['side_thickness'], c['base_thickness'])/2.0):
-    print("ERR634: Error, bell_cnc_router_bit_radius {:0.3f} is too big compare to face_thickness {:0.3f}, side_thickness {:0.3f} or base_thickness {:0.3f}".format(c['bell_cnc_router_bit_radius'], c['face_thickness'], c['side_thickness'], c['base_thickness']))
+    six.print_(("ERR634: Error, bell_cnc_router_bit_radius {:0.3f} is too big compare to face_thickness {:0.3f}, side_thickness {:0.3f} or base_thickness {:0.3f}".format(c['bell_cnc_router_bit_radius'], c['face_thickness'], c['side_thickness'], c['base_thickness'])))
     sys.exit(2)
   # bell_extra_cut_thickness
   if(c['bell_extra_cut_thickness']>min(c['bell_face_width'], c['bell_face_height'])/10.0):
-    print("ERR630: Error, bell_extra_cut_thickness {:0.3f} is too big compare to bell_face_width {:0.3f} and bell_face_height {:0.3f}".format(c['bell_extra_cut_thickness'], c['bell_face_width'], c['bell_face_height']))
+    six.print_(("ERR630: Error, bell_extra_cut_thickness {:0.3f} is too big compare to bell_face_width {:0.3f} and bell_face_height {:0.3f}".format(c['bell_extra_cut_thickness'], c['bell_face_width'], c['bell_face_height'])))
     sys.exit(2)
   ## intermediate parameters
   c['f_w2'] = c['bell_face_width']/2.0
@@ -896,7 +897,7 @@ def bell_cli_return_type(return_type, c):
   elif(return_type=='figures_3dconf_info'):
     r_b = (figures['part_list'], assembly_conf['bell_assembly_conf1'], b_info)
   else:
-    print("ERR508: Error the return_type {:s} is unknown".format(return_type))
+    six.print_(("ERR508: Error the return_type {:s} is unknown".format(return_type)))
     sys.exit(2)
   return(r_b)
 

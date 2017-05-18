@@ -29,7 +29,7 @@ It has been created to split the too large bell.py file into two smaller files, 
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import cnc25d_api
+from . import cnc25d_api
 #cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -47,7 +47,8 @@ import math
 #from FreeCAD import Base
 #
 # cnc25d
-import small_geometry
+from . import small_geometry
+import six
 
 
 ################################################################
@@ -134,8 +135,8 @@ def bell_face_outline(ai_c):
   lAC = math.sqrt(lAB**2+lBC**2)
   cos_aBAC = float(lAB)/lAC
   if(abs(cos_aBAC)>1):
-    print("ERR063: Error, cos_aBAC {:0.3f} is out of the range -1..1".format(cos_aBAC))
-    print("dbg064: lAC {:0.3f}  lAB {:0.3f}".format(lAC, lAB))
+    six.print_(("ERR063: Error, cos_aBAC {:0.3f} is out of the range -1..1".format(cos_aBAC)))
+    six.print_(("dbg064: lAC {:0.3f}  lAB {:0.3f}".format(lAC, lAB)))
     sys.exit(2)
   aBAC = math.acos(cos_aBAC)
   #lAD = math.sqrt(lAC**2-lCD**2)
@@ -166,7 +167,7 @@ def bell_face_outline(ai_c):
     # angle (Gx, GH)
     axGH = math.atan2(Hy-Gy, Hx-Gx)
     if(abs(axGH+leg_ext_axle_angle)>radian_epsilon): # check axGH
-      print("ERR097: Error, axGH {:0.3f} is not equal to -1*leg_ext_axle_angle {:0.3f}".format(axGH, leg_ext_axle_angle))
+      six.print_(("ERR097: Error, axGH {:0.3f} is not equal to -1*leg_ext_axle_angle {:0.3f}".format(axGH, leg_ext_axle_angle)))
       sys.exit(2)
     # angle (Gx, GE)
     axGE = math.atan2(Ey-Gy, Ex-Gx)
@@ -359,12 +360,12 @@ def bell_base_main_hole_outline(ai_c):
     lCB = math.sqrt(lAB**2+lAC**2-2*lAB*lAC*math.cos(aBAC)) # law of cosines in the triangle ABC
     cos_aACB = (lCB**2+lAC**2-lAB**2)/(2*lCB*lAC)
     if(abs(cos_aACB)>1):
-      print("ERR359: Error, cos_aACB {:0.3f} is out of the range -1..1".format(cos_aACB))
+      six.print_(("ERR359: Error, cos_aACB {:0.3f} is out of the range -1..1".format(cos_aACB)))
       sys.exit(2)
     aACB = math.acos(cos_aACB)
     cos_aBCD = lCD/lCB
     if(abs(cos_aBCD)>1):
-      print("ERR364: Error, cos_aBCD {:0.3f} is out of the range -1..1".format(cos_aBCD))
+      six.print_(("ERR364: Error, cos_aBCD {:0.3f} is out of the range -1..1".format(cos_aBCD)))
       sys.exit(2)
     aBCD = math.acos(cos_aBCD)
     aACD = aACB + aBCD
@@ -581,7 +582,7 @@ def bell_external_buttress(ai_c, ai_type):
   elif(ai_type=='side'):
     wall_thickness = ai_c['side_thickness']
   else:
-    print("ERR527: Error, ai_type {:s} doesn't exist".format(ai_type))
+    six.print_(("ERR527: Error, ai_type {:s} doesn't exist".format(ai_type)))
     sys.exit(2)
   ### outline construction
   b_p = {}

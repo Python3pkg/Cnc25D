@@ -38,6 +38,7 @@ FREECADPATH=['/usr/lib/freecad/lib'] # add the path to the file FreeCAD.so to th
 ################################################################
 
 import sys, os
+import six
 
 ################################################################
 # function
@@ -61,7 +62,7 @@ def importing_freecad():
         freecad_path=p
     if(freecad_path==''):
       print("ERR070: Error, the FreeCAD library path has not been found!")
-      print("Add the path of the directory containing FreeCAD.so to the variable FREECADPATH in the file {:s}".format(__FILE__))
+      six.print_(("Add the path of the directory containing FreeCAD.so to the variable FREECADPATH in the file {:s}".format(__FILE__)))
       sys.exit(2)
     #print("dbg101: add FREECADPATH to sys.path")
     sys.path.append(freecad_path)
@@ -77,6 +78,6 @@ def importing_freecad():
 
 if(__name__ == "__main__"):
   importing_freecad()
-  print("FreeCAD.Version:", FreeCAD.Version())
+  six.print_(("FreeCAD.Version:", FreeCAD.Version()))
   FreeCAD.Console.PrintMessage("Hello from PrintMessage!\n")
 

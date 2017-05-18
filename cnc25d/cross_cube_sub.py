@@ -30,7 +30,8 @@ inheritance chain: cross_cube_sub.py > crest.py > cross_cube.py
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import cnc25d_api
+from . import cnc25d_api
+import six
 cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -167,30 +168,30 @@ def cross_cube_sub_face_check(ai_constraints):
   # axle_diameter
   cc_c['axle_radius'] = cc_c['axle_diameter']/2.0
   if(cc_c['axle_radius']<radian_epsilon):
-    print("ERR220: Error, axle_radius {:0.3f} must be strictly positive".format(cc_c['axle_radius']))
+    six.print_(("ERR220: Error, axle_radius {:0.3f} must be strictly positive".format(cc_c['axle_radius'])))
     sys.exit(2)
   # inter_axle_length
   if(cc_c['inter_axle_length']<0):
-    print("ERR224: Error, inter_axle_length {:0.3f} must be positive".format(cc_c['inter_axle_length']))
+    six.print_(("ERR224: Error, inter_axle_length {:0.3f} must be positive".format(cc_c['inter_axle_length'])))
     sys.exit(2)
   if(cc_c['inter_axle_length']<2*cc_c['axle_radius']):
-    print("WARN227: Warning, inter_axle_length {:0.3f} is smaller than the axle_diameter {:0.3f}".format(cc_c['inter_axle_length'], 2*cc_c['axle_radius']))
+    six.print_(("WARN227: Warning, inter_axle_length {:0.3f} is smaller than the axle_diameter {:0.3f}".format(cc_c['inter_axle_length'], 2*cc_c['axle_radius'])))
   # height_margin
   if(cc_c['height_margin']<radian_epsilon):
-    print("ERR229: Error, height_margin {:0.3f} must be strictly positive".format(cc_c['height_margin']))
+    six.print_(("ERR229: Error, height_margin {:0.3f} must be strictly positive".format(cc_c['height_margin'])))
     sys.exit(2)
   # top_thickness
   if(cc_c['top_thickness']<2*cc_c['cross_cube_cnc_router_bit_radius']):
-    print("ERR232: Error, top_thickness {:0.3f} is too small compare to cross_cube_cnc_router_bit_radius {:0.3f}".format(cc_c['top_thickness'], cc_c['cross_cube_cnc_router_bit_radius']))
+    six.print_(("ERR232: Error, top_thickness {:0.3f} is too small compare to cross_cube_cnc_router_bit_radius {:0.3f}".format(cc_c['top_thickness'], cc_c['cross_cube_cnc_router_bit_radius'])))
     sys.exit(2)
   if(cc_c['top_thickness']>(cc_c['inter_axle_length']+2*cc_c['axle_radius']+2*cc_c['height_margin'])/4.0):
-    print("ERR235: top_thickness {:0.3f} is too small compare to inter_axle_length {:0.3}, axle_radius {:0.3}, height_margin {:0.3}".format(cc_c['top_thickness'], cc_c['inter_axle_length'], cc_c['axle_radius'], cc_c['height_margin']))
+    six.print_(("ERR235: top_thickness {:0.3f} is too small compare to inter_axle_length {:0.3}, axle_radius {:0.3}, height_margin {:0.3}".format(cc_c['top_thickness'], cc_c['inter_axle_length'], cc_c['axle_radius'], cc_c['height_margin'])))
     sys.exit(2)
   cc_c['cube_height'] = cc_c['inter_axle_length'] + 2*cc_c['axle_radius'] + 2*cc_c['height_margin'] + 2*cc_c['top_thickness']
   ## width
   # cube_width
   if(cc_c['cube_width']<3*cc_c['axle_radius']):
-    print("ERR239: Error, cube_width {:0.3f} is too small compare to axle_radius {:0.3f}".format(cc_c['cube_width'], cc_c['axle_radius']))
+    six.print_(("ERR239: Error, cube_width {:0.3f} is too small compare to axle_radius {:0.3f}".format(cc_c['cube_width'], cc_c['axle_radius'])))
     sys.exit(2)
   # face_A1_thickness, face_A2_thickness, face_B1_thickness, face_B2_thickness
   face_thickness = [cc_c['face_A1_thickness'], cc_c['face_A2_thickness'], cc_c['face_B1_thickness'], cc_c['face_B2_thickness']]
@@ -200,13 +201,13 @@ def cross_cube_sub_face_check(ai_constraints):
     if(face_thickness[i]==0):
       face_thickness[i] = cc_c['top_thickness']
     if(face_thickness[i]<2*cc_c['cross_cube_cnc_router_bit_radius']):
-      print("ERR244: Error, face_thickness[{:d}] {:0.3f} is too small compare to cross_cube_cnc_router_bit_radius {:0.3f}".format(i, face_thickness[i], cc_c['cross_cube_cnc_router_bit_radius']))
+      six.print_(("ERR244: Error, face_thickness[{:d}] {:0.3f} is too small compare to cross_cube_cnc_router_bit_radius {:0.3f}".format(i, face_thickness[i], cc_c['cross_cube_cnc_router_bit_radius'])))
       sys.exit(2)
     if(face_thickness[i]>cc_c['cube_width']/2.0-cc_c['axle_radius']):
-      print("ERR247: Error, face_thickness[{:d}] {:0.3f} is too big compare to cube_width {:0.3f} and axle_radius {:0.3f}".format(i, face_thickness[i], cc_c['cube_width'], cc_c['axle_radius']))
+      six.print_(("ERR247: Error, face_thickness[{:d}] {:0.3f} is too big compare to cube_width {:0.3f} and axle_radius {:0.3f}".format(i, face_thickness[i], cc_c['cube_width'], cc_c['axle_radius'])))
       sys.exit(2)
     if(face_thickness[i]>cc_c['cube_width']/6.0):
-      print("ERR250: Error, face_thickness[{:d}] {:0.3f} is too big compare to cube_width {:0.3f}".format(i, face_thickness[i], cc_c['cube_width']))
+      six.print_(("ERR250: Error, face_thickness[{:d}] {:0.3f} is too big compare to cube_width {:0.3f}".format(i, face_thickness[i], cc_c['cube_width'])))
       sys.exit(2)
   cc_c['face_A1_thickness'] = face_thickness[0]
   cc_c['face_A2_thickness'] = face_thickness[1]
@@ -219,61 +220,61 @@ def cross_cube_sub_face_check(ai_constraints):
   if(cc_c['face_rod_hole_radius']>0):
     # face_rod_hole_h_position
     if(cc_c['face_rod_hole_h_position']<cc_c['face_rod_hole_radius']):
-      print("ERR257: Error, face_rod_hole_h_position {:0.3f} must be biggert than face_rod_hole_radius {:0.3f}".format(cc_c['face_rod_hole_h_position'], cc_c['face_rod_hole_radius']))
+      six.print_(("ERR257: Error, face_rod_hole_h_position {:0.3f} must be biggert than face_rod_hole_radius {:0.3f}".format(cc_c['face_rod_hole_h_position'], cc_c['face_rod_hole_radius'])))
       sys.exit(2)
     if(cc_c['max_face_thickness']+cc_c['face_rod_hole_h_position']+cc_c['face_rod_hole_radius']>cc_c['cube_width']/2.0-cc_c['axle_radius']):
-      print("ERR261: Error, face_rod_hole_h_position {:0.3f} is too big compare to max_face_thickness {:0.3f}, face_rod_hole_radius {:0.3f}, cube_width {:0.3f}, axle_radius {:0.3f}".format(cc_c['face_rod_hole_h_position'], cc_c['max_face_thickness'], cc_c['face_rod_hole_radius'], cc_c['cube_width'], cc_c['axle_radius']))
+      six.print_(("ERR261: Error, face_rod_hole_h_position {:0.3f} is too big compare to max_face_thickness {:0.3f}, face_rod_hole_radius {:0.3f}, cube_width {:0.3f}, axle_radius {:0.3f}".format(cc_c['face_rod_hole_h_position'], cc_c['max_face_thickness'], cc_c['face_rod_hole_radius'], cc_c['cube_width'], cc_c['axle_radius'])))
       sys.exit(2)
     # face_rod_hole_v_distance
     if(cc_c['face_rod_hole_v_distance']<2*cc_c['face_rod_hole_radius']):
-      print("ERR264: Error, face_rod_hole_v_distance {:0.3f} must be bigger than face_rod_hole_diameter {:0.3f}".format(cc_c['face_rod_hole_v_distance'], 2*cc_c['face_rod_hole_radius']))
+      six.print_(("ERR264: Error, face_rod_hole_v_distance {:0.3f} must be bigger than face_rod_hole_diameter {:0.3f}".format(cc_c['face_rod_hole_v_distance'], 2*cc_c['face_rod_hole_radius'])))
       sys.exit(2)
     if(cc_c['face_rod_hole_v_position']+cc_c['face_rod_hole_v_distance']+cc_c['face_rod_hole_radius']>cc_c['height_margin']+cc_c['inter_axle_length']):
-      print("ERR296: Error, face_rod_hole_v_distance {:0.3f} is too big compare to face_rod_hole_v_position {:0.3f}, face_rod_hole_radius {:0.3f}, height_margin {:0.3f} and inter_axle_length {:0.3f}".format(cc_c['face_rod_hole_v_distance'], cc_c['face_rod_hole_v_position'], cc_c['face_rod_hole_radius'], cc_c['height_margin'], cc_c['inter_axle_length']))
+      six.print_(("ERR296: Error, face_rod_hole_v_distance {:0.3f} is too big compare to face_rod_hole_v_position {:0.3f}, face_rod_hole_radius {:0.3f}, height_margin {:0.3f} and inter_axle_length {:0.3f}".format(cc_c['face_rod_hole_v_distance'], cc_c['face_rod_hole_v_position'], cc_c['face_rod_hole_radius'], cc_c['height_margin'], cc_c['inter_axle_length'])))
       sys.exit(2)
     # face_rod_hole_v_position
     if(cc_c['face_rod_hole_v_position']<cc_c['face_rod_hole_radius']):
-      print("ERR297: Error, face_rod_hole_v_position {:0.3f} must be bigger than face_rod_hole_radius {:0.3f}".format(cc_c['face_rod_hole_v_position'], cc_c['face_rod_hole_radius']))
+      six.print_(("ERR297: Error, face_rod_hole_v_position {:0.3f} must be bigger than face_rod_hole_radius {:0.3f}".format(cc_c['face_rod_hole_v_position'], cc_c['face_rod_hole_radius'])))
       sys.exit(2)
     if(cc_c['face_rod_hole_v_position']+cc_c['face_rod_hole_radius']>cc_c['height_margin']):
-      print("ERR267: Error, face_rod_hole_v_position {:0.3f} is too big compare to face_rod_hole_radius {:0.3f} and height_margin {:0.3f}".format(cc_c['face_rod_hole_v_position'], cc_c['face_rod_hole_radius'], cc_c['height_margin']))
+      six.print_(("ERR267: Error, face_rod_hole_v_position {:0.3f} is too big compare to face_rod_hole_radius {:0.3f} and height_margin {:0.3f}".format(cc_c['face_rod_hole_v_position'], cc_c['face_rod_hole_radius'], cc_c['height_margin'])))
       sys.exit(2)
   ## top
   ### hollow
   ## face hollow
   # face_hollow_leg_nb
   if(not(cc_c['face_hollow_leg_nb'] in [1, 4, 8])):
-    print("ERR281: Error, face_hollow_leg_nb {:d} accepts only the values: 1, 4 or 8".format(cc_c['face_hollow_leg_nb']))
+    six.print_(("ERR281: Error, face_hollow_leg_nb {:d} accepts only the values: 1, 4 or 8".format(cc_c['face_hollow_leg_nb'])))
     sys.exit(2)
   # face_hollow_border_width
   if(cc_c['face_hollow_border_width']==0):
     cc_c['face_hollow_border_width'] = cc_c['max_face_top_thickness']
   if(cc_c['face_hollow_border_width']<radian_epsilon):
-    print("ERR283: Error, face_hollow_border_width {:0.3f} must be strictly positive".format(cc_c['face_hollow_border_width']))
+    six.print_(("ERR283: Error, face_hollow_border_width {:0.3f} must be strictly positive".format(cc_c['face_hollow_border_width'])))
     sys.exit(2)
   # face_hollow_axle_width
   if(cc_c['face_hollow_axle_width']==0):
     cc_c['face_hollow_axle_width'] = cc_c['axle_radius']
   if(cc_c['face_hollow_axle_width']<radian_epsilon):
-    print("ERR292: Error, face_hollow_axle_width {:0.3f} must be strictly positive".format(cc_c['face_hollow_axle_width']))
+    six.print_(("ERR292: Error, face_hollow_axle_width {:0.3f} must be strictly positive".format(cc_c['face_hollow_axle_width'])))
     sys.exit(2)
   # face_hollow_leg_width
   if(cc_c['face_hollow_leg_width']==0):
     cc_c['face_hollow_leg_width'] = max(cc_c['face_hollow_border_width'], cc_c['face_hollow_axle_width'])
   if(cc_c['face_hollow_leg_width']<radian_epsilon):
-    print("ERR297: Error, face_hollow_leg_width {:0.3f} must be strictly positive".format(cc_c['face_hollow_leg_width']))
+    six.print_(("ERR297: Error, face_hollow_leg_width {:0.3f} must be strictly positive".format(cc_c['face_hollow_leg_width'])))
     sys.exit(2)
   # face_hollow_smoothing_radius
   if(cc_c['face_hollow_smoothing_radius']==0):
     cc_c['face_hollow_smoothing_radius'] = cc_c['cube_width']/10.0
   if(cc_c['face_hollow_smoothing_radius']<cc_c['cross_cube_cnc_router_bit_radius']):
-    print("ERR302: Error, face_hollow_smoothing_radius {:0.3f} must be bigger than cross_cube_cnc_router_bit_radius {:0.3f}".format(cc_c['face_hollow_smoothing_radius'], cc_c['cross_cube_cnc_router_bit_radius']))
+    six.print_(("ERR302: Error, face_hollow_smoothing_radius {:0.3f} must be bigger than cross_cube_cnc_router_bit_radius {:0.3f}".format(cc_c['face_hollow_smoothing_radius'], cc_c['cross_cube_cnc_router_bit_radius'])))
     sys.exit(2)
   ### manufacturing
   # cross_cube_cnc_router_bit_radius
   # cross_cube_extra_cut_thickness
   if(abs(cc_c['cross_cube_extra_cut_thickness'])>min(cc_c['cube_width']/5.0, cc_c['cube_height']/4.0)/3.0):
-    print("ERR369: Error, cross_cube_extra_cut_thickness {:0.3} absolute value is too big compare to cube_width {:0.3f} and cube_height {:0.3f}".format(cc_c['cross_cube_extra_cut_thickness'], cc_c['cube_width'], cc_c['cube_height']))
+    six.print_(("ERR369: Error, cross_cube_extra_cut_thickness {:0.3} absolute value is too big compare to cube_width {:0.3f} and cube_height {:0.3f}".format(cc_c['cross_cube_extra_cut_thickness'], cc_c['cube_width'], cc_c['cube_height'])))
     sys.exit(2)
   # return
   return(cc_c)
@@ -294,55 +295,55 @@ def cross_cube_sub_top_check(ai_constraints):
   if(cc_c['top_rod_hole_radius']>0):
     # top_rod_hole_h_position
     if(cc_c['top_rod_hole_h_position']<cc_c['face_rod_hole_h_position']+cc_c['face_rod_hole_radius']+cc_c['top_rod_hole_radius']):
-      print("ERR273: Error, top_rod_hole_h_position {:0.3f} is too small compare to face_rod_hole_h_position {:0.3f}, face_rod_hole_radius {:0.3f} and top_rod_hole_radius {:0.3f}".format(cc_c['top_rod_hole_h_position'], cc_c['face_rod_hole_h_position'], cc_c['face_rod_hole_radius'], cc_c['top_rod_hole_radius']))
+      six.print_(("ERR273: Error, top_rod_hole_h_position {:0.3f} is too small compare to face_rod_hole_h_position {:0.3f}, face_rod_hole_radius {:0.3f} and top_rod_hole_radius {:0.3f}".format(cc_c['top_rod_hole_h_position'], cc_c['face_rod_hole_h_position'], cc_c['face_rod_hole_radius'], cc_c['top_rod_hole_radius'])))
       sys.exit(2)
     if(cc_c['max_face_thickness']+cc_c['top_rod_hole_h_position']+cc_c['top_rod_hole_radius']>cc_c['cube_width']/2.0-cc_c['axle_radius']):
-      print("ERR276: Error, top_rod_hole_h_position {:0.3f} is too big compare to max_face_thickness {:0.3f}, top_rod_hole_radius {:0.3f}, cube_width {:0.3f} and axle_radius {:0.3f}".format(cc_c['top_rod_hole_h_position'], cc_c['max_face_thickness'], cc_c['top_rod_hole_radius'], cc_c['cube_width'], cc_c['axle_radius']))
+      six.print_(("ERR276: Error, top_rod_hole_h_position {:0.3f} is too big compare to max_face_thickness {:0.3f}, top_rod_hole_radius {:0.3f}, cube_width {:0.3f} and axle_radius {:0.3f}".format(cc_c['top_rod_hole_h_position'], cc_c['max_face_thickness'], cc_c['top_rod_hole_radius'], cc_c['cube_width'], cc_c['axle_radius'])))
       sys.exit(2)
   ## top hollow
   # top_hollow_leg_nb
   if(not(cc_c['top_hollow_leg_nb'] in [0, 1, 4, 8])):
-    print("ERR325: Error, top_hollow_leg_nb {:d} accepts only the values: 0, 1, 4, 8".format(cc_c['top_hollow_leg_nb']))
+    six.print_(("ERR325: Error, top_hollow_leg_nb {:d} accepts only the values: 0, 1, 4, 8".format(cc_c['top_hollow_leg_nb'])))
     sys.exit(2)
   # top_hollow_border_width
   if(cc_c['top_hollow_border_width']==0):
     cc_c['top_hollow_border_width'] = cc_c['max_face_thickness']
   if(cc_c['top_hollow_border_width']<radian_epsilon):
-    print("ERR332: Error, top_hollow_border_width {:0.3f} must be strictly positive".format(cc_c['top_hollow_border_width']))
+    six.print_(("ERR332: Error, top_hollow_border_width {:0.3f} must be strictly positive".format(cc_c['top_hollow_border_width'])))
     sys.exit(2)
   # top_hollow_leg_width
   if(cc_c['top_hollow_leg_width']==0):
     cc_c['top_hollow_leg_width'] = cc_c['top_hollow_border_width']
   if(cc_c['top_hollow_leg_width']<radian_epsilon):
-    print("ERR338: Error, top_hollow_leg_width {:0.3f} must be strictly positive".format(cc_c['top_hollow_leg_width']))
+    six.print_(("ERR338: Error, top_hollow_leg_width {:0.3f} must be strictly positive".format(cc_c['top_hollow_leg_width'])))
     sys.exit(2)
   # top_hollow_smoothing_radius
   if(cc_c['top_hollow_smoothing_radius']==0):
     cc_c['top_hollow_smoothing_radius'] = cc_c['cube_width']/10.0
   if(cc_c['top_hollow_smoothing_radius']<cc_c['cross_cube_cnc_router_bit_radius']):
-    print("ERR344: Error, top_hollow_smoothing_radius {:0.3f} must be bigger than cross_cube_cnc_router_bit_radius {:0.3f}".format(cc_c['top_hollow_smoothing_radius'], cc_c['cross_cube_cnc_router_bit_radius']))
+    six.print_(("ERR344: Error, top_hollow_smoothing_radius {:0.3f} must be bigger than cross_cube_cnc_router_bit_radius {:0.3f}".format(cc_c['top_hollow_smoothing_radius'], cc_c['cross_cube_cnc_router_bit_radius'])))
     sys.exit(2)
   ### axle
   # axle_length
   if(cc_c['axle_length']==0):
     cc_c['axle_length'] = 2*cc_c['cube_width']
   if(cc_c['axle_length']<cc_c['cube_width']):
-    print("ERR349: Error, axle_length {:0.3f} must be bigger than cube_width {:0.3f}".format(cc_c['axle_length'], cc_c['cube_width']))
+    six.print_(("ERR349: Error, axle_length {:0.3f} must be bigger than cube_width {:0.3f}".format(cc_c['axle_length'], cc_c['cube_width'])))
     sys.exit(2)
   # spacer_diameter
   cc_c['spacer_radius'] = cc_c['spacer_diameter']/2.0
   if(cc_c['spacer_radius']==0):
     cc_c['spacer_radius'] = 1.2*cc_c['axle_radius']
   if(cc_c['spacer_radius']<cc_c['axle_radius']+radian_epsilon):
-    print("ERR357: Error, spacer_radius {:0.3f} must be bigger than axle_radius {:0.3f}".format(cc_c['spacer_radius'], cc_c['axle_radius']))
+    six.print_(("ERR357: Error, spacer_radius {:0.3f} must be bigger than axle_radius {:0.3f}".format(cc_c['spacer_radius'], cc_c['axle_radius'])))
     sys.exit(2)
   if(cc_c['spacer_length']==0):
     cc_c['spacer_length'] = (cc_c['axle_length']-cc_c['cube_width'])/4.0
   if(cc_c['spacer_length']<radian_epsilon):
-    print("ERR360: Error, spacer_length {:0.3f} must be strictly positive".format(cc_c['spacer_length']))
+    six.print_(("ERR360: Error, spacer_length {:0.3f} must be strictly positive".format(cc_c['spacer_length'])))
     sys.exit(2)
   if(cc_c['spacer_length']>(cc_c['axle_length']-cc_c['cube_width'])/2.0):
-    print("ERR363: Error, spacer_length {:0.3f} is too big compare to axle_length {:0.3f} and cube_width {:0.3f}".format(cc_c['spacer_length'], cc_c['axle_length'], cc_c['cube_width']))
+    six.print_(("ERR363: Error, spacer_length {:0.3f} is too big compare to axle_length {:0.3f} and cube_width {:0.3f}".format(cc_c['spacer_length'], cc_c['axle_length'], cc_c['cube_width'])))
     sys.exit(2)
   # return
   return(cc_c)

@@ -33,6 +33,8 @@ In addition, it checks if FreeCAD is correctly installed on the host computer.
 
 import os, re, sys
 import subprocess
+import six
+from six.moves import input
 
 ##############################################################################
 # Checking FreeCAD installation
@@ -76,11 +78,11 @@ freecad_verion = freecad_verion.split(',')
 freecad_verion_major = int(freecad_verion[0])
 freecad_verion_minor = int(freecad_verion[1])
 if((freecad_verion_major==0)and(freecad_verion_minor<13)):
-  print("ERR056: Error, Your FreeCAD version is too old! You have {:d}.{:d} and 0.13 or newer is needed.".format(freecad_verion_major, freecad_verion_minor))
+  six.print_(("ERR056: Error, Your FreeCAD version is too old! You have {:d}.{:d} and 0.13 or newer is needed.".format(freecad_verion_major, freecad_verion_minor)))
   print("Please, install the latest FreeCAD version on your system and re-run this script.")
   sys.exit(1)
 #info
-print("The FreeCAD version {:d}.{:d} is installed on your system.".format(freecad_verion_major, freecad_verion_minor))
+six.print_(("The FreeCAD version {:d}.{:d} is installed on your system.".format(freecad_verion_major, freecad_verion_minor)))
 
 ### check if the FreeCAD Library can be imported
 
@@ -4014,8 +4016,8 @@ ceg_example_list={
 ceg_example_list_sorted_keys = sorted(ceg_example_list.keys())
 print("\nThis executable helps you to generate the following cnc25d script examples in the current directory:")
 for l_example in ceg_example_list_sorted_keys:
-  print("  +  {:s}".format(l_example))
-user_choice=raw_input("Do you want to generate all these upper files in the current directory? [yes/No] ")
+  six.print_(("  +  {:s}".format(l_example)))
+user_choice=input("Do you want to generate all these upper files in the current directory? [yes/No] ")
 if((user_choice=='yes')or(user_choice=='y')):
   for l_example in ceg_example_list_sorted_keys:
     fh_output = open(l_example, 'w')
@@ -4025,14 +4027,14 @@ if((user_choice=='yes')or(user_choice=='y')):
 else:
   print("Choose which cnc25d script example you want to generate in the current directory:")
   for l_example in ceg_example_list_sorted_keys:
-    print("cnc25d script example : {:s}".format(l_example))
-    user_choice=raw_input("Do you want to generate the file {:s} in the current directory? [yes/No] ".format(l_example))
+    six.print_(("cnc25d script example : {:s}".format(l_example)))
+    user_choice=input("Do you want to generate the file {:s} in the current directory? [yes/No] ".format(l_example))
     if((user_choice=='yes')or(user_choice=='y')):
       fh_output = open(l_example, 'w')
       fh_output.write(ceg_example_list[l_example])
       fh_output.close()
-      print(ceg_instructions.format(l_example, l_example, l_example))
+      six.print_((ceg_instructions.format(l_example, l_example, l_example)))
     else:
-      print("The script example {:s} has not been created.".format(l_example))
+      six.print_(("The script example {:s} has not been created.".format(l_example)))
 
 

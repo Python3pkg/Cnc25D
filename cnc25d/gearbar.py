@@ -30,7 +30,8 @@ You can also simulate or view of the gearbar and get a DXF, SVG or BRep file.
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import cnc25d_api
+from . import cnc25d_api
+import six
 cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -53,7 +54,7 @@ import Part
 #import svgwrite
 #from dxfwrite import DXFEngine
 # cnc25d
-import gear_profile
+from . import gear_profile
 
 ################################################################
 # inheritance from gear_profile
@@ -126,7 +127,7 @@ def gearbar_constraint_check(c):
   c['gearbar_hole_radius'] = float(c['gearbar_hole_diameter'])/2
   # c['gearbar_hole_height_position']
   if((c['gearbar_hole_height_position']+c['gearbar_hole_radius'])>c['gearbar_height']):
-    print("ERR215: Error, gearbar_hole_height_position {:0.3} and gearbar_hole_radius {:0.3f} are too big compare to gearbar_height {:0.3f} !".format(c['gearbar_hole_height_position'], c['gearbar_hole_radius'], c['gearbar_height']))
+    six.print_(("ERR215: Error, gearbar_hole_height_position {:0.3} and gearbar_hole_radius {:0.3f} are too big compare to gearbar_height {:0.3f} !".format(c['gearbar_hole_height_position'], c['gearbar_hole_radius'], c['gearbar_height'])))
     sys.exit(2)
   # c['gearbar_hole_increment']
   if(c['gearbar_hole_increment']==0):
@@ -156,7 +157,7 @@ def gearbar_constraint_check(c):
     bottom_land = gear_profile_parameters['g1_param']['bottom_land']
     top_land = gear_profile_parameters['g1_param']['top_land']
     if((top_land + full_positive_slope + bottom_land + full_negative_slope)!=c['pi_module']):
-      print("ERR269: Error with top_land {:0.3f}  full_positive_slope {:0.3f}  bottom_land {:0.3f}  full_negative_slope {:0.3f} and pi_module  {:0.3f}".format(top_land, full_positive_slope, bottom_land, full_negative_slope, c['pi_module']))
+      six.print_(("ERR269: Error with top_land {:0.3f}  full_positive_slope {:0.3f}  bottom_land {:0.3f}  full_negative_slope {:0.3f} and pi_module  {:0.3f}".format(top_land, full_positive_slope, bottom_land, full_negative_slope, c['pi_module'])))
       sys.exit(2)
     if(pfe==0):
       c['first_tooth_position'] = full_positive_slope + bottom_land + full_negative_slope + float(top_land)/2
@@ -168,7 +169,7 @@ def gearbar_constraint_check(c):
       c['first_tooth_position'] = float(bottom_land)/2 + full_negative_slope + float(top_land)/2
   else: # no gear_profile, just a circle
     if(c['gear_primitive_diameter']<radian_epsilon):
-      print("ERR885: Error, the no-gear-profile line outline length gear_primitive_diameter {:0.2f} is too small!".format(c['gear_primitive_diameter']))
+      six.print_(("ERR885: Error, the no-gear-profile line outline length gear_primitive_diameter {:0.2f} is too small!".format(c['gear_primitive_diameter'])))
       sys.exit(2)
     #c['g1_ix'] = c['center_position_x
     #c['g1_iy'] = c['center_position_y
@@ -180,11 +181,11 @@ def gearbar_constraint_check(c):
   ### check parameter coherence (part 2)
   # minimal_gear_profile_height
   if(c['minimal_gear_profile_height']<radian_epsilon):
-    print("ERR265: Error, minimal_gear_profile_height {:0.3f} is too small".format(c['minimal_gear_profile_height']))
+    six.print_(("ERR265: Error, minimal_gear_profile_height {:0.3f} is too small".format(c['minimal_gear_profile_height'])))
     sys.exit(2)
   # gearbar_hole_diameter
   if((c['gearbar_hole_height_position']+c['gearbar_hole_radius'])>c['minimal_gear_profile_height']):
-    print("ERR269: Error, gearbar_hole_height_position {:0.3f} and gearbar_hole_radius {:0.3f} are too big compare to minimal_gear_profile_height {:0.3f}".format(c['gearbar_hole_height_position'], c['gearbar_hole_radius'], c['minimal_gear_profile_height']))
+    six.print_(("ERR269: Error, gearbar_hole_height_position {:0.3f} and gearbar_hole_radius {:0.3f} are too big compare to minimal_gear_profile_height {:0.3f}".format(c['gearbar_hole_height_position'], c['gearbar_hole_radius'], c['minimal_gear_profile_height'])))
     sys.exit(2)
   # pi_module
   if(c['gearbar_hole_radius']>0):

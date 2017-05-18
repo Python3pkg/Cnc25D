@@ -28,7 +28,7 @@ cnc_cut_outline.py provides API functions to design 2.5D parts and create cuboid
 # python behavior
 ################################################################
 
-from __future__ import division # to get float division
+ # to get float division
 
 ################################################################
 # header for Python / FreeCAD compatibility
@@ -54,8 +54,9 @@ from __future__ import division # to get float division
 import math
 import sys, argparse
 #
-import design_help # just for get_effective_args()
-from small_geometry import *
+from . import design_help # just for get_effective_args()
+from .small_geometry import *
+import six
 
 ################################################################
 # ******** Sub-functions for the API ***********
@@ -69,7 +70,7 @@ def check_outline_format(ai_outline):
   # check if it is a format-B circle
   if(not isinstance(ai_outline, (tuple, list))):
     print("ERR937: Error, ai_outline must be a list or a tuple")
-    print("dbg072: ai_outline:", ai_outline)
+    six.print_(("dbg072: ai_outline:", ai_outline))
     sys.exit(2)
   # check if the outline contains at least on element
   if(len(ai_outline)==0):
@@ -79,8 +80,8 @@ def check_outline_format(ai_outline):
   if(isinstance(ai_outline[0], (tuple, list))): # general outline
     # checks on ai_outline for general outline
     if(len(ai_outline)<2):
-      print("ERR402: Error, the segment list must contain at least 2 elements. Currently, len(ai_outline) = {:d}".format(len(ai_outline)))
-      print("dbg082: ai_outline:", ai_outline)
+      six.print_(("ERR402: Error, the segment list must contain at least 2 elements. Currently, len(ai_outline) = {:d}".format(len(ai_outline))))
+      six.print_(("dbg082: ai_outline:", ai_outline))
       sys.exit(2)
     # check the first point
     len_first_point = len(ai_outline[0])
@@ -89,12 +90,12 @@ def check_outline_format(ai_outline):
     elif(len_first_point==3):
       r_outline_type = 2
     else:
-      print("ERR457: Error, the first point has an unexpected number of items {:d}".format(len_first_point))
+      six.print_(("ERR457: Error, the first point has an unexpected number of items {:d}".format(len_first_point)))
       #print("dbg093: ai_outline:", ai_outline)
       sys.exit(2)
   else: # circle outline
     if(len(ai_outline)!=3):
-      print("ERR758: Error, circle outline must be a list of 3 floats (or int)! Current len: {:d}".format(len(ai_outline)))
+      six.print_(("ERR758: Error, circle outline must be a list of 3 floats (or int)! Current len: {:d}".format(len(ai_outline))))
       sys.exit(2)
     r_outline_type = 0
   return(r_outline_type)
@@ -125,7 +126,7 @@ def reverse_outline(ai_outline):
       elif(len_p==4):
         is_arc = True
       else:
-        print("ERR257: Error, the segment has an unxepected number of items {:d}".format(len_p))
+        six.print_(("ERR257: Error, the segment has an unxepected number of items {:d}".format(len_p)))
         sys.exit(2)
     elif(outline_type==2):
       if(len_p==3):
@@ -133,7 +134,7 @@ def reverse_outline(ai_outline):
       elif(len_p==5):
         is_arc = True
       else:
-        print("ERR258: Error, the segment has an unxepected number of items {:d}".format(len_p))
+        six.print_(("ERR258: Error, the segment has an unxepected number of items {:d}".format(len_p)))
         sys.exit(2)
     #else:
     #  print("ERR557: Error, the outline_type is unexpected {:d}".format(outline_type))
@@ -179,7 +180,7 @@ def reverse_outline(ai_outline):
   if(outline_closed):
     if(outline_type==2):
       if(r_outline[0][2]!=0):
-        print("WARN567: Warning, the last router_bit request of the closed outline is not set to zero: {:0.2f}".format(r_outline[0][2]))
+        six.print_(("WARN567: Warning, the last router_bit request of the closed outline is not set to zero: {:0.2f}".format(r_outline[0][2])))
       r_outline[0]=(r_outline[0][0], r_outline[0][1], r_outline[-1][-1])
       last_segment =  list(r_outline[-1])
       last_segment[-1] = 0
@@ -203,22 +204,22 @@ def smooth_corner_line_line(ai_pre_point, ai_current_point, ai_post_point, ai_ro
   # corner angle
   #if(AG==0):
   if(AG<radian_epsilon):
-    print("ERR406: the length AG is null at point {:s} ({:0.2f}, {:0.2f}, {:0.2f})".format(ai_error_msg_id, AX, AY, ai_router_bit_request))
+    six.print_(("ERR406: the length AG is null at point {:s} ({:0.2f}, {:0.2f}, {:0.2f})".format(ai_error_msg_id, AX, AY, ai_router_bit_request)))
     sys.exit(1)
   #if(AH==0):
   if(AH<radian_epsilon):
-    print("ERR407: the length AH is null at point {:s} ({:0.2f}, {:0.2f}, {:0.2f})".format(ai_error_msg_id, AX, AY, ai_router_bit_request))
+    six.print_(("ERR407: the length AH is null at point {:s} ({:0.2f}, {:0.2f}, {:0.2f})".format(ai_error_msg_id, AX, AY, ai_router_bit_request)))
     sys.exit(1)
   #if(GH==0):
   if(GH<radian_epsilon):
-    print("ERR408: the length GH is null at point {:s} ({:0.2f}, {:0.2f}, {:0.2f})".format(ai_error_msg_id, AX, AY, ai_router_bit_request))
+    six.print_(("ERR408: the length GH is null at point {:s} ({:0.2f}, {:0.2f}, {:0.2f})".format(ai_error_msg_id, AX, AY, ai_router_bit_request)))
     sys.exit(1)
   # law of cosines
   #corner_angle = math.acos((AG**2+AH**2-GH**2)/(2*AH*AG))
   corner_cos = (AG**2+AH**2-GH**2)/(2*AH*AG)
   if(abs(corner_cos)>(1+radian_epsilon)):
-    print("ERR210: Error with math.acos {:0.5f}".format((AG**2+AH**2-GH**2)/(2*AH*AG)))
-    print("dbg211: AG {:0.3f}  AH {:0.3f}  GH {:0.3f}".format(AG, AH, GH))
+    six.print_(("ERR210: Error with math.acos {:0.5f}".format((AG**2+AH**2-GH**2)/(2*AH*AG))))
+    six.print_(("dbg211: AG {:0.3f}  AH {:0.3f}  GH {:0.3f}".format(AG, AH, GH)))
     sys.exit(2)
   elif(corner_cos>=1):
     corner_angle = 0
@@ -228,16 +229,16 @@ def smooth_corner_line_line(ai_pre_point, ai_current_point, ai_post_point, ai_ro
     corner_angle = math.acos(corner_cos)
   #print("dbg206: corner_angle:", corner_angle)
   if(corner_angle>math.pi-radian_epsilon):
-    print("WARN673: Warning, the corner angle {:s} is too flat and won't be smoothed!".format(ai_error_msg_id))
+    six.print_(("WARN673: Warning, the corner angle {:s} is too flat and won't be smoothed!".format(ai_error_msg_id)))
     r_outline = [(AX, AY)]
   elif(corner_angle<radian_epsilon):
-    print("WARN674: Warning, the corner angle {:s} is too acute and won't be smoothed!".format(ai_error_msg_id))
+    six.print_(("WARN674: Warning, the corner angle {:s} is too acute and won't be smoothed!".format(ai_error_msg_id)))
     r_outline = [(AX, AY)]
   else:
     # AE ( = AF = r/(tan(a/2) )
     AE = ai_router_bit_request/math.tan(corner_angle/2)
     if((AG<AE)or(AH<AE)):
-      print("WARN675: Warning, the segments of {:s} are too small to smooth the corner: AG={:0.2f} AH={:0.2f} AE={:0.2f}!".format(ai_error_msg_id, AG, AH, AE))
+      six.print_(("WARN675: Warning, the segments of {:s} are too small to smooth the corner: AG={:0.2f} AH={:0.2f} AE={:0.2f}!".format(ai_error_msg_id, AG, AH, AE)))
       r_outline = [(AX, AY)]
     else:
       # coordiantes of E and F
@@ -311,29 +312,29 @@ def enlarge_corner_line_line(ai_pre_point, ai_current_point, ai_post_point, ai_r
   # corner angle
   #if(AG==0):
   if(AG<radian_epsilon):
-    print("ERR506: the length AG is null at point {:s} ({:0.2f}, {:0.2f}, {:0.2f})".format(ai_error_msg_id, AX, AY, ai_router_bit_request))
+    six.print_(("ERR506: the length AG is null at point {:s} ({:0.2f}, {:0.2f}, {:0.2f})".format(ai_error_msg_id, AX, AY, ai_router_bit_request)))
     sys.exit(1)
   #if(AH==0):
   if(AH<radian_epsilon):
-    print("ERR507: the length AH is null at point {:s} ({:0.2f}, {:0.2f}, {:0.2f})".format(ai_error_msg_id, AX, AY, ai_router_bit_request))
+    six.print_(("ERR507: the length AH is null at point {:s} ({:0.2f}, {:0.2f}, {:0.2f})".format(ai_error_msg_id, AX, AY, ai_router_bit_request)))
     sys.exit(1)
   #if(GH==0):
   if(GH<radian_epsilon):
-    print("ERR508: the length GH is null at point {:s} ({:0.2f}, {:0.2f}, {:0.2f})".format(ai_error_msg_id, AX, AY, ai_router_bit_request))
+    six.print_(("ERR508: the length GH is null at point {:s} ({:0.2f}, {:0.2f}, {:0.2f})".format(ai_error_msg_id, AX, AY, ai_router_bit_request)))
     sys.exit(1)
   corner_angle = math.acos((AG**2+AH**2-GH**2)/(2*AH*AG))
   #print("dbg296: corner_angle:", corner_angle)
   if(corner_angle>math.pi-radian_epsilon):
-    print("WARN573: Warning, the corner angle {:s} is too flat and won't be enlarged!".format(ai_error_msg_id))
+    six.print_(("WARN573: Warning, the corner angle {:s} is too flat and won't be enlarged!".format(ai_error_msg_id)))
     r_outline = [(AX, AY)]
   elif(corner_angle<radian_epsilon):
-    print("WARN574: Warning, the corner angle {:s} is too acute and won't be enlarged!".format(ai_error_msg_id))
+    six.print_(("WARN574: Warning, the corner angle {:s} is too acute and won't be enlarged!".format(ai_error_msg_id)))
     r_outline = [(AX, AY)]
   elif(corner_angle>math.pi/2-radian_epsilon): # enlarge obtuse angle
     # AE ( = AF = 2*r*cos(a/2) )
     AE = 2*ai_router_bit_request*math.cos(corner_angle/2)
     if((AG<AE)or(AH<AE)):
-      print("WARN575: Warning, the segments of {:s} are too small to enlarge the obtuse corner: AG={:0.2f} AH={:0.2f} AE={:0.2f}!".format(ai_error_msg_id, AG, AH, AE))
+      six.print_(("WARN575: Warning, the segments of {:s} are too small to enlarge the obtuse corner: AG={:0.2f} AH={:0.2f} AE={:0.2f}!".format(ai_error_msg_id, AG, AH, AE)))
       r_outline = [(AX, AY)]
     else:
       # coordiantes of E and F
@@ -348,7 +349,7 @@ def enlarge_corner_line_line(ai_pre_point, ai_current_point, ai_post_point, ai_r
     AM = ai_router_bit_request/math.sin(corner_angle/2)
     #print("dbg503: AM:", AM)
     if((AG<AM)or(AH<AM)):
-      print("WARN578: Warning, the segments of {:s} are too small to enlarge the acute corner: AG={:0.2f} AH={:0.2f} AM={:0.2f}!".format(ai_error_msg_id, AG, AH, AM))
+      six.print_(("WARN578: Warning, the segments of {:s} are too small to enlarge the acute corner: AG={:0.2f} AH={:0.2f} AM={:0.2f}!".format(ai_error_msg_id, AG, AH, AM)))
       r_outline = [(AX, AY)]
     else:
       # coordiantes of M and N
@@ -517,16 +518,16 @@ def arc_middle(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_new_end1, ai_new_end2, ai_
   ID = math.sqrt((DX-IX)**2+(DY-IY)**2)
   IE = math.sqrt((EX-IX)**2+(EY-IY)**2)
   if((abs(IA-arc_radius)>radian_epsilon)or(abs(IB-arc_radius)>radian_epsilon)or(abs(IC-arc_radius)>radian_epsilon)):
-    print("ERR831: Error, in {:s}, I is not equidistant from A,B,C,D,E. IA={:0.2f} IB={:0.2f} IC={:0.2f}".format(ai_error_msg_id, IA, IB, IC))
+    six.print_(("ERR831: Error, in {:s}, I is not equidistant from A,B,C,D,E. IA={:0.2f} IB={:0.2f} IC={:0.2f}".format(ai_error_msg_id, IA, IB, IC)))
     sys.exit(2)
   if((abs(ID-IA)>radian_epsilon)or(abs(IE-IA)>radian_epsilon)):
-    print("ERR832: Error, in {:s}, I is not equidistant from A,B,C,D,E. IA={:0.2f} IB={:0.2f} IC={:0.2f} ID={:0.2f} IE={:0.2f}".format(error_msg_id, IA, IB, IC, ID, IE))
-    print("dbg414: AX {:0.2f}  AY {:0.2f}".format(AX,AY))
-    print("dbg424: BX {:0.2f}  BY {:0.2f}".format(BX,BY))
-    print("dbg434: CX {:0.2f}  CY {:0.2f}".format(CX,CY))
-    print("dbg444: DX {:0.2f}  DY {:0.2f}".format(DX,DY))
-    print("dbg454: EX {:0.2f}  EY {:0.2f}".format(EX,EY))
-    print("dbg464: IX {:0.2f}  IY {:0.2f}".format(IX,IY))
+    six.print_(("ERR832: Error, in {:s}, I is not equidistant from A,B,C,D,E. IA={:0.2f} IB={:0.2f} IC={:0.2f} ID={:0.2f} IE={:0.2f}".format(error_msg_id, IA, IB, IC, ID, IE)))
+    six.print_(("dbg414: AX {:0.2f}  AY {:0.2f}".format(AX,AY)))
+    six.print_(("dbg424: BX {:0.2f}  BY {:0.2f}".format(BX,BY)))
+    six.print_(("dbg434: CX {:0.2f}  CY {:0.2f}".format(CX,CY)))
+    six.print_(("dbg444: DX {:0.2f}  DY {:0.2f}".format(DX,DY)))
+    six.print_(("dbg454: EX {:0.2f}  EY {:0.2f}".format(EX,EY)))
+    six.print_(("dbg464: IX {:0.2f}  IY {:0.2f}".format(IX,IY)))
     sys.exit(2)
   # calculation of the angles d=(Ix, ID) and e=(Ix, IE)
   d = math.atan2(DY-IY, DX-IX)
@@ -540,21 +541,21 @@ def arc_middle(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_new_end1, ai_new_end2, ai_
     ue = math.fmod(e-u+4*math.pi, 2*math.pi)
   # correction because of calculation imprecision
   if(abs(ud)>2*math.pi-radian_epsilon):
-    print("WARN771: Warning in {:s}, the angle ud is corrected to zero because of presumed calculation imprecision!".format(error_msg_id))
+    six.print_(("WARN771: Warning in {:s}, the angle ud is corrected to zero because of presumed calculation imprecision!".format(error_msg_id)))
     ud = 0
   arc_middle_status = 1
   # check if E and F below to the arc segment A,B,C
   if((abs(uw)<abs(ud)-radian_epsilon)or(abs(uw)<abs(ue)-radian_epsilon)):
-    print("ERR441: Error, in {:s}, E or F are not on the arc segment A,B,C! uw={:0.2f} ud={:0.2f} ue={:0.2f}".format(error_msg_id, uw, ud, ue))
-    print("dbg927: A={:0.2f} {:0.2f}  B={:0.2f} {:0.2f}  C={:0.2f} {:0.2f}  D={:0.2f} {:0.2f}  E={:0.2f} {:0.2f}".format(AX,AY,BX,BY,CX,CY,DX,DY,EX,EY))
+    six.print_(("ERR441: Error, in {:s}, E or F are not on the arc segment A,B,C! uw={:0.2f} ud={:0.2f} ue={:0.2f}".format(error_msg_id, uw, ud, ue)))
+    six.print_(("dbg927: A={:0.2f} {:0.2f}  B={:0.2f} {:0.2f}  C={:0.2f} {:0.2f}  D={:0.2f} {:0.2f}  E={:0.2f} {:0.2f}".format(AX,AY,BX,BY,CX,CY,DX,DY,EX,EY)))
     #sys.exit(2)
     arc_middle_status = 2
   # check the orientation of E,F compare to A,B,C
   if(abs(ud)>abs(ue)):
-    print("dbg539: u {:0.3f}  uw {:0.3f}  w {:0.3f}  d {:0.3f}  e {:0.3f}".format(u, uw, w, d, e))
-    print("dbg540: AX {:0.3f}  AY {:0.3f}  BX {:0.3f}  BY {:0.3f}  CX {:0.3f}  CY {:0.3f}  DX {:0.3f}  DY {:0.3f}  EX {:0.3f}  EY {:0.3f}".format(AX, AY, BX, BY, CX, CY, DX, DY, EX, EY))
-    print("dbg541: ud {:0.3f}  ue {:0.3f}".format(ud, ue))
-    print("ERR442: Error, in {:s}, E,F have not the same orientation as A,B,C! ud={:0.2f} ue={:0.2f}".format(error_msg_id, ud, ue))
+    six.print_(("dbg539: u {:0.3f}  uw {:0.3f}  w {:0.3f}  d {:0.3f}  e {:0.3f}".format(u, uw, w, d, e)))
+    six.print_(("dbg540: AX {:0.3f}  AY {:0.3f}  BX {:0.3f}  BY {:0.3f}  CX {:0.3f}  CY {:0.3f}  DX {:0.3f}  DY {:0.3f}  EX {:0.3f}  EY {:0.3f}".format(AX, AY, BX, BY, CX, CY, DX, DY, EX, EY)))
+    six.print_(("dbg541: ud {:0.3f}  ue {:0.3f}".format(ud, ue)))
+    six.print_(("ERR442: Error, in {:s}, E,F have not the same orientation as A,B,C! ud={:0.2f} ue={:0.2f}".format(error_msg_id, ud, ue)))
     #sys.exit(2)
     arc_middle_status = 2
   # calculation of the angle de=(ID, IE)
@@ -563,7 +564,7 @@ def arc_middle(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_new_end1, ai_new_end2, ai_
   else:
     de = math.fmod(e-d+4*math.pi, 2*math.pi)
   if(arc_middle_status == 2):
-    print("dbg550: de {:0.3f}  arc_radius {:0.3f}".format(de, arc_radius))
+    six.print_(("dbg550: de {:0.3f}  arc_radius {:0.3f}".format(de, arc_radius)))
   # calculation of the angle f=(Ix, IF)=(Ix, ID)+(ID, IF)
   f = d + de/2
   # calculation of F
@@ -571,7 +572,7 @@ def arc_middle(ai_arc_pt1, ai_arc_pt2, ai_arc_pt3, ai_new_end1, ai_new_end2, ai_
   FY = IY+arc_radius*math.sin(f)
   # dummy F in case of error
   if(arc_middle_status==2):
-    print("ERR221: Error in {:s} during the recalculation of the arc middle point!".format(error_msg_id))
+    six.print_(("ERR221: Error in {:s} during the recalculation of the arc middle point!".format(error_msg_id)))
     sys.exit(2)
     #print("WARN221: Warning in {:s}, creating a dummy arc because of internal error!".format(error_msg_id))
     #lDE = math.sqrt((EX-DX)**2+(EY-DY)**2)
@@ -592,7 +593,7 @@ def general_outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_off
   """
   # check the parameters
   if((ai_x_coefficient==0)or(ai_y_coefficient==0)):
-    print("ERR439: Error, a multiplication coefficient is set to zero: {:0.2f}  {:0.2f}".format(ai_x_coefficient, ai_y_coefficient))
+    six.print_(("ERR439: Error, a multiplication coefficient is set to zero: {:0.2f}  {:0.2f}".format(ai_x_coefficient, ai_y_coefficient)))
     sys.exit(2)
   # check if the outline must be reversed
   if((ai_x_coefficient*ai_y_coefficient)<0):
@@ -615,7 +616,7 @@ def general_outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_off
       elif(len_p==4):
         is_arc = True
       else:
-        print("ERR237: Error, the segment has an unxepected number of items {:d}".format(len_p))
+        six.print_(("ERR237: Error, the segment has an unxepected number of items {:d}".format(len_p)))
         sys.exit(2)
     elif(outline_type==2):
       if(len_p==3):
@@ -623,10 +624,10 @@ def general_outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_off
       elif(len_p==5):
         is_arc = True
       else:
-        print("ERR247: Error, the segment has an unxepected number of items {:d}".format(len_p))
+        six.print_(("ERR247: Error, the segment has an unxepected number of items {:d}".format(len_p)))
         sys.exit(2)
     else:
-      print("ERR257: Error, the outline_type is unexpected {:d}".format(outline_type))
+      six.print_(("ERR257: Error, the outline_type is unexpected {:d}".format(outline_type)))
       sys.exit(2)
     # extract segments
     end_point = []
@@ -673,7 +674,7 @@ def general_outline_rotate(ai_outline, ai_ox, ai_oy, ai_rotation_angle):
       elif(len_p==4):
         is_arc = True
       else:
-        print("ERR237: Error, the segment has an unxepected number of items {:d}".format(len_p))
+        six.print_(("ERR237: Error, the segment has an unxepected number of items {:d}".format(len_p)))
         sys.exit(2)
     elif(outline_type==2):
       if(len_p==3):
@@ -681,10 +682,10 @@ def general_outline_rotate(ai_outline, ai_ox, ai_oy, ai_rotation_angle):
       elif(len_p==5):
         is_arc = True
       else:
-        print("ERR247: Error, the segment has an unxepected number of items {:d}".format(len_p))
+        six.print_(("ERR247: Error, the segment has an unxepected number of items {:d}".format(len_p)))
         sys.exit(2)
     else:
-      print("ERR257: Error, the outline_type is unexpected {:d}".format(outline_type))
+      six.print_(("ERR257: Error, the outline_type is unexpected {:d}".format(outline_type)))
       sys.exit(2)
     # extract segments
     end_point = []
@@ -722,7 +723,7 @@ def outline_shift_xy(ai_outline, ai_x_offset, ai_x_coefficient, ai_y_offset, ai_
   outline_type = check_outline_format(ai_outline)
   if(outline_type==0): # it's a format-B circle
     if(abs(ai_x_coefficient)!=abs(ai_y_coefficient)):
-      print("WARN358: Warning, circle is scaled with different scale along x and y! {:0.2f} {:0.2f}".format(ai_x_coefficient, ai_y_coefficient))
+      six.print_(("WARN358: Warning, circle is scaled with different scale along x and y! {:0.2f} {:0.2f}".format(ai_x_coefficient, ai_y_coefficient)))
     circle_center_x = ai_outline[0]
     circle_center_y = ai_outline[1]
     circle_radius = ai_outline[2]
@@ -834,14 +835,14 @@ def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
   segment_nb = point_nb-1
   # check of the outline size
   if(segment_nb<1):
-    print("ERR202: Error in {:s}, the number of segments must be bigger than 1. Currently: {:d}".format(ai_error_msg_id, segment_nb))
+    six.print_(("ERR202: Error in {:s}, the number of segments must be bigger than 1. Currently: {:d}".format(ai_error_msg_id, segment_nb)))
     sys.exit(2)
   if((segment_nb<2)and(outline_closed)):
-    print("ERR203: Error in {:s}, the number of segments must be bigger than 2 with a closed outline. Currently: {:d}".format(ai_error_msg_id, point_nb))
+    six.print_(("ERR203: Error in {:s}, the number of segments must be bigger than 2 with a closed outline. Currently: {:d}".format(ai_error_msg_id, point_nb)))
     sys.exit(2)
   # check the start point
   if(len(ai_segment_list[0])!=3):
-    print("ERR564: the start point is not defined with three floats. {:d}".format(len(ai_segment_list[0])))
+    six.print_(("ERR564: the start point is not defined with three floats. {:d}".format(len(ai_segment_list[0]))))
     sys.exit(2)
   # extract segment data
   pt_end = []
@@ -857,19 +858,19 @@ def cnc_cut_outline(ai_segment_list, ai_error_msg_id):
       (mid_pt_x, mid_pt_y, end_pt_x, end_pt_y, end_pt_r) = ai_segment_list[pt_idx]
       mid_elem = (mid_pt_x, mid_pt_y)
     else:
-      print("ERR563: Error, the segment is defined with an unexpected number of float {:d}".format(len_segment))
+      six.print_(("ERR563: Error, the segment is defined with an unexpected number of float {:d}".format(len_segment)))
       sys.exit(2)
     pt_end.append((end_pt_x,end_pt_y))
     pt_request.append(end_pt_r)
     pt_mid.append(mid_elem)
   # check router_bit request of first and last point
   if((pt_request[0]!=0)and(not outline_closed)):
-    print("WARN946: Warning, in {:s}, the router_bit request of the start point of the open outline is not zero: {:0.2f}".format(ai_error_msg_id, pt_request[0]))
+    six.print_(("WARN946: Warning, in {:s}, the router_bit request of the start point of the open outline is not zero: {:0.2f}".format(ai_error_msg_id, pt_request[0])))
     pt_request[0]=0
   # if the outline is open, the router_bit request of the last point has no signification
   # if the outline is closed, the router_bit request of the last point is ignore. and the router_bit request of the first point is used
   if(pt_request[-1]!=0):
-    print("WARN947: Warning, in {:s}, the router_bit request of the last point of the outline is not zero: {:0.2f}".format(ai_error_msg_id, pt_request[-1]))
+    six.print_(("WARN947: Warning, in {:s}, the router_bit request of the last point of the outline is not zero: {:0.2f}".format(ai_error_msg_id, pt_request[-1])))
     pt_request[-1]=0
   # build outline
   r_outline = []
@@ -945,13 +946,13 @@ def approximate_curve_tangent(ai_polyline, ai_error_msg_id):
   point_nb = len(ai_polyline)
   # check the outline point number
   if(point_nb<2):
-    print("ERR309: Error in {:s}, the number of points must be bigger than 2. Currently: {:d}".format(ai_error_msg_id, point_nb))
+    six.print_(("ERR309: Error in {:s}, the number of points must be bigger than 2. Currently: {:d}".format(ai_error_msg_id, point_nb)))
     sys.exit(2)
   # check if ai_polyline is valid
   for i in range(len(ai_polyline)):
     point_len = len(ai_polyline[i])
     if(point_len!=2):
-      print("ERR319: Error in {:s}, the point {:d} of ai_polyline must have exactly 2 elements. Currently: {:d}".format(ai_error_msg_id, i, point_len))
+      six.print_(("ERR319: Error in {:s}, the point {:d} of ai_polyline must have exactly 2 elements. Currently: {:d}".format(ai_error_msg_id, i, point_len)))
       sys.exit(2)
   # processing initialization
   r_outline = []
@@ -967,7 +968,7 @@ def approximate_curve_tangent(ai_polyline, ai_error_msg_id):
     tangent_inclination2 = math.atan2((post2_point[1]-pre_point[1])/segment_length, (post2_point[0]-pre_point[0])/segment_length)
     tangent_inclination2_diff = math.fmod(tangent_inclination2-tangent_inclination+5*math.pi, 2*math.pi) - math.pi
     if(abs(tangent_inclination2_diff)>math.pi/3):
-      print("ERR315: Error in {:s}, the tangent_inclination is changing too fast for a curve approximation. tangent_inclination: {:0.2f}  tangent_inclination2: {:0.2f}".format(ai_error_msg_id, tangent_inclination, tangent_inclination2))
+      six.print_(("ERR315: Error in {:s}, the tangent_inclination is changing too fast for a curve approximation. tangent_inclination: {:0.2f}  tangent_inclination2: {:0.2f}".format(ai_error_msg_id, tangent_inclination, tangent_inclination2)))
       sys.exit(2)
     tangent_inclination = math.fmod(tangent_inclination-1*tangent_inclination2_diff/2 + 5*math.pi, 2*math.pi) - math.pi
   r_outline.append((ai_polyline[0][0], ai_polyline[0][1], tangent_inclination)) # first-point
@@ -993,7 +994,7 @@ def approximate_curve_tangent(ai_polyline, ai_error_msg_id):
     tangent_inclination2 = math.atan2((post_point[1]-pre2_point[1])/segment_length, (post_point[0]-pre2_point[0])/segment_length)
     tangent_inclination2_diff = math.fmod(tangent_inclination2-tangent_inclination+5*math.pi, 2*math.pi) - math.pi
     if(abs(tangent_inclination2_diff)>math.pi/3):
-      print("ERR315: Error in {:s}, the tangent_inclination is changing too fast for a curve approximation. tangent_inclination: {:0.2f}  tangent_inclination2: {:0.2f}".format(ai_error_msg_id, tangent_inclination, tangent_inclination2))
+      six.print_(("ERR315: Error in {:s}, the tangent_inclination is changing too fast for a curve approximation. tangent_inclination: {:0.2f}  tangent_inclination2: {:0.2f}".format(ai_error_msg_id, tangent_inclination, tangent_inclination2)))
       sys.exit(2)
     tangent_inclination = math.fmod(tangent_inclination-1*tangent_inclination2_diff/2 + 5*math.pi, 2*math.pi) - math.pi
   r_outline.append((ai_polyline[-1][0], ai_polyline[-1][1], tangent_inclination)) # end-point
@@ -1045,13 +1046,13 @@ def ideal_outline(ai_outline, ai_error_msg_id):
       # check the segment length
       segment_len = len(i_segment)
       if((segment_len!=3)and(segment_len!=5)):
-        print("ERR868: Error in {:s}.{:d}, len(segment_len) is not 3 or 5!".format(ai_error_msg_id, i))
+        six.print_(("ERR868: Error in {:s}.{:d}, len(segment_len) is not 3 or 5!".format(ai_error_msg_id, i)))
         sys.exit(2)
       i += 1
       # construct the ideal outline
       r_outline.append(i_segment[:-1]) # remove the third or the fifth element
   else: # format-B circle or format-B general outline
-    print("WARN441: Warning in {:s}, nothing to do, the outline is already in format-B".format(ai_error_msg_id))
+    six.print_(("WARN441: Warning in {:s}, nothing to do, the outline is already in format-B".format(ai_error_msg_id)))
     r_outline = ai_outline
   return(r_outline)
 
@@ -1064,14 +1065,14 @@ def ideal_outline(ai_outline, ai_error_msg_id):
 # addition import for the tests
 ################################################################
 
-import importing_freecad 
+from . import importing_freecad 
 importing_freecad.importing_freecad()
 #
 import Part
 from FreeCAD import Base 
 #
-import Tkinter
-import outline_backends
+from six.moves import tkinter
+from . import outline_backends
 #
 #import timeit
 #import cProfile
@@ -1117,7 +1118,7 @@ def make_H_shape(ai_origin_x, ai_origin_y, ai_router_bit_r, ai_height, ai_output
   Part.show(myh_solid) # works only with FreeCAD GUI, ignore otherwise
   if(ai_output_file!=''):
     myh_solid.exportStl(ai_output_file)
-    print("output stl file: %s"%(ai_output_file))
+    six.print_(("output stl file: %s"%(ai_output_file)))
 
 def make_X_shape(ai_origin_x, ai_origin_y, ai_router_bit_r, ai_height, ai_output_file):
   """ design a X-shape to test not 90 degree angles with the function cnc_cut_outline()
@@ -1154,7 +1155,7 @@ def make_X_shape(ai_origin_x, ai_origin_y, ai_router_bit_r, ai_height, ai_output
   Part.show(myx_solid) # works only with FreeCAD GUI, ignore otherwise
   if(ai_output_file!=''):
     myx_solid.exportStl(ai_output_file)
-    print("output stl file: %s"%(ai_output_file))
+    six.print_(("output stl file: %s"%(ai_output_file)))
 
 def make_M_shape(ai_origin_x, ai_origin_y, ai_router_bit_r, ai_height, ai_output_file):
   """ design a M-shape to test the three outline_shift_x, _y and _xy functions
@@ -1201,7 +1202,7 @@ def make_M_shape(ai_origin_x, ai_origin_y, ai_router_bit_r, ai_height, ai_output
   Part.show(myx_solid) # works only with FreeCAD GUI, ignore otherwise
   if(ai_output_file!=''):
     myx_solid.exportStl(ai_output_file)
-    print("output stl file: %s"%(ai_output_file))
+    six.print_(("output stl file: %s"%(ai_output_file)))
 
 def cnc_cut_outline_test1():
   """ First test to check the cnc_cut_outline API
@@ -1209,7 +1210,7 @@ def cnc_cut_outline_test1():
   ### check the cnc_cut_outline function with several router_bit diameter
   y_offset = 0
   for ir in [2.0, 1.5, 1.0, 0, -1.0, -2.0]:
-    print("dbg603: test with router_bit radius (ir):", ir)
+    six.print_(("dbg603: test with router_bit radius (ir):", ir))
     make_H_shape( 0,  y_offset, ir, 2, "self_test_cnc_cut_outline_H_r%0.2f.stl"%ir)
     make_X_shape(50,  y_offset, ir, 2, "self_test_cnc_cut_outline_X_r%0.2f.stl"%ir)
     make_M_shape(150,  y_offset, ir, 2, "self_test_cnc_cut_outline_M_r%0.2f.stl"%ir)
@@ -1238,7 +1239,7 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
   """ Third test to check the cnc_cut_outline API
       It displays the shapes with Tkinter
   """
-  print("Run test_3  with ai_sw_router_bit_radius={:0.2f} ...".format(ai_sw_router_bit_radius))
+  six.print_(("Run test_3  with ai_sw_router_bit_radius={:0.2f} ...".format(ai_sw_router_bit_radius)))
   def outline_a(ai_router_bit_radius):
     corner_a=[
       [0,20, ai_router_bit_radius],
@@ -1332,7 +1333,7 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
   outline_e2 = smooth_outline_b_curve(first_curve, radian_precision, ai_sw_router_bit_radius, 'cnc_cut_outline_test3_e2')
 
   # display with Tkinter
-  tk_root = Tkinter.Tk()
+  tk_root = tkinter.Tk()
   my_canvas = outline_backends.Two_Canvas(tk_root)
   # callback function for display_backend
   def sub_canvas_graphics(ai_rotation_direction, ai_angle_position):
@@ -1374,7 +1375,7 @@ def cnc_cut_outline_test3(ai_sw_router_bit_radius):
     for i in range(ai_repeat_nb):
       tmp = sub_canvas_graphics(1, i*math.pi/200)
     time_stop = time.clock()
-    print("dbg507: time sub_canvas_graphics:", time_stop-time_start)
+    six.print_(("dbg507: time sub_canvas_graphics:", time_stop-time_start))
   #measure_the_execution_time_of_the_sub_canvas_graphics_function(100)
   # end of measurement
   my_canvas.add_canvas_graphic_function(sub_canvas_graphics)
@@ -1387,7 +1388,7 @@ def cnc_cut_outline_test4(ai_sw_router_bit_radius):
   """ Fourth test suggests small shapes, useful to develop the cnc_cut_outline API
       It displays the shapes with Tkinter
   """
-  print("Run test_4  with ai_sw_router_bit_radius={:0.2f} ...".format(ai_sw_router_bit_radius))
+  six.print_(("Run test_4  with ai_sw_router_bit_radius={:0.2f} ...".format(ai_sw_router_bit_radius)))
   def outline_t4_a(ai_router_bit_radius):
     three_arcs=[
       [0,20, 0],
@@ -1435,7 +1436,7 @@ def cnc_cut_outline_test4(ai_sw_router_bit_radius):
   #  print("dbg332: outline_a2 i_segment:", len(i_segment), i_segment)
 
   # display with Tkinter
-  tk_root = Tkinter.Tk()
+  tk_root = tkinter.Tk()
   my_canvas = outline_backends.Two_Canvas(tk_root)
   # callback function for display_backend
   def sub_canvas_graphics_t4(ai_rotation_direction, ai_angle_position):
@@ -1458,7 +1459,7 @@ def cnc_cut_outline_test5(ai_sw_router_bit_radius):
       It displays the shapes with Tkinter
   """
   radian_precision = math.pi/100
-  print("Run test_5  with ai_sw_router_bit_radius={:0.2f} ...".format(ai_sw_router_bit_radius))
+  six.print_(("Run test_5  with ai_sw_router_bit_radius={:0.2f} ...".format(ai_sw_router_bit_radius)))
   first_curve=[
     [20,0],
     [22,10],
@@ -1476,7 +1477,7 @@ def cnc_cut_outline_test5(ai_sw_router_bit_radius):
   #  print("dbg332: outline_a2 i_segment:", len(i_segment), i_segment)
 
   # display with Tkinter
-  tk_root = Tkinter.Tk()
+  tk_root = tkinter.Tk()
   my_canvas = outline_backends.Two_Canvas(tk_root)
   # callback function for display_backend
   def sub_canvas_graphics_t5(ai_rotation_direction, ai_angle_position):

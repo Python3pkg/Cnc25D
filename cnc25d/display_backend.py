@@ -33,10 +33,11 @@ display_backend.py creates and displays the two Tkinter Canvas windows used by o
 
 import math
 import sys, argparse
-import Tkinter
+from six.moves import tkinter
 #import tkMessageBox
 import matplotlib.pyplot
-import design_help # just for get_effective_args()
+from . import design_help # just for get_effective_args()
+import six
 
 ################################################################
 # global variable
@@ -69,7 +70,7 @@ def find_outline_extremum(ai_outline_list):
     first_point_x=first_outline[0]
     first_point_y=first_outline[1]
   else:
-    print("ERR305: Error, the outline type is unknow: {:s}".format(first_outline_type))
+    six.print_(("ERR305: Error, the outline type is unknow: {:s}".format(first_outline_type)))
     sys.exit(2)
   min_x=first_point_x
   max_x=first_point_x
@@ -291,11 +292,11 @@ class Two_Canvas():
     """ This function is only used for debug
         It has no utility for the Two_Canvas class
     """
-    print("dbg141: event:", event)
-    print("dbg142: event.time:", event.time)
-    print("dbg143: event.type:", event.type)
-    print("dbg144: event.widget:", event.widget)
-    print("dbg145: event.keysym:", event.keysym)
+    six.print_(("dbg141: event:", event))
+    six.print_(("dbg142: event.time:", event.time))
+    six.print_(("dbg143: event.type:", event.type))
+    six.print_(("dbg144: event.widget:", event.widget))
+    six.print_(("dbg145: event.keysym:", event.keysym))
 
   def action_canvas_a_mouse_button_press(self, event):
     """ Start of the zoom area selection
@@ -366,8 +367,8 @@ class Two_Canvas():
       if(length_measurement>0):
         angle_measurement = math.atan2((p2y-p1y)/length_measurement, (p2x-p1x)/length_measurement)
         self.measurement_id += 1
-        print("Info: measurement {:2d} : lenght: {:0.3f}  angle: {:0.3f}".format(self.measurement_id, length_measurement, angle_measurement))
-        print("P1x: {:0.2f}  P1y: {:0.2f}  P2x: {:0.2f}  P2y: {:0.2f}".format(p1x, p1y, p2x, p2y))
+        six.print_(("Info: measurement {:2d} : lenght: {:0.3f}  angle: {:0.3f}".format(self.measurement_id, length_measurement, angle_measurement)))
+        six.print_(("P1x: {:0.2f}  P1y: {:0.2f}  P2x: {:0.2f}  P2y: {:0.2f}".format(p1x, p1y, p2x, p2y)))
 
   def simulation_step(self):
     """ Time simulation main function
@@ -414,7 +415,7 @@ class Two_Canvas():
     if(self.canvas_graphic_function!=None):
       all_graphics = self.canvas_graphic_function(self.rotation_direction, self.angle_position)
       #
-      self.canvas_a.delete(Tkinter.ALL)
+      self.canvas_a.delete(tkinter.ALL)
       # uncomment if you want to scale outline depending on the angle_position
       #self.outline_extremum = find_outline_extremum(all_graphics)
       canvas_a_size = (canvas_a_width, canvas_a_height, tkinter_canvas_margin_x, tkinter_canvas_margin_y)
@@ -427,7 +428,7 @@ class Two_Canvas():
       if(self.crop_limit==(0,0,0,0)):
         self.crop_limit=(self.outline_extremum[0], self.outline_extremum[1], (self.outline_extremum[0]+self.outline_extremum[2])/2, (self.outline_extremum[1]+self.outline_extremum[3])/2)
       #
-      self.canvas_b.delete(Tkinter.ALL)
+      self.canvas_b.delete(tkinter.ALL)
       crop_graphics = crop_outline(all_graphics, self.crop_limit)
       #print("dbg857: len(crop_graphics):", len(crop_graphics))
       canvas_b_size = (canvas_b_width, canvas_b_height, 2, 2)
@@ -465,15 +466,15 @@ class Two_Canvas():
     """ Define the zoom window
     """
     #print("dbg554: create_zoom_frame")
-    self.frame_b = Tkinter.Toplevel(self.frame_a)
+    self.frame_b = tkinter.Toplevel(self.frame_a)
     #self.frame_b.grid(column=0, row=0, sticky=Tkinter.N+Tkinter.E+Tkinter.S+Tkinter.W) # Toplevel doesn't have grid method !
     #self.frame_b.pack(fill=Tkinter.BOTH, expand=1)
     self.frame_b.title("cnc25d display backend details")
-    self.canvas_b = Tkinter.Canvas(self.frame_b, width=initial_tkinter_canvas_width, height=initial_tkinter_canvas_height)
+    self.canvas_b = tkinter.Canvas(self.frame_b, width=initial_tkinter_canvas_width, height=initial_tkinter_canvas_height)
     #self.canvas_b.grid(column=0, row=0, sticky=Tkinter.N+Tkinter.E+Tkinter.S+Tkinter.W)
     #self.canvas_b.columnconfigure(0, weight=1)
     #self.canvas_b.rowconfigure(0, weight=1)
-    self.canvas_b.pack(fill=Tkinter.BOTH, expand=1) # with Toplevel parent, it seems you need to use pack to resisze the canvas !
+    self.canvas_b.pack(fill=tkinter.BOTH, expand=1) # with Toplevel parent, it seems you need to use pack to resisze the canvas !
     self.canvas_b.bind("<ButtonPress-1>", self.action_canvas_b_mouse_button_press)
     self.canvas_b.bind("<B1-Motion>", self.action_canvas_b_mouse_button_motion)
     self.canvas_b.bind("<ButtonRelease-1>", self.action_canvas_b_mouse_button_release)
@@ -510,10 +511,10 @@ class Two_Canvas():
     """ Define the parameter window
     """
     #print("dbg414: create_parameter_frame")
-    self.frame_c = Tkinter.Toplevel(self.frame_a)
+    self.frame_c = tkinter.Toplevel(self.frame_a)
     self.frame_c.title("parameter info")
-    self.parameter_message = Tkinter.Message(self.frame_c, textvariable=self.parameter_content)
-    self.parameter_message.grid(sticky=Tkinter.N+Tkinter.E+Tkinter.S+Tkinter.W)
+    self.parameter_message = tkinter.Message(self.frame_c, textvariable=self.parameter_content)
+    self.parameter_message.grid(sticky=tkinter.N+tkinter.E+tkinter.S+tkinter.W)
     self.frame_c.protocol("WM_DELETE_WINDOW", self.hide_parameter_frame) # change the behaviour of the window X button
 
   def hide_parameter_frame(self):
@@ -561,7 +562,7 @@ class Two_Canvas():
       for j in range(curve_nb-1):
         check_len = len( self.curve_graphic_table[j+2][1])
         if(check_len!=curve_table_len):
-          print("ERR586: Error in the curve_table {:d}! Its lenght {:d} does not match the reference length {:d}".format(j, check_len, curve_table_len))
+          six.print_(("ERR586: Error in the curve_table {:d}! Its lenght {:d} does not match the reference length {:d}".format(j, check_len, curve_table_len)))
       x_increment = self.curve_graphic_table[0][2]
       abscissa_x = 0
       for i in range(curve_table_len):
@@ -604,105 +605,105 @@ class Two_Canvas():
     #self.frame_canvas.rowconfigure(0, weight=1)
     #
     #self.canvas_a =  Tkinter.Canvas(self.frame_a, width=self.canvas_a_width, height=self.canvas_a_height)
-    self.canvas_a =  Tkinter.Canvas(self.frame_a, width=initial_tkinter_canvas_width, height=initial_tkinter_canvas_height)
+    self.canvas_a =  tkinter.Canvas(self.frame_a, width=initial_tkinter_canvas_width, height=initial_tkinter_canvas_height)
     #self.canvas_a.pack(fill=Tkinter.BOTH, expand=1)
-    self.canvas_a.grid(column=0, row=0, sticky=Tkinter.N+Tkinter.E+Tkinter.S+Tkinter.W)
+    self.canvas_a.grid(column=0, row=0, sticky=tkinter.N+tkinter.E+tkinter.S+tkinter.W)
     self.canvas_a.columnconfigure(0, weight=1)
     self.canvas_a.rowconfigure(0, weight=1)
     self.canvas_a.bind("<ButtonPress-1>", self.action_canvas_a_mouse_button_press)
     self.canvas_a.bind("<B1-Motion>", self.action_canvas_a_mouse_button_motion)
     self.canvas_a.bind("<ButtonRelease-1>", self.action_canvas_a_mouse_button_release)
     #
-    self.frame_control = Tkinter.Frame(self.frame_a)
+    self.frame_control = tkinter.Frame(self.frame_a)
     #self.frame_control.pack(side=Tkinter.BOTTOM)
-    self.frame_control.grid(column=0, row=1, sticky=Tkinter.W + Tkinter.S)
+    self.frame_control.grid(column=0, row=1, sticky=tkinter.W + tkinter.S)
     #
-    self.frame_button_speed = Tkinter.Frame(self.frame_control)
+    self.frame_button_speed = tkinter.Frame(self.frame_control)
     self.frame_button_speed.grid(column=0, row=0)
     #
-    self.button_fast_backward = Tkinter.Button(self.frame_button_speed)
+    self.button_fast_backward = tkinter.Button(self.frame_button_speed)
     self.button_fast_backward["text"] = "<<-",
     self.button_fast_backward["command"] = self.action_button_fast_backward
-    self.button_fast_backward.pack(side=Tkinter.LEFT)
+    self.button_fast_backward.pack(side=tkinter.LEFT)
     #
-    self.button_slow_backward = Tkinter.Button(self.frame_button_speed)
+    self.button_slow_backward = tkinter.Button(self.frame_button_speed)
     self.button_slow_backward["text"] = "<-",
     self.button_slow_backward["command"] = self.action_button_slow_backward
-    self.button_slow_backward.pack(side=Tkinter.LEFT)
+    self.button_slow_backward.pack(side=tkinter.LEFT)
     #
-    self.button_step_backward = Tkinter.Button(self.frame_button_speed)
+    self.button_step_backward = tkinter.Button(self.frame_button_speed)
     self.button_step_backward["text"] = "<|",
     self.button_step_backward["command"] = self.action_button_step_backward
-    self.button_step_backward.pack(side=Tkinter.LEFT)
+    self.button_step_backward.pack(side=tkinter.LEFT)
     #
-    self.button_stop = Tkinter.Button(self.frame_button_speed)
+    self.button_stop = tkinter.Button(self.frame_button_speed)
     self.button_stop["foreground"]   = "red"
     self.button_stop["text"] = "||",
     self.button_stop["command"] = self.action_button_stop
-    self.button_stop.pack(side=Tkinter.LEFT)
+    self.button_stop.pack(side=tkinter.LEFT)
     #
-    self.button_step_forward = Tkinter.Button(self.frame_button_speed)
+    self.button_step_forward = tkinter.Button(self.frame_button_speed)
     self.button_step_forward["text"] = "|>",
     self.button_step_forward["command"] = self.action_button_step_forward
-    self.button_step_forward.pack(side=Tkinter.LEFT)
+    self.button_step_forward.pack(side=tkinter.LEFT)
     #
-    self.button_slow_forward = Tkinter.Button(self.frame_button_speed)
+    self.button_slow_forward = tkinter.Button(self.frame_button_speed)
     self.button_slow_forward["text"] = "->",
     self.button_slow_forward["command"] = self.action_button_slow_forward
-    self.button_slow_forward.pack(side=Tkinter.LEFT)
+    self.button_slow_forward.pack(side=tkinter.LEFT)
     #
-    self.button_fast_forward = Tkinter.Button(self.frame_button_speed)
+    self.button_fast_forward = tkinter.Button(self.frame_button_speed)
     self.button_fast_forward["text"] = "->>",
     self.button_fast_forward["command"] = self.action_button_fast_forward
-    self.button_fast_forward.pack(side=Tkinter.LEFT)
+    self.button_fast_forward.pack(side=tkinter.LEFT)
     #
-    self.frame_label = Tkinter.Frame(self.frame_control)
-    self.frame_label.grid(column=0, row=1, sticky=Tkinter.W)
+    self.frame_label = tkinter.Frame(self.frame_control)
+    self.frame_label.grid(column=0, row=1, sticky=tkinter.W)
     #
-    self.label_angle = Tkinter.Label(self.frame_label)
+    self.label_angle = tkinter.Label(self.frame_label)
     self.label_angle["textvariable"] = self.label1_content
     #self.label_angle.pack(side=Tkinter.TOP)
     #self.label_angle.pack(anchor=Tkinter.NW)
-    self.label_angle.grid(column=0, row=0, sticky=Tkinter.W)
+    self.label_angle.grid(column=0, row=0, sticky=tkinter.W)
     #
-    self.label_angle_speed = Tkinter.Label(self.frame_label)
+    self.label_angle_speed = tkinter.Label(self.frame_label)
     self.label_angle_speed["textvariable"] = self.label2_content
     #self.label_angle_speed.pack(side=Tkinter.BOTTOM)
     #self.label_angle_speed.pack(anchor=Tkinter.SW)
-    self.label_angle_speed.grid(column=0, row=1, sticky=Tkinter.W)
+    self.label_angle_speed.grid(column=0, row=1, sticky=tkinter.W)
     #
-    self.frame_button_options = Tkinter.Frame(self.frame_control)
-    self.frame_button_options.grid(column=0, row=2, sticky=Tkinter.W+Tkinter.S)
+    self.frame_button_options = tkinter.Frame(self.frame_control)
+    self.frame_button_options.grid(column=0, row=2, sticky=tkinter.W+tkinter.S)
     #
-    self.button_zoom = Tkinter.Button(self.frame_button_options)
+    self.button_zoom = tkinter.Button(self.frame_button_options)
     self.button_zoom["text"] = "Zoom",
     self.button_zoom["command"] = self.action_button_zoom
-    self.button_zoom.pack(side=Tkinter.LEFT)
+    self.button_zoom.pack(side=tkinter.LEFT)
     #
-    self.button_overlay = Tkinter.Button(self.frame_button_options)
+    self.button_overlay = tkinter.Button(self.frame_button_options)
     self.button_overlay["text"] = "Overlay",
     self.button_overlay["command"] = self.action_button_overlay
-    self.button_overlay.pack(side=Tkinter.LEFT)
+    self.button_overlay.pack(side=tkinter.LEFT)
     #
-    self.button_parameter = Tkinter.Button(self.frame_button_options)
+    self.button_parameter = tkinter.Button(self.frame_button_options)
     self.button_parameter["text"] = "Parameters",
     self.button_parameter["command"] = self.action_button_parameters
-    self.button_parameter.pack(side=Tkinter.LEFT)
+    self.button_parameter.pack(side=tkinter.LEFT)
     #
-    self.button_graph = Tkinter.Button(self.frame_button_options)
+    self.button_graph = tkinter.Button(self.frame_button_options)
     self.button_graph["text"] = "Graph",
     #self.button_graph["command"] = lambda a=1: self.action_button_check_event(a)
     #self.button_graph.bind("<Button-1>", lambda event: self.action_button_check_event(event))
     #self.button_graph.bind("<Button-1>", self.action_button_check_event) # the event argument is added by default
     self.button_graph.bind("<Button-1>", self.action_button_curve_graph) # the event argument is added by default
-    self.button_graph.pack(side=Tkinter.LEFT)
+    self.button_graph.pack(side=tkinter.LEFT)
     #
-    self.button_quit = Tkinter.Button(self.frame_button_options)
+    self.button_quit = tkinter.Button(self.frame_button_options)
     self.button_quit["text"] = "Quit",
     #self.button_quit["command"] = self.frame_a.quit
     #self.button_quit["command"] = self.tktop.destroy
     self.button_quit["command"] = self.quit_Two_Canvas
-    self.button_quit.pack(side=Tkinter.LEFT)
+    self.button_quit.pack(side=tkinter.LEFT)
     #
     ## second window with canvas_b
     self.create_zoom_frame()
@@ -716,13 +717,13 @@ class Two_Canvas():
     """ Initiate the class Two_Canvas by creating the windows, initializing the class variables and starting the time simulation
     """
     self.tktop = winParent # used to destroy the app when quit
-    self.frame_a = Tkinter.Frame(winParent)
+    self.frame_a = tkinter.Frame(winParent)
     winParent.title("cnc25d display backend main")
     #self.frame_a.pack()
     #winParent.grid(sticky=Tkinter.N+Tkinter.E+Tkinter.S+Tkinter.W)
     winParent.columnconfigure(0, weight=1)
     winParent.rowconfigure(0, weight=1)
-    self.frame_a.grid(sticky=Tkinter.N+Tkinter.E+Tkinter.S+Tkinter.W)
+    self.frame_a.grid(sticky=tkinter.N+tkinter.E+tkinter.S+tkinter.W)
     self.frame_a.columnconfigure(0, weight=1)
     self.frame_a.rowconfigure(0, weight=1)
     #
@@ -731,11 +732,11 @@ class Two_Canvas():
     self.angle_position = 0
     self.outline_extremum = (0,0,0,0)
     #
-    self.label1_content = Tkinter.StringVar()
-    self.label2_content = Tkinter.StringVar()
+    self.label1_content = tkinter.StringVar()
+    self.label2_content = tkinter.StringVar()
     self.set_label_content()
     #
-    self.parameter_content = Tkinter.StringVar()
+    self.parameter_content = tkinter.StringVar()
     #
     self.overlay = 0
     self.canvas_graphic_function = None
@@ -865,7 +866,7 @@ Vous êtes le Phénix des hôtes de ces bois. "
     ('plot1_title', test1_curve1, 'bo'),
     ('plot2_title', test1_curve2, 'r'))
   #
-  tk_root = Tkinter.Tk()
+  tk_root = tkinter.Tk()
   dut = Two_Canvas(tk_root)
   #dut = Two_Canvas()
   dut.add_canvas_graphic_function(test_canvas_graphic_1)
@@ -909,7 +910,7 @@ Tenait en son bec un fromage.
     ('plot1_title', test1_curve1, 'bo'),
     ('plot2_title', test1_curve2, 'r'))
   #
-  tk_root = Tkinter.Tk()
+  tk_root = tkinter.Tk()
   dut = Two_Canvas(tk_root)
   dut.add_canvas_graphic_function(test_canvas_graphic_2)
   dut.add_parameter_info(test_parameter_info)

@@ -30,7 +30,8 @@ The function gear_profile() returns an format B outline that can be easily inclu
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import cnc25d_api
+from . import cnc25d_api
+import six
 cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -46,7 +47,7 @@ import sys, argparse
 #from datetime import datetime
 #import os, errno
 #import re
-import Tkinter # to display the outline in a small GUI
+from six.moves import tkinter # to display the outline in a small GUI
 import time # for time.sleep to help Tkinter to finish properly
 # FreeCAD
 import Part
@@ -55,7 +56,7 @@ import Part
 #import svgwrite
 #from dxfwrite import DXFEngine
 # cnc25d
-from gear_profile_outline import *
+from .gear_profile_outline import *
 
 ################################################################
 # module variable
@@ -269,20 +270,20 @@ def gear_profile_constraint_check(c):
   if((c['gear_type']=='e')or(c['gear_type']=='i')or(c['gear_type']=='l')):
     g1_type = c['gear_type']
   else:
-    print("ERR111: Error, the gear_type {:s} is not valid!".format(c['gear_type']))
+    six.print_(("ERR111: Error, the gear_type {:s} is not valid!".format(c['gear_type'])))
     sys.exit(2)
   # g2_type
   if((c['second_gear_type']=='e')or(c['second_gear_type']=='i')or(c['second_gear_type']=='l')):
     g2_type = c['second_gear_type']
   else:
-    print("ERR511: Error, the gear_type {:s} is not valid!".format(c['second_gear_type']))
+    six.print_(("ERR511: Error, the gear_type {:s} is not valid!".format(c['second_gear_type'])))
     sys.exit(2)
   # check of the type cross compatibility
   if((g1_type=='i')and(g2_type!='e')):
-    print("ERR512: Error, internal gear is only compatible with external gear. g1_type: {:s}  g2_type: {:s}".format(g1_type, g2_type))
+    six.print_(("ERR512: Error, internal gear is only compatible with external gear. g1_type: {:s}  g2_type: {:s}".format(g1_type, g2_type)))
     sys.exit(2)
   if((g1_type=='l')and(g2_type!='e')):
-    print("ERR512: Error, linear gear is only compatible with external gear. g1_type: {:s}  g2_type: {:s}".format(g1_type, g2_type))
+    six.print_(("ERR512: Error, linear gear is only compatible with external gear. g1_type: {:s}  g2_type: {:s}".format(g1_type, g2_type)))
     sys.exit(2)
   g1_param['gear_type'] = g1_type
   g2_param['gear_type'] = g2_type
@@ -292,14 +293,14 @@ def gear_profile_constraint_check(c):
     print("ERR112: Error, the gear_tooth_nb must be set!")
     sys.exit(2)
   if(g1_n<3):
-    print("ERR113: Error, the gear_tooth_nb {:d} must be equal or bigger than 3!".format(g1_n))
+    six.print_(("ERR113: Error, the gear_tooth_nb {:d} must be equal or bigger than 3!".format(g1_n)))
     sys.exit(2)
   g2_n = c['second_gear_tooth_nb']
   g2_exist = False
   if(g2_n!=0):
     g2_exist = True
   if(g2_exist and (g1_n<3)):
-    print("ERR114: Error, the second_gear_tooth_nb {:d} must be equal or bigger than 3!".format(g2_n))
+    six.print_(("ERR114: Error, the second_gear_tooth_nb {:d} must be equal or bigger than 3!".format(g2_n)))
     sys.exit(2)
   #g1_param['gear_exist'] = True
   #g2_param['gear_exist'] = g2_exist
@@ -314,7 +315,7 @@ def gear_profile_constraint_check(c):
     g1_m_set = True
   if(c['gear_primitive_diameter']>0):
     if(g1_m_set):
-      print("ERR115: Error, too much constraints! the gear_module is already set to {:0.2f}!".format(g1_m))
+      six.print_(("ERR115: Error, too much constraints! the gear_module is already set to {:0.2f}!".format(g1_m)))
       sys.exit(2)
     else:
       if((g1_type=='i')or(g1_type=='e')):
@@ -327,7 +328,7 @@ def gear_profile_constraint_check(c):
       print("ERR116: Error, set second_gear_tooth_nb to use second_gear_primitive_diameter")
       sys.exit(2)
     elif(g1_m_set):
-      print("ERR117: Error, too much constraints! the gear_module is already set to {:0.2f}!".format(g1_m))
+      six.print_(("ERR117: Error, too much constraints! the gear_module is already set to {:0.2f}!".format(g1_m)))
       sys.exit(2)
     else:
       if((g2_type=='i')or(g2_type=='e')):
@@ -360,7 +361,7 @@ def gear_profile_constraint_check(c):
   # addendum_dedendum_parity
   g1_adp = float(c['gear_addendum_dedendum_parity'])/100
   if((g1_adp<=0)or(g1_adp>=1)):
-    print("ERR118: Error, the gear_addendum_dedendum_parity {:0.2f} must be set strictly between 0% and 100%!".format(c['gear_addendum_dedendum_parity']))
+    six.print_(("ERR118: Error, the gear_addendum_dedendum_parity {:0.2f} must be set strictly between 0% and 100%!".format(c['gear_addendum_dedendum_parity'])))
     sys.exit(2)
   g2_adp = 1-g1_adp
   if(c['second_gear_addendum_dedendum_parity']>0):
@@ -371,7 +372,7 @@ def gear_profile_constraint_check(c):
       #print("WARN211: Warning, second_gear_addendum_dedendum_parity is used for irregular cases.")
       g2_adp = float(c['second_gear_addendum_dedendum_parity'])/100
   if((g2_adp<=0)or(g2_adp>=1)):
-    print("ERR119: Error, the second_gear_addendum_dedendum_parity {:0.2f} must be set strictly between 0% and 100%!".format(c['second_gear_addendum_dedendum_parity']))
+    six.print_(("ERR119: Error, the second_gear_addendum_dedendum_parity {:0.2f} must be set strictly between 0% and 100%!".format(c['second_gear_addendum_dedendum_parity'])))
     sys.exit(2)
   g1_param['addendum_dedendum_parity'] = g1_adp
   g2_param['addendum_dedendum_parity'] = g2_adp
@@ -420,11 +421,11 @@ def gear_profile_constraint_check(c):
   g2_small_r = min(g2_ar, g2_dr) # small radius
   g2_big_r = max(g2_ar, g2_dr) # big radius
   if(g1_a_delta>aal+g2_d_delta):
-    print("WARN213: Warning, the addendum {:0.2f} of the first gear is too big, other the dedendum {:0.2f} of the other gear is too small (second_gear_additional_axis_length={:0.2f})!".format(g1_a_delta, g2_d_delta, aal))
+    six.print_(("WARN213: Warning, the addendum {:0.2f} of the first gear is too big, other the dedendum {:0.2f} of the other gear is too small (second_gear_additional_axis_length={:0.2f})!".format(g1_a_delta, g2_d_delta, aal)))
   if(g2_a_delta>aal+g1_d_delta):
-    print("WARN214: Warning, the addendum {:0.2f} of the second gear is too big, other the dedendum {:0.2f} of the other gear is too small (second_gear_additional_axis_length={:0.2f})!".format(g2_a_delta, g1_d_delta, aal))
+    six.print_(("WARN214: Warning, the addendum {:0.2f} of the second gear is too big, other the dedendum {:0.2f} of the other gear is too small (second_gear_additional_axis_length={:0.2f})!".format(g2_a_delta, g1_d_delta, aal)))
   if(g1_a_delta+g2_a_delta<aal):
-    print("WARN215: Warning, the (second_gear_additional_axis_length {:0.2f} is too big compare to the addendum {:0.2f} and {:0.2f}!".format(aal, g1_a_delta, g2_a_delta))
+    six.print_(("WARN215: Warning, the (second_gear_additional_axis_length {:0.2f} is too big compare to the addendum {:0.2f} and {:0.2f}!".format(aal, g1_a_delta, g2_a_delta)))
   g1_param['tooth_half_height'] = g1_thh # g1
   g1_param['addendum_height']   = g1_a_delta
   g1_param['dedendum_height']   = g1_d_delta
@@ -460,10 +461,10 @@ def gear_profile_constraint_check(c):
         print("ERR121: Error, set second_gear_tooth_nb to use second_gear_base_diameter")
         sys.exit(2)
       elif(g2_type=='l'):
-        print("ERR921: Error, the second gear type {:s} is a gearbar".format(g2_type))
+        six.print_(("ERR921: Error, the second gear type {:s} is a gearbar".format(g2_type)))
         sys.exit(2)
       elif(g1_brp_set):
-        print("ERR122: Error, too much constraints! gear_base_diameter is already set to {:0.2f}".format(g1_brp*2))
+        six.print_(("ERR122: Error, too much constraints! gear_base_diameter is already set to {:0.2f}".format(g1_brp*2)))
         sys.exit(2)
       else:
         g1_brp = float(c['second_gear_base_diameter']*g1_n)/(2*g2_n)
@@ -473,17 +474,17 @@ def gear_profile_constraint_check(c):
         print("ERR811: Error, set second_gear_tooth_nb to use gearbar_slope")
         sys.exit(2)
       elif((g2_type=='e')or(g2_type=='i')):
-        print("ERR812: Error, the second gear type {:s} is not a gearbar".format(g2_type))
+        six.print_(("ERR812: Error, the second gear type {:s} is not a gearbar".format(g2_type)))
         sys.exit(2)
       elif(g1_brp_set):
-        print("ERR813: Error, too much constraints! gear_base_diameter is already set to {:0.2f}".format(g1_brp*2))
+        six.print_(("ERR813: Error, too much constraints! gear_base_diameter is already set to {:0.2f}".format(g1_brp*2)))
         sys.exit(2)
       else:
         g1_brp = g1_pr*math.cos(c['gearbar_slope'])
         g1_brp_set = True
     if(c['gear_force_angle']>0):
       if(g1_brp_set):
-        print("ERR123: Error, too much constraints! gear_base_diameter is already set to {:0.2f}".format(g1_brp*2))
+        six.print_(("ERR123: Error, too much constraints! gear_base_diameter is already set to {:0.2f}".format(g1_brp*2)))
         sys.exit(2)
       else:
         g1_brp = g1_pr*math.cos(c['gear_force_angle'])
@@ -499,10 +500,10 @@ def gear_profile_constraint_check(c):
         print("ERR121: Error, set second_gear_tooth_nb to use second_gear_base_diameter_n")
         sys.exit(2)
       elif(g2_type=='l'):
-        print("ERR922: Error, the second gear type {:s} is a gearbar".format(g2_type))
+        six.print_(("ERR922: Error, the second gear type {:s} is a gearbar".format(g2_type)))
         sys.exit(2)
       elif(g1_brn_set):
-        print("ERR122: Error, too much constraints! gear_base_diameter_n is already set to {:0.2f}".format(g1_brn*2))
+        six.print_(("ERR122: Error, too much constraints! gear_base_diameter_n is already set to {:0.2f}".format(g1_brn*2)))
         sys.exit(2)
       else:
         g1_brn = float(c['second_gear_base_diameter_n']*g1_n)/(2*g2_n)
@@ -512,17 +513,17 @@ def gear_profile_constraint_check(c):
         print("ERR821: Error, set second_gear_tooth_nb to use gearbar_slope_n")
         sys.exit(2)
       elif((g2_type=='e')or(g2_type=='i')):
-        print("ERR822: Error, the second gear type {:s} is not a gearbar".format(g2_type))
+        six.print_(("ERR822: Error, the second gear type {:s} is not a gearbar".format(g2_type)))
         sys.exit(2)
       elif(g1_brn_set):
-        print("ERR823: Error, too much constraints! gear_base_diameter is already set to {:0.2f}".format(g1_brn*2))
+        six.print_(("ERR823: Error, too much constraints! gear_base_diameter is already set to {:0.2f}".format(g1_brn*2)))
         sys.exit(2)
       else:
         g1_brn = g1_pr*math.cos(c['gearbar_slope_n'])
         g1_brn_set = True
     if(c['gear_force_angle_n']>0):
       if(g1_brn_set):
-        print("ERR123: Error, too much constraints! gear_base_diameter is already set to {:0.2f}".format(g1_brn*2))
+        six.print_(("ERR123: Error, too much constraints! gear_base_diameter is already set to {:0.2f}".format(g1_brn*2)))
         sys.exit(2)
       else:
         g1_brn = g1_pr*math.cos(c['gear_force_angle_n'])
@@ -530,7 +531,7 @@ def gear_profile_constraint_check(c):
   elif(g1_type=='l'):
     g1_sp_set = False
     if((c['gear_base_diameter']>0)or(c['gear_base_diameter_n']>0)):
-      print("ERR331: Error, for gearbar use gearbar_slope and gearbar_slope_n instead of gear_base_diameter {:0.3f}  and gear_base_diameter_n {:0.3f}".format(c['gear_base_diameter'], c['gear_base_diameter_n']))
+      six.print_(("ERR331: Error, for gearbar use gearbar_slope and gearbar_slope_n instead of gear_base_diameter {:0.3f}  and gear_base_diameter_n {:0.3f}".format(c['gear_base_diameter'], c['gear_base_diameter_n'])))
       sys.exit(2)
     if(c['gearbar_slope']>0):
       g1_sp = c['gearbar_slope']
@@ -544,7 +545,7 @@ def gear_profile_constraint_check(c):
         print("ERR521: Error, set second_gear_tooth_nb to use second_gear_base_diameter")
         sys.exit(2)
       elif(g1_sp_set):
-        print("ERR523: Error, too much constraints! gearbar_slope_angle is already set to {:0.2f}".format(g1_sp))
+        six.print_(("ERR523: Error, too much constraints! gearbar_slope_angle is already set to {:0.2f}".format(g1_sp)))
         sys.exit(2)
       else:
         g1_sp = math.acos(float(c['second_gear_base_diameter'])/(2*g2_pr))
@@ -566,7 +567,7 @@ def gear_profile_constraint_check(c):
         print("ERR531: Error, set second_gear_tooth_nb to use second_gear_base_diameter_n")
         sys.exit(2)
       elif(g1_sn_set):
-        print("ERR532: Error, too much constraints! gearbar_slope_angle_n is already set to {:0.2f}".format(g1_sp))
+        six.print_(("ERR532: Error, too much constraints! gearbar_slope_angle_n is already set to {:0.2f}".format(g1_sp)))
         sys.exit(2)
       else:
         g1_sn = math.acos(float(c['second_gear_base_diameter_n'])/(2*g2_pr))
@@ -589,27 +590,27 @@ def gear_profile_constraint_check(c):
   # base radius check
   if((g1_type=='e')or(g1_type=='i')):
     if(g1_brp>g1_small_r):
-      print("WARN216: Warning, g1_brp {:0.2f} is bigger than g1_small_r {:0.2f}".format(g1_brp, g1_small_r))
+      six.print_(("WARN216: Warning, g1_brp {:0.2f} is bigger than g1_small_r {:0.2f}".format(g1_brp, g1_small_r)))
     if(g1_brn>g1_small_r):
-      print("WARN246: Warning, g1_brn {:0.2f} is bigger than g1_small_r {:0.2f}".format(g1_brn, g1_small_r))
+      six.print_(("WARN246: Warning, g1_brn {:0.2f} is bigger than g1_small_r {:0.2f}".format(g1_brn, g1_small_r)))
     if(g1_brp!=g1_brn):
-      print("WARN218: Warning, g1_brp {:0.2f} and g1_brn {:0.2f} are different. The gear_tooth are asymmetrical!".format(g1_brp, g1_brn))
+      six.print_(("WARN218: Warning, g1_brp {:0.2f} and g1_brn {:0.2f} are different. The gear_tooth are asymmetrical!".format(g1_brp, g1_brn)))
     if(g1_brp>g1_big_r):
-      print("ERR616: Error, g1_brp {:0.2f} is bigger than g1_big_r {:0.2f}".format(g1_brp, g1_big_r))
+      six.print_(("ERR616: Error, g1_brp {:0.2f} is bigger than g1_big_r {:0.2f}".format(g1_brp, g1_big_r)))
       sys.exit(2)
     if(g1_brn>g1_big_r):
-      print("ERR646: Error, g1_brn {:0.2f} is bigger than g1_big_r {:0.2f}".format(g1_brn, g1_big_r))
+      six.print_(("ERR646: Error, g1_brn {:0.2f} is bigger than g1_big_r {:0.2f}".format(g1_brn, g1_big_r)))
       sys.exit(2)
   if((g2_type=='e')or(g2_type=='i')):
     if(g2_exist and (g2_brp>g2_small_r)):
-      print("WARN217: Warning, g2_brp {:0.2f} is bigger than g2_small_r {:0.2f}".format(g2_brp, g2_small_r))
+      six.print_(("WARN217: Warning, g2_brp {:0.2f} is bigger than g2_small_r {:0.2f}".format(g2_brp, g2_small_r)))
     if(g2_exist and (g2_brn>g2_small_r)):
-      print("WARN247: Warning, g2_brn {:0.2f} is bigger than g2_small_r {:0.2f}".format(g2_brn, g2_small_r))
+      six.print_(("WARN247: Warning, g2_brn {:0.2f} is bigger than g2_small_r {:0.2f}".format(g2_brn, g2_small_r)))
     if(g2_exist and (g2_brp>g2_big_r)):
-      print("ERR617: Error, g2_brp {:0.2f} is bigger than g2_big_r {:0.2f}".format(g2_brp, g2_big_r))
+      six.print_(("ERR617: Error, g2_brp {:0.2f} is bigger than g2_big_r {:0.2f}".format(g2_brp, g2_big_r)))
       sys.exit(2)
     if(g2_exist and (g2_brn>g2_big_r)):
-      print("ERR647: Error, g2_brn {:0.2f} is bigger than g2_big_r {:0.2f}".format(g2_brn, g2_big_r))
+      six.print_(("ERR647: Error, g2_brn {:0.2f} is bigger than g2_big_r {:0.2f}".format(g2_brn, g2_big_r)))
       sys.exit(2)
   g1_param['positive_base_radius'] = g1_brp
   g1_param['negative_base_radius'] = g1_brn
@@ -652,12 +653,12 @@ def gear_profile_constraint_check(c):
   # hollow
   g1_h_delta = g1_thh*float(c['gear_hollow_height_pourcentage'])/100
   if(g1_h_delta<1.05*g1_rbr):
-    print("WARN218: Warning, g1_h_delta {:0.2f} is smaller than the router_bit_radius {:0.2f}. gear_hollow_height_pourcentage {:0.2f} should be set to {:0.2f}".format(g1_h_delta, g1_rbr, c['gear_hollow_height_pourcentage'], 100.0*g1_rbr/g1_thh))
+    six.print_(("WARN218: Warning, g1_h_delta {:0.2f} is smaller than the router_bit_radius {:0.2f}. gear_hollow_height_pourcentage {:0.2f} should be set to {:0.2f}".format(g1_h_delta, g1_rbr, c['gear_hollow_height_pourcentage'], 100.0*g1_rbr/g1_thh)))
     g1_h_delta = 1.05*g1_rbr
   g2_h_delta = g2_thh*float(c['second_gear_hollow_height_pourcentage'])/100
   if(g2_exist):
     if(g2_h_delta<1.05*g2_rbr):
-      print("WARN219: Warning, g2_h_delta {:0.2f} is smaller than the second_router_bit_radius {:0.2f}. second_gear_hollow_height_pourcentage {:0.2f} should be set to {:0.2f}".format(g2_h_delta, g2_rbr, c['second_gear_hollow_height_pourcentage'], 100.0*g2_rbr/g2_thh))
+      six.print_(("WARN219: Warning, g2_h_delta {:0.2f} is smaller than the second_router_bit_radius {:0.2f}. second_gear_hollow_height_pourcentage {:0.2f} should be set to {:0.2f}".format(g2_h_delta, g2_rbr, c['second_gear_hollow_height_pourcentage'], 100.0*g2_rbr/g2_thh)))
       g2_h_delta = 1.05*g2_rbr
   g1_hr = g1_dr - g1_as*g1_h_delta
   g2_hr = g2_dr - g2_as*g2_h_delta
@@ -703,7 +704,7 @@ def gear_profile_constraint_check(c):
   g1_ple = 0
   if(c['portion_tooth_nb']>0): # cut a portion of the first gear
     if(((g1_type=='e')or(g1_type=='i'))and(c['portion_tooth_nb']>=g1_n)):
-      print("ERR553: Error, the portion {:d} of gearwheel is bigger than the maximal number of teeth {:d}!".format(c['portion_tooth_nb'], g1_n))
+      six.print_(("ERR553: Error, the portion {:d} of gearwheel is bigger than the maximal number of teeth {:d}!".format(c['portion_tooth_nb'], g1_n)))
       sys.exit(2)
     g1_ptn = c['portion_tooth_nb']
     g1_pfe = c['portion_first_end']
@@ -942,7 +943,7 @@ def gear_profile_simulation_A(c):
   g2_rotation_speed_curve_table = []
   tangential_friction_curve_table = []
   ### start Tkinter
-  tk_root = Tkinter.Tk()
+  tk_root = tkinter.Tk()
   my_canvas = cnc25d_api.Two_Canvas(tk_root)
   # callback functions for display_backend
   def sub_canvas_graphics(ai_rotation_direction, ai_angle_position):

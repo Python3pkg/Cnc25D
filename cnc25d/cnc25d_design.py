@@ -29,22 +29,22 @@ to be used by the design examples or external scripts
 # import
 ################################################################
 
-import box_wood_frame
-import gear_profile
-import gearwheel
-import gearring
-import gearbar
-import split_gearwheel
-import epicyclic_gearing
-import axle_lid
-import motor_lid
-import bell
-import bagel
-import bell_bagel_assembly
-import crest
-import cross_cube
-import gimbal
-import low_torque_transmission
+from . import box_wood_frame
+from . import gear_profile
+from . import gearwheel
+from . import gearring
+from . import gearbar
+from . import split_gearwheel
+from . import epicyclic_gearing
+from . import axle_lid
+from . import motor_lid
+from . import bell
+from . import bagel
+from . import bell_bagel_assembly
+from . import crest
+from . import cross_cube
+from . import gimbal
+from . import low_torque_transmission
 
 ################################################################
 # Cnc25d Designs

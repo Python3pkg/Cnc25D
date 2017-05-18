@@ -33,7 +33,7 @@ On 2013/10/02, the bug is fixed
 try: # when working with an installed Cnc25D package
   from cnc25d import cnc25d_api
 except:    # when working on the source files
-  import importing_cnc25d # give access to the cnc25d package
+  from . import importing_cnc25d # give access to the cnc25d package
   from cnc25d import cnc25d_api
 #cnc25d_api.importing_freecad()
 #print("FreeCAD.Version:", FreeCAD.Version())

@@ -29,7 +29,8 @@ The main function displays in a Tk-interface the epicyclic gearing, or generate 
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import cnc25d_api
+from . import cnc25d_api
+import six
 cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -52,10 +53,10 @@ from FreeCAD import Base
 #import svgwrite
 #from dxfwrite import DXFEngine
 # cnc25d
-import gearring
-import gearwheel
-import gear_profile # to get the high-level parameter to find the angle position
-import axle_lid
+from . import gearring
+from . import gearwheel
+from . import gear_profile # to get the high-level parameter to find the angle position
+from . import axle_lid
 
 ################################################################
 # epicyclic_gearing constraint_constructor
@@ -380,14 +381,14 @@ def sun_gearwheel_constraint(c):
   #tooth_check = (c['sun_gear_tooth_nb'] + c['annulus_gear_tooth_nb'])%c['planet_nb']
   tooth_check = (2*(c['sun_gear_tooth_nb'] + c['planet_gear_tooth_nb'])) % c['planet_nb']
   if(tooth_check!=0):
-    print("WARN418: Warning, tooth_check {:d} is different from 0.".format(tooth_check))
+    six.print_(("WARN418: Warning, tooth_check {:d} is different from 0.".format(tooth_check)))
     #print("tooth_check = (sun_nb {:d} + annulus_nb {:d}) % planet_nb {:d}".format(c['sun_gear_tooth_nb'], c['annulus_gear_tooth_nb'], c['planet_nb']))
-    print("tooth_check = (2*(sun_nb {:d} + planet_nb {:d})) % planet_nb {:d}".format(c['sun_gear_tooth_nb'], c['planet_gear_tooth_nb'], c['planet_nb']))
+    six.print_(("tooth_check = (2*(sun_nb {:d} + planet_nb {:d})) % planet_nb {:d}".format(c['sun_gear_tooth_nb'], c['planet_gear_tooth_nb'], c['planet_nb'])))
   for i in range(c['planet_nb']):
     a0_ai_diff = math.fmod(sun_angle_position[i]-sun_angle_position[0]+5.5*g2_pi_module_angle, g2_pi_module_angle) - 0.5*g2_pi_module_angle
     if(abs(a0_ai_diff)>radian_epsilon):
-      print("ERR414: Error, the i {:d} sun_angle_position {:0.5f} differ from the 0 sun_angle_position {:0.5f} with g2_pi_module_angle {:0.8f}".format(i, sun_angle_position[i], sun_angle_position[0], g2_pi_module_angle))
-      print("dbg417: a0_ai_diff {:0.8f}".format(a0_ai_diff))
+      six.print_(("ERR414: Error, the i {:d} sun_angle_position {:0.5f} differ from the 0 sun_angle_position {:0.5f} with g2_pi_module_angle {:0.8f}".format(i, sun_angle_position[i], sun_angle_position[0], g2_pi_module_angle)))
+      six.print_(("dbg417: a0_ai_diff {:0.8f}".format(a0_ai_diff)))
       sys.exit(2)
   gw_c['gear_initial_angle'] = sun_angle_position[0]
   return(gw_c)
@@ -419,7 +420,7 @@ def epicyclic_gearing_constraint_check(c):
     c['carrier_crenel_rbr'] = c['cnc_router_bit_radius']
   ## gearring_dedendum_to_hollow_pourcentage
   if((c['gearring_dedendum_to_hollow_pourcentage']>=100.0)or(c['gearring_dedendum_to_hollow_pourcentage']<0)):
-    print("ERR277: Error, gearring_dedendum_to_hollow_pourcentage {:0.3f} must be set between 0.0% and 100.0%".format(c['gearring_dedendum_to_hollow_pourcentage']))
+    six.print_(("ERR277: Error, gearring_dedendum_to_hollow_pourcentage {:0.3f} must be set between 0.0% and 100.0%".format(c['gearring_dedendum_to_hollow_pourcentage'])))
     sys.exit(2)
   ## tooth number
   c['annulus_gear_tooth_nb'] = c['sun_gear_tooth_nb'] + 2 * c['planet_gear_tooth_nb']
@@ -432,12 +433,12 @@ def epicyclic_gearing_constraint_check(c):
   if(c['planet_nb']==0):
     c['planet_nb'] = c['planet_number_max']
   if(c['planet_nb']>c['planet_number_max']):
-    print("ERR270: Error, planet_nb {:d} is bigger than planet_number_max {:d}".format(c['planet_nb'], c['planet_number_max']))
+    six.print_(("ERR270: Error, planet_nb {:d} is bigger than planet_number_max {:d}".format(c['planet_nb'], c['planet_number_max'])))
     sys.exit(2)
   c['epicyclic_gearing_ratio'] = float(c['sun_gear_tooth_nb'])/(c['sun_gear_tooth_nb']+c['annulus_gear_tooth_nb'])
   ## gear_addendum_dedendum_parity_slack
   if((c['gear_addendum_dedendum_parity_slack']<0)or(c['gear_addendum_dedendum_parity_slack']>30)):
-    print("ERR274: Error, gear_addendum_dedendum_parity_slack {:0.3f} is out of the range 0..30".format(c['gear_addendum_dedendum_parity_slack']))
+    six.print_(("ERR274: Error, gear_addendum_dedendum_parity_slack {:0.3f} is out of the range 0..30".format(c['gear_addendum_dedendum_parity_slack'])))
     sys.exit(2)
   c['addendum_dedendum_parity'] = 50.0-c['gear_addendum_dedendum_parity_slack']/2.0
   c['first_planet_position_angle'] = c['planet_carrier_angle']
@@ -502,23 +503,23 @@ def epicyclic_gearing_constraint_check(c):
   #  print("ERR443: Error, carrier_central_hole_diameter {:0.3f} is bigger than carrier_central_diameter {:0.3f}".format(c['carrier_central_hole_diameter'], c['carrier_central_diameter']))
   #  sys.exit(2)
   if(c['carrier_leg_hole_radius']>c['carrier_leg_radius']):
-    print("ERR446: Error, carrier_leg_hole_radius {:0.3f} is bigger than carrier_leg_radius {:0.3f}".format(c['carrier_leg_hole_radius'], c['carrier_leg_radius']))
+    six.print_(("ERR446: Error, carrier_leg_hole_radius {:0.3f} is bigger than carrier_leg_radius {:0.3f}".format(c['carrier_leg_hole_radius'], c['carrier_leg_radius'])))
     sys.exit(2)
   if(c['carrier_peripheral_internal_radius']>c['sun_planet_length']):
-    print("ERR448: Error, carrier_peripheral_internal_radius {:0.3f} is bigger than sun_planet_length {:0.3f}".format(c['carrier_peripheral_internal_radius'], c['sun_planet_length']))
+    six.print_(("ERR448: Error, carrier_peripheral_internal_radius {:0.3f} is bigger than sun_planet_length {:0.3f}".format(c['carrier_peripheral_internal_radius'], c['sun_planet_length'])))
     sys.exit(2)
   if(c['carrier_peripheral_internal_radius']<(c['carrier_central_radius']+3*c['carrier_sr'])):
     #print("WARN455: Warning, carrier_peripheral_internal_radius {:0.3f} is too small compare to  carrier_central_radius {:0.3f} and carrier_smoothing_radius {:0.3f}".format(c['carrier_peripheral_internal_radius'], c['carrier_central_radius'], c['carrier_sr']))
     c['carrier_hollow_disable'] = True
   if(c['carrier_peripheral_external_radius']<(c['sun_planet_length']+c['carrier_leg_radius'])):
-    print("WARN461: Warning, carrier_peripheral_external_radius {:0.3f} is too small compare to sun_planet_length {:0.3f} and carrier_leg_radius {:0.3f}".format(c['carrier_peripheral_external_radius'], c['sun_planet_length'], c['carrier_leg_radius']))
+    six.print_(("WARN461: Warning, carrier_peripheral_external_radius {:0.3f} is too small compare to sun_planet_length {:0.3f} and carrier_leg_radius {:0.3f}".format(c['carrier_peripheral_external_radius'], c['sun_planet_length'], c['carrier_leg_radius'])))
     sys.exit(2)
   c['carrier_crenel'] = True
   if(c['carrier_crenel_height']==0):
     c['carrier_crenel'] = False
   if(c['carrier_crenel']):
     if(c['carrier_crenel_width']<7.0*c['carrier_crenel_rbr']):
-      print("ERR468: Error, carrier_crenel_width {:0.3f} is too small compare to carrier_crenel_router_bit_radius {:0.3f}".format(c['carrier_crenel_width'], c['carrier_crenel_rbr']))
+      six.print_(("ERR468: Error, carrier_crenel_width {:0.3f} is too small compare to carrier_crenel_router_bit_radius {:0.3f}".format(c['carrier_crenel_width'], c['carrier_crenel_rbr'])))
       sys.exit(2)
     if(c['carrier_crenel_height']<3*c['carrier_crenel_rbr']):
       c['carrier_crenel_type'] = 2
@@ -527,48 +528,48 @@ def epicyclic_gearing_constraint_check(c):
   #print("dbg509: carrier_crenel_router_bit_radius {:0.3f}  carrier_crenel_type {:d}".format(c['carrier_crenel_rbr'], c['carrier_crenel_type']))
   if(c['carrier_hole_radius']>0):
     if(c['carrier_hole_position_radius']<(c['sun_planet_length']+c['carrier_leg_hole_radius']+c['carrier_hole_radius']+radian_epsilon)):
-      print("ERR544: Error, carrier_hole_position_radius {:0.3f} is too small compare to sun_planet_length {:0.3f}, carrier_leg_hole_radius {:0.3f} and carrier_hole_radius {:0.3f}".format(c['carrier_hole_position_radius'], c['sun_planet_length'], c['carrier_leg_hole_radius'], c['carrier_hole_radius']))
+      six.print_(("ERR544: Error, carrier_hole_position_radius {:0.3f} is too small compare to sun_planet_length {:0.3f}, carrier_leg_hole_radius {:0.3f} and carrier_hole_radius {:0.3f}".format(c['carrier_hole_position_radius'], c['sun_planet_length'], c['carrier_leg_hole_radius'], c['carrier_hole_radius'])))
       sys.exit(2)
     if(c['carrier_hole_position_radius']>(c['carrier_peripheral_external_radius']-c['carrier_crenel_height']-c['carrier_hole_radius']-radian_epsilon)):
-      print("ERR548: Error, carrier_hole_position_radius {:0.3f} is too big compare to carrier_peripheral_external_radius {:0.3f} carrier_crenel_height {:0.3f} and carrier_hole_radius {:0.3f}".format(c['carrier_hole_position_radius'], c['carrier_peripheral_external_radius'], c['carrier_crenel_height'], c['carrier_hole_radius']))
+      six.print_(("ERR548: Error, carrier_hole_position_radius {:0.3f} is too big compare to carrier_peripheral_external_radius {:0.3f} carrier_crenel_height {:0.3f} and carrier_hole_radius {:0.3f}".format(c['carrier_hole_position_radius'], c['carrier_peripheral_external_radius'], c['carrier_crenel_height'], c['carrier_hole_radius'])))
       sys.exit(2)
   if(c['carrier_double_hole_length']<0):
-    print("ERR658: Error, carrier_double_hole_length {:0.3f} should be positive".format(c['carrier_double_hole_length']))
+    six.print_(("ERR658: Error, carrier_double_hole_length {:0.3f} should be positive".format(c['carrier_double_hole_length'])))
     sys.exit(2)
   elif(c['carrier_double_hole_length']>0):
     if(c['carrier_hole_radius']==0):
-      print("ERR662: Error, carrier_double_hole_length {:0.3f} is positive whereas carrier_hole_radius is set to zero".format(c['carrier_double_hole_length']))
+      six.print_(("ERR662: Error, carrier_double_hole_length {:0.3f} is positive whereas carrier_hole_radius is set to zero".format(c['carrier_double_hole_length'])))
       sys.exit(2)
   ### top (axle-lid)
   c['top_clearance_radius'] = c['top_clearance_diameter']/2.0
   if(c['top_clearance_radius'] == 0):
     c['top_clearance_radius'] = (c['carrier_peripheral_external_radius'] + c['holder_radius'])/2.0 # default value
   if(c['top_clearance_radius'] < c['carrier_peripheral_external_radius']):
-    print("ERR968: Error, top_clearance_radius {:0.3f} is smaller than carrier_peripheral_external_radius {:0.3f}".format(c['top_clearance_radius'], c['carrier_peripheral_external_radius']))
+    six.print_(("ERR968: Error, top_clearance_radius {:0.3f} is smaller than carrier_peripheral_external_radius {:0.3f}".format(c['top_clearance_radius'], c['carrier_peripheral_external_radius'])))
     sys.exit(2)
   if(c['top_clearance_radius'] > c['holder_radius']):
-    print("ERR971: Error, top_clearance_radius {:0.3f} is bigger than holder_radius {:0.3f}".format(c['top_clearance_radius'], c['holder_radius']))
+    six.print_(("ERR971: Error, top_clearance_radius {:0.3f} is bigger than holder_radius {:0.3f}".format(c['top_clearance_radius'], c['holder_radius'])))
     sys.exit(2)
   c['top_axle_hole_radius'] = c['top_axle_hole_diameter']/2.0
   if(c['top_axle_hole_radius'] == 0):
     if(c['sun_axle_type'] != 'circle'):
-      print("WARN978: Warning, sun_axle_type {:s} is not set to circle but sun_axle_x_width {:0.3f} is used to set the top_axle_hole_diameter".format(c['sun_axle_type'], c['sun_axle_x_width']))
+      six.print_(("WARN978: Warning, sun_axle_type {:s} is not set to circle but sun_axle_x_width {:0.3f} is used to set the top_axle_hole_diameter".format(c['sun_axle_type'], c['sun_axle_x_width'])))
     c['top_axle_hole_radius'] = c['sun_axle_x_width']/2.0
   c['top_central_radius'] = c['top_central_diameter']/2.0
   if(c['top_central_radius'] == 0):
     c['top_central_radius'] = 3*c['top_axle_hole_radius']
   if(c['top_central_radius']<c['top_axle_hole_radius']):
-    print("ERR984: Error, top_central_radius {:0.3f} is smaller than top_axle_hole_radius {:0.3f}".format(c['top_central_radius'], c['top_axle_hole_radius']))
+    six.print_(("ERR984: Error, top_central_radius {:0.3f} is smaller than top_axle_hole_radius {:0.3f}".format(c['top_central_radius'], c['top_axle_hole_radius'])))
     sys.exit(2)
   if(c['top_central_radius']>c['holder_radius']):
-    print("ERR987: Error, top_central_radius {:0.3f} is bigger than holder_radius {:0.3f}".format(c['top_central_radius'], c['holder_radius']))
+    six.print_(("ERR987: Error, top_central_radius {:0.3f} is bigger than holder_radius {:0.3f}".format(c['top_central_radius'], c['holder_radius'])))
     sys.exit(2)
   ### inout_in_hole_diameter
   #c['input_axle_shaft_radius'] = (c['input_gearwheel_tooth_nb']+2)*c['input_gearwheel_module']/2.0 # no, to avoid Z-axis issue, we don't want to make this radius as small as possible, but set it to carrier_peripheral_external_radius. Nice to have: input_axle_shaft_radius < (c['annulus_gear_tooth_nb']-2)*gear_module
   #c['input_axle_shaft_radius'] = c['carrier_peripheral_external_radius']
   c['input_axle_shaft_radius'] = max((c['input_gearwheel_tooth_nb']+2)*c['input_gearwheel_module']/2.0, c['carrier_peripheral_external_radius'])
   if(c['input_axle_shaft_radius']>(c['annulus_gear_tooth_nb']-2)*c['gear_module']/2.0-radian_epsilon):
-    print("WARN910: Warning, input_axle_shaft_radius {:0.3f} is too big compare to annulus_gear_tooth_nb {:d} and gear_module {:0.3f}".format(c['input_axle_shaft_radius'], c['annulus_gear_tooth_nb'], c['gear_module']))
+    six.print_(("WARN910: Warning, input_axle_shaft_radius {:0.3f} is too big compare to annulus_gear_tooth_nb {:d} and gear_module {:0.3f}".format(c['input_axle_shaft_radius'], c['annulus_gear_tooth_nb'], c['gear_module'])))
   c['inout_in_hole_diameter'] = 2*(c['input_axle_shaft_radius']+c['input_cover_extra_space'])
   ### inout_out_hole_diameter
   #output_axle_shaft_radius = (c['output_gearwheel_tooth_nb']+2)*c['output_gearwheel_module']/2.0 # no, it's not defined by the output gearwheel
@@ -627,7 +628,7 @@ def epicyclic_gearing_2d_construction(c):
       carrier_peripheral_portion_angle = 2*math.pi/(2*c['planet_nb'])
       carrier_peripheral_arc_half_angle = (carrier_peripheral_portion_angle - 2 * crenel_width_half_angle)/2.0
       if(carrier_peripheral_arc_half_angle<radian_epsilon):
-        print("ERR493: Error, carrier_peripheral_arc_half_angle {:0.3f} is negative or too small".format(carrier_peripheral_arc_half_angle))
+        six.print_(("ERR493: Error, carrier_peripheral_arc_half_angle {:0.3f} is negative or too small".format(carrier_peripheral_arc_half_angle)))
         sys.exit(2)
       cp_A = [(0.0+cpe_radius*math.cos(-1*crenel_width_half_angle), 0.0+cpe_radius*math.sin(-1*crenel_width_half_angle), 0)]
       arc_middle_a = crenel_width_half_angle + carrier_peripheral_arc_half_angle
@@ -663,7 +664,7 @@ def epicyclic_gearing_2d_construction(c):
       (crenel_A, crenel_width_half_angle) = carrier_crenel_outline(AIl)
       arc_half_angle = (math.pi/2 - LAOa - crenel_width_half_angle)/2.0
       if(arc_half_angle<radian_epsilon):
-        print("ERR596: Error, arc_half_angle {:0.3f} is negative or too small".format(arc_half_angle))
+        six.print_(("ERR596: Error, arc_half_angle {:0.3f} is negative or too small".format(arc_half_angle)))
         sys.exit(2)
       leg_A.append((OAl+AIl*math.cos(ta1+1*arc_half_angle), AIl*math.sin(ta1+1*arc_half_angle), OAl+AIl*math.cos(ta1+2*arc_half_angle), AIl*math.sin(ta1+2*arc_half_angle), 0))
       leg_A.extend(cnc25d_api.outline_shift_x(crenel_A, OAl, 1))
@@ -724,7 +725,7 @@ def epicyclic_gearing_2d_construction(c):
       cia_half = cia
       arc_half = (leg_hole_portion - 2*cia_half)/2.0
       if(arc_half<radian_epsilon):
-        print("ERR551: Error, rear planet-carrier arc_half {:0.3f} is negative or too small".format(arc_half))
+        six.print_(("ERR551: Error, rear planet-carrier arc_half {:0.3f} is negative or too small".format(arc_half)))
         sys.exit(2)
       cpi_A = [(0.0+cpi_radius*math.cos(-1*cia_half), 0.0+cpi_radius*math.sin(-1*cia_half), c['carrier_sr'])]
       short_radius = c['sun_planet_length'] - cl_radius
@@ -750,11 +751,11 @@ def epicyclic_gearing_2d_construction(c):
       middle_radius_intersection = True
     # intersection carrier_leg_middle_radius and carrier_peripheral_external_radius from planet
     if(c['sun_planet_length']+c['carrier_leg_middle_radius']<c['carrier_peripheral_external_radius']):
-      print("ERR731: Error, carrier_leg_middle_radius {:0.3f} is too small compare to sun_planet_length {:0.3f} and carrier_peripheral_external_radius {:0.3f}".format(c['carrier_leg_middle_radius'], c['sun_planet_length'], c['carrier_peripheral_external_radius']))
+      six.print_(("ERR731: Error, carrier_leg_middle_radius {:0.3f} is too small compare to sun_planet_length {:0.3f} and carrier_peripheral_external_radius {:0.3f}".format(c['carrier_leg_middle_radius'], c['sun_planet_length'], c['carrier_peripheral_external_radius'])))
       sys.exit(2)
     cos_imea = (c['carrier_leg_middle_radius']**2+c['sun_planet_length']**2-c['carrier_peripheral_external_radius']**2)/(2*c['carrier_leg_middle_radius']*c['sun_planet_length'])
     if((cos_imea<-1)or(cos_imea>1)):
-      print("ERR730: Error, cos_imea {:0.3f} is out of the range -1,1".format(cos_imea))
+      six.print_(("ERR730: Error, cos_imea {:0.3f} is out of the range -1,1".format(cos_imea)))
       sys.exit(2)
     imea = math.acos(cos_imea)
     # intersection carrier_leg_middle_radius and carrier_peripheral_internal_radius from planet
@@ -767,7 +768,7 @@ def epicyclic_gearing_2d_construction(c):
         imia = imia_0 + math.acos((planet_planet_length**2+0*c['carrier_leg_middle_radius']**2)/(2*planet_planet_length*c['carrier_leg_middle_radius']))
     pla = (imea-imia)/2.0
     if(pla<radian_epsilon):
-      print("ERR628: Error, imia {:0.3f} is larger than imea {:0.3f}".format(imia, imea))
+      six.print_(("ERR628: Error, imia {:0.3f} is larger than imea {:0.3f}".format(imia, imea)))
       sys.exit(2)
     # intersection carrier_leg_middle_radius and carrier_peripheral_external_radius from sun
     imefsa = math.acos((c['sun_planet_length']**2+c['carrier_peripheral_external_radius']**2-c['carrier_leg_middle_radius']**2)/(2*c['sun_planet_length']*c['carrier_peripheral_external_radius']))
@@ -784,7 +785,7 @@ def epicyclic_gearing_2d_construction(c):
       (crenel_A, crenel_width_half_angle) = carrier_crenel_outline(cpe_radius)
       carrier_peripheral_arc_half_angle = (leg_hole_portion - 2 * imefsa - 2 * crenel_width_half_angle)/4.0
       if(carrier_peripheral_arc_half_angle<radian_epsilon):
-        print("ERR635: Error, middle carrier_peripheral_arc_half_angle {:0.3f} is negative or too small".format(carrier_peripheral_arc_half_angle))
+        six.print_(("ERR635: Error, middle carrier_peripheral_arc_half_angle {:0.3f} is negative or too small".format(carrier_peripheral_arc_half_angle)))
         sys.exit(2)
       arc_middle_a = crenel_width_half_angle + carrier_peripheral_arc_half_angle
       arc_end_a = arc_middle_a + carrier_peripheral_arc_half_angle
@@ -915,7 +916,7 @@ def epicyclic_gearing_2d_construction(c):
       output_axle_shaft_figure.extend(output_gearwheel_figure[1:])
     inout_out_axle_shaft_figure = output_axle_shaft_figure[:] # inherit outline and holes from output_axle_shaft_figure
     if(c['sun_axle_type']!='circle'):
-      print("WARN945: Warning, sun_axle_type {:s} is not circle but sun_axle_x_width {:0.3f} is used as axle diameter for the output shaft".format(c['sun_axle_type'], c['sun_axle_x_width']))
+      six.print_(("WARN945: Warning, sun_axle_type {:s} is not circle but sun_axle_x_width {:0.3f} is used as axle diameter for the output shaft".format(c['sun_axle_type'], c['sun_axle_x_width'])))
     output_axle_shaft_figure.append((0.0, 0.0, c['sun_axle_x_width']/2.0))
     output_cover_shaft_merge_figure.extend(output_cover_figure) # output_cover_shaft_merge_figure
     output_cover_shaft_merge_figure.extend(output_axle_shaft_figure)

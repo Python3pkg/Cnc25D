@@ -44,6 +44,7 @@ it provides macros that are commonly used in design scripts
 import sys, argparse
 #from datetime import datetime
 import os, errno
+import six
 #import re
 #import Tkinter # to display the outline in a small GUI
 # FreeCAD
@@ -72,7 +73,7 @@ def mkdir_p(ai_directory):
   if(ai_directory!=''):
     #print("dbg448: ai_directory:", ai_directory)
     # mkdir -p directory if needed
-    print("dbg450: try to create the output directory: {:s}".format(ai_directory))
+    six.print_(("dbg450: try to create the output directory: {:s}".format(ai_directory)))
     try:
       os.makedirs(ai_directory)
       r_status = 0

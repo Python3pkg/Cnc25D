@@ -30,7 +30,7 @@ You can also simulate or view of the gearwheel and get a DXF, SVG or BRep file.
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import cnc25d_api
+from . import cnc25d_api
 #cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -53,7 +53,8 @@ from FreeCAD import Base
 #import svgwrite
 #from dxfwrite import DXFEngine
 # cnc25d
-import gear_profile
+from . import gear_profile
+import six
 
 ################################################################
 # inheritance from gear_profile
@@ -157,24 +158,24 @@ def gearwheel_constraint_check(c):
     c['axle_rbr'] = c['cnc_router_bit_radius']
   # c['axle_type']
   if(not c['axle_type'] in ('none', 'circle', 'rectangle')):
-    print("ERR932: Error, axle_type {:s} is not valid!".format(c['axle_type']))
+    six.print_(("ERR932: Error, axle_type {:s} is not valid!".format(c['axle_type'])))
     sys.exit(2)
   # c['axle_x_width']
   axle_diameter = 0
   if(c['axle_type'] in('circle','rectangle')):
     if(c['axle_x_width']<2*c['axle_rbr']+radian_epsilon):
-      print("ERR663: Error, axle_x_width {:0.2f} is too small compare to axle_router_bit_radius {:0.2f}!".format(c['axle_x_width'], c['axle_rbr']))
+      six.print_(("ERR663: Error, axle_x_width {:0.2f} is too small compare to axle_router_bit_radius {:0.2f}!".format(c['axle_x_width'], c['axle_rbr'])))
       sys.exit(2)
     axle_diameter = c['axle_x_width']
     # c['axle_y_width']
     if(c['axle_type']=='rectangle'):
       if(c['axle_y_width']<2*c['axle_rbr']+radian_epsilon):
-        print("ERR664: Error, axle_y_width {:0.2f} is too small compare to axle_router_bit_radius {:0.2f}!".format(c['axle_y_width'], c['axle_rbr']))
+        six.print_(("ERR664: Error, axle_y_width {:0.2f} is too small compare to axle_router_bit_radius {:0.2f}!".format(c['axle_y_width'], c['axle_rbr'])))
         sys.exit(2)
       axle_diameter = math.sqrt(c['axle_x_width']**2+c['axle_y_width']**2)
   # crenel_type
   if((c['crenel_type']!='rectangle')and(c['crenel_type']!='circle')):
-    print("ERR213: Error, crenel_type {:s} is unknown".format(c['crenel_type']))
+    six.print_(("ERR213: Error, crenel_type {:s} is unknown".format(c['crenel_type'])))
     sys.exit(2)
   # crenel_number
   crenel_increment_angle = 0.0
@@ -182,13 +183,13 @@ def gearwheel_constraint_check(c):
     crenel_increment_angle = 2*math.pi/c['crenel_number']
   if(c['crenel_tooth_align']>0):
     if(c['crenel_number']>0):
-      print("ERR255: Error, crenel_tooth_align {:d} and crenel_number {:d} are set together".format(c['crenel_tooth_align'], c['crenel_number']))
+      six.print_(("ERR255: Error, crenel_tooth_align {:d} and crenel_number {:d} are set together".format(c['crenel_tooth_align'], c['crenel_number'])))
       sys.exit(2)
     if(c['crenel_angle']!=0):
-      print("ERR258: Error, crenel_tooth_align {:d} and crenel_angle {:0.3f} are set together".format(c['crenel_tooth_align'], c['crenel_angle']))
+      six.print_(("ERR258: Error, crenel_tooth_align {:d} and crenel_angle {:0.3f} are set together".format(c['crenel_tooth_align'], c['crenel_angle'])))
       sys.exit(2)
     if(c['gear_tooth_nb']==0):
-      print("ERR261: Error, crenel_tooth_align {:d} set and gear_tooth_nb {:d} is set to zero".format(c['crenel_tooth_align'], c['gear_tooth_nb']))
+      six.print_(("ERR261: Error, crenel_tooth_align {:d} set and gear_tooth_nb {:d} is set to zero".format(c['crenel_tooth_align'], c['gear_tooth_nb'])))
       sys.exit(2)
     c['crenel_number'] = int(c['gear_tooth_nb']/c['crenel_tooth_align'])
     c['crenel_angle'] = c['gear_initial_angle']
@@ -196,14 +197,14 @@ def gearwheel_constraint_check(c):
   #print("dbg266: crenel_number {:d}  crenel_angle {:0.3f}  crenel_increment_angle {:0.3f}".format(c['crenel_number'], c['crenel_angle'], crenel_increment_angle))
   # crenel_mark_nb
   if((c['crenel_mark_nb']<0)or(c['crenel_mark_nb']>c['crenel_number'])):
-    print("ERR233: Error, crenel_mark_nb {:d} is out of the range 0..{:d}".format(c['crenel_mark_nb'], c['crenel_number']))
+    six.print_(("ERR233: Error, crenel_mark_nb {:d} is out of the range 0..{:d}".format(c['crenel_mark_nb'], c['crenel_number'])))
     sys.exit(2)
   # crenel_diameter
   crenel_diameter = c['crenel_diameter']
   if(crenel_diameter==0):
     crenel_diameter = axle_diameter
   if(crenel_diameter<axle_diameter):
-    print("ERR212: Error, crenel_diameter {:0.3f} is smaller than the axle_diameter {:0.3f}".format(crenel_diameter, axle_diameter))
+    six.print_(("ERR212: Error, crenel_diameter {:0.3f} is smaller than the axle_diameter {:0.3f}".format(crenel_diameter, axle_diameter)))
     sys.exit(2)
   c['crenel_radius'] = crenel_diameter/2.0
   # c['gear_tooth_nb']
@@ -220,7 +221,7 @@ def gearwheel_constraint_check(c):
     c['addendum_radius'] = gear_profile_parameters['g1_param']['addendum_radius'] # for slice_xyz
   else: # no gear_profile, just a circle
     if(c['gear_primitive_diameter']<radian_epsilon):
-      print("ERR885: Error, the no-gear-profile circle outline diameter gear_primitive_diameter {:0.2f} is too small!".format(c['gear_primitive_diameter']))
+      six.print_(("ERR885: Error, the no-gear-profile circle outline diameter gear_primitive_diameter {:0.2f} is too small!".format(c['gear_primitive_diameter'])))
       sys.exit(2)
     c['g1_ix'] = c['center_position_x']
     c['g1_iy'] = c['center_position_y']
@@ -232,7 +233,7 @@ def gearwheel_constraint_check(c):
   if(c['axle_radius'] == 0): # if axle = none
     c['axle_radius'] = 1.0
   if(c['axle_radius']>minimal_gear_profile_radius-radian_epsilon): # non sense case
-    print("ERR218: Error, axle_radius {:0.3f} is bigger than minimal_gear_profile_radius {:0.3f}".format(c['axle_radius'], minimal_gear_profile_radius))
+    six.print_(("ERR218: Error, axle_radius {:0.3f} is bigger than minimal_gear_profile_radius {:0.3f}".format(c['axle_radius'], minimal_gear_profile_radius)))
     sys.exit(2)
   c['wheel_hollow_external_radius'] = c['wheel_hollow_external_diameter']/2.0
   c['wheel_hollow_internal_radius'] = c['wheel_hollow_internal_diameter']/2.0
@@ -240,63 +241,63 @@ def gearwheel_constraint_check(c):
     if(c['wheel_hollow_external_radius']==0): # set the default value
       c['wheel_hollow_external_radius'] = minimal_gear_profile_radius - 2.5*g1_m
       if(c['wheel_hollow_external_radius']<c['axle_radius']+2.1*c['wheel_hollow_rbr']): # remove the default value
-        print("WARN224: Warning, the wheel_hollow_external_radius default value {:0.3f} can not be set!".format(c['wheel_hollow_external_radius']))
+        six.print_(("WARN224: Warning, the wheel_hollow_external_radius default value {:0.3f} can not be set!".format(c['wheel_hollow_external_radius'])))
         c['wheel_hollow_external_radius'] = 0
         c['wheel_hollow_leg_number'] = 0
     if(c['wheel_hollow_internal_radius']==0): # set the default value
       #c['wheel_hollow_internal_radius'] = 2.0*c['axle_radius']
       c['wheel_hollow_internal_radius'] = c['axle_radius'] + 1.0*c['wheel_hollow_leg_width']
       if(c['wheel_hollow_internal_radius']>c['wheel_hollow_external_radius']-2.1*c['wheel_hollow_rbr']): # remove the default value
-        print("WARN228: Warning, the wheel_hollow_internal_radius default value {:0.3f} can not be set!".format(c['wheel_hollow_internal_radius']))
+        six.print_(("WARN228: Warning, the wheel_hollow_internal_radius default value {:0.3f} can not be set!".format(c['wheel_hollow_internal_radius'])))
         c['wheel_hollow_internal_radius'] = 0
         c['wheel_hollow_leg_number'] = 0
     if(c['wheel_hollow_router_bit_radius']==0): # set the default value
       c['wheel_hollow_rbr'] = (c['wheel_hollow_external_radius']-c['wheel_hollow_internal_radius'])/5.0
       if(c['wheel_hollow_rbr']<c['cnc_router_bit_radius']):
-        print("WARN233: Warning, the wheel_hollow_router_bit_radius default value {:0.3f} can not be set!".format(c['wheel_hollow_rbr']))
+        six.print_(("WARN233: Warning, the wheel_hollow_router_bit_radius default value {:0.3f} can not be set!".format(c['wheel_hollow_rbr'])))
         c['wheel_hollow_rbr'] = c['cnc_router_bit_radius']
   ### check parameter coherence (part 2)
   if(c['wheel_hollow_leg_number']>0):
     # wheel_hollow_external_diameter
     if(c['wheel_hollow_external_radius'] > minimal_gear_profile_radius-radian_epsilon):
-      print("ERR733: Error, wheel_hollow_external_radius {:0.2f} is bigger than the gear_hollow_radius {:0.2f}!".format(c['wheel_hollow_external_radius'], minimal_gear_profile_radius))
+      six.print_(("ERR733: Error, wheel_hollow_external_radius {:0.2f} is bigger than the gear_hollow_radius {:0.2f}!".format(c['wheel_hollow_external_radius'], minimal_gear_profile_radius)))
       sys.exit(2)
     if(c['wheel_hollow_external_radius'] < c['wheel_hollow_internal_radius']+2*c['wheel_hollow_rbr']+radian_epsilon):
-      print("ERR734: Error, wheel_hollow_external_radius {:0.2f} is too small compare to wheel_hollow_internal_radius {:0.2f} and wheel_hollow_router_bit_radius {:0.2f}!".format(c['wheel_hollow_external_radius'], c['wheel_hollow_internal_radius'], c['wheel_hollow_rbr']))
+      six.print_(("ERR734: Error, wheel_hollow_external_radius {:0.2f} is too small compare to wheel_hollow_internal_radius {:0.2f} and wheel_hollow_router_bit_radius {:0.2f}!".format(c['wheel_hollow_external_radius'], c['wheel_hollow_internal_radius'], c['wheel_hollow_rbr'])))
       sys.exit(2)
     # wheel_hollow_leg_width
     if(c['wheel_hollow_leg_width']<radian_epsilon):
-      print("ERR735: Error, wheel_hollow_leg_width {:0.2f} is too small!".format(c['wheel_hollow_leg_width']))
+      six.print_(("ERR735: Error, wheel_hollow_leg_width {:0.2f} is too small!".format(c['wheel_hollow_leg_width'])))
       sys.exit(2)
     # wheel_hollow_internal_diameter
     if(c['wheel_hollow_internal_radius']<c['axle_radius']+radian_epsilon):
-      print("ERR736: Error, wheel_hollow_internal_radius {:0.2f} is too small compare to axle_radius {:0.2f}!".format(c['wheel_hollow_internal_radius'], c['axle_radius']))
+      six.print_(("ERR736: Error, wheel_hollow_internal_radius {:0.2f} is too small compare to axle_radius {:0.2f}!".format(c['wheel_hollow_internal_radius'], c['axle_radius'])))
       sys.exit(2)
     if(2*c['wheel_hollow_internal_radius']<c['wheel_hollow_leg_width']+2*radian_epsilon):
-      print("ERR736: Error, wheel_hollow_internal_radius {:0.2f} is too small compare to wheel_hollow_leg_width {:0.2f}!".format(c['wheel_hollow_internal_radius'], c['wheel_hollow_leg_width']))
+      six.print_(("ERR736: Error, wheel_hollow_internal_radius {:0.2f} is too small compare to wheel_hollow_leg_width {:0.2f}!".format(c['wheel_hollow_internal_radius'], c['wheel_hollow_leg_width'])))
       sys.exit(2)
   if(c['crenel_number']>0):
     #print("dbg305: crenel_type {:s}".format(c['crenel_type']))
     if(c['crenel_type']=='rectangle'):
       if(math.sqrt((c['crenel_radius']+c['crenel_height'])**2+(c['crenel_width']/2)**2)> minimal_gear_profile_radius-radian_epsilon):
-        print("ERR298: Error, crenel_radius {:0.3f}, crenel_height {:0.3f} or crenel_width {:0.3f} are too big compare to minimal_gear_profile_radius {:0.3f}".format(c['crenel_radius'], c['crenel_height'], c['crenel_width'], minimal_gear_profile_radius))
+        six.print_(("ERR298: Error, crenel_radius {:0.3f}, crenel_height {:0.3f} or crenel_width {:0.3f} are too big compare to minimal_gear_profile_radius {:0.3f}".format(c['crenel_radius'], c['crenel_height'], c['crenel_width'], minimal_gear_profile_radius)))
         sys.exit(2)
     elif(c['crenel_type']=='circle'):
       if((c['crenel_radius']+c['crenel_width']/2)>minimal_gear_profile_radius-radian_epsilon):
-        print("ERR311: Error, crenel_radius {:0.3f} or crenel_width {:0.3f} are too big compare to minimal_gear_profile_radius {:0.3f}".format(c['crenel_radius'], c['crenel_width'], minimal_gear_profile_radius))
+        six.print_(("ERR311: Error, crenel_radius {:0.3f} or crenel_width {:0.3f} are too big compare to minimal_gear_profile_radius {:0.3f}".format(c['crenel_radius'], c['crenel_width'], minimal_gear_profile_radius)))
         sys.exit(2)
     if(c['crenel_radius']<radian_epsilon):
-      print("ERR301: Error, the crenel_radius {:0.3f} is too small".format(c['crenel_radius']))
+      six.print_(("ERR301: Error, the crenel_radius {:0.3f} is too small".format(c['crenel_radius'])))
       sys.exit(2)
     if(abs(c['crenel_width'])>2*c['crenel_radius']-radian_epsilon):
-      print("ERR304: Error, crenel_width {:0.3f} is too big compare to crenel_radius {:0.3f}".format(c['crenel_width'], c['crenel_radius']))
+      six.print_(("ERR304: Error, crenel_width {:0.3f} is too big compare to crenel_radius {:0.3f}".format(c['crenel_width'], c['crenel_radius'])))
       sys.exit(2)
     c['crenel_half_width_angle'] = math.asin(c['crenel_width']/(2*c['crenel_radius']))
     if(c['crenel_half_width_angle']*2.2>crenel_increment_angle):
-      print("ERR305: Error, the crenel_increment_angle {:0.3f} or crenel_width {:0.3f} are too big!".format(crenel_increment_angle, c['crenel_width']))
+      six.print_(("ERR305: Error, the crenel_increment_angle {:0.3f} or crenel_width {:0.3f} are too big!".format(crenel_increment_angle, c['crenel_width'])))
       sys.exit(2)
     if(c['crenel_width']<3.2*c['crenel_rbr']):
-      print("ERR308: Error, crenel_width {:0.3f} is too small compare to crenel_router_bit_radius {:0.3f}".format(c['crenel_width'], c['crenel_rbr']))
+      six.print_(("ERR308: Error, crenel_width {:0.3f} is too small compare to crenel_router_bit_radius {:0.3f}".format(c['crenel_width'], c['crenel_rbr'])))
       sys.exit(2)
 
   ### crenel preparation
@@ -341,7 +342,7 @@ def marked_circle_crenel(ai_x, ai_y, ai_radius, ai_orientation, ai_router_bit_ra
     #r_mcc = cnc25d_api.cnc_cut_outline(cnc25d_api.outline_rotate(A_mcc, ai_x, ai_y, ai_orientation), "marked_circle_crenel")
     r_mcc = cnc25d_api.outline_rotate(A_mcc, ai_x, ai_y, ai_orientation)
   else:
-    print("ERR182: Error, ai_mark_type {:d} doesn't exist".format(ai_mark_type))
+    six.print_(("ERR182: Error, ai_mark_type {:d} doesn't exist".format(ai_mark_type)))
     sys.exit(2)
   return(r_mcc)
     
@@ -442,7 +443,7 @@ def gearwheel_2d_construction(c):
     wh_angle = 2*math.pi/c['wheel_hollow_leg_number']
     wh_leg_top_angle1 = math.asin(float(c['wheel_hollow_leg_width']/2.0+c['wheel_hollow_rbr'])/(c['wheel_hollow_external_radius']-c['wheel_hollow_rbr']))
     if(wh_angle<2*wh_leg_top_angle1+radian_epsilon):
-      print("ERR664: Error, wh_angle {:0.2f} too small compare to wh_leg_top_angle1 {:0.2f}!".format(wh_angle, wh_leg_top_angle1))
+      six.print_(("ERR664: Error, wh_angle {:0.2f} too small compare to wh_leg_top_angle1 {:0.2f}!".format(wh_angle, wh_leg_top_angle1)))
       sys.exit(2)
     wh_leg_bottom_angle1 = math.asin(float(c['wheel_hollow_leg_width']/2.0+c['wheel_hollow_rbr'])/(c['wheel_hollow_internal_radius']+c['wheel_hollow_rbr']))
     #wh_leg_top_angle2 = math.asin((c['wheel_hollow_leg_width']/2)/c['wheel_hollow_external_radius'])

@@ -28,7 +28,8 @@ positioning.py provides help functions to place 3D parts in an assembly
 # header for Python / FreeCAD compatibility
 ################################################################
 
-import importing_freecad
+from . import importing_freecad
+import six
 importing_freecad.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -42,7 +43,7 @@ import Part
 from FreeCAD import Base
 import math
 import sys, argparse
-import design_help # just for get_effective_args()
+from . import design_help # just for get_effective_args()
 
 ################################################################
 # Positioning API
@@ -66,7 +67,7 @@ def place_plank(ai_plank_solid, ai_x_length, ai_y_width, ai_z_height, ai_flip, a
   elif(ai_flip=='z'):
     r_placed_plank.rotate(Base.Vector(flip_center_x, flip_center_y, flip_center_z),Base.Vector(0,0,1),180)
   else:
-    print("ERR505: Error, the flip value %s doesn't exist! Use only: i,x,y,z."%ai_flip)
+    six.print_(("ERR505: Error, the flip value %s doesn't exist! Use only: i,x,y,z."%ai_flip))
     sys.exit(2)
   # orientation
   if(ai_orientation=='xy'):
@@ -90,7 +91,7 @@ def place_plank(ai_plank_solid, ai_x_length, ai_y_width, ai_z_height, ai_flip, a
     r_placed_plank.rotate(Base.Vector(0, 0, 0),Base.Vector(0,1,0),-90)
     r_placed_plank.translate(Base.Vector(ai_z_height, 0, 0))
   else:
-    print("ERR506: Error, the orientation value %s doesn't exist! Use only: xz,xy,yx,yz,zx,zy."%ai_orientation)
+    six.print_(("ERR506: Error, the orientation value %s doesn't exist! Use only: xz,xy,yx,yz,zx,zy."%ai_orientation))
     sys.exit(2)
   # translation
   r_placed_plank.translate(Base.Vector(ai_translate_x, ai_translate_y, ai_translate_z))

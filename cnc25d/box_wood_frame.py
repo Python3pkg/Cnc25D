@@ -31,7 +31,7 @@ It's a rewrite of the script box_wood_frame_ng.py using bare_design.py
 
 #import importing_freecad
 #importing_freecad.importing_freecad()
-import cnc25d_api
+from . import cnc25d_api
 cnc25d_api.importing_freecad()
 
 #print("FreeCAD.Version:", FreeCAD.Version())
@@ -47,7 +47,7 @@ import sys, argparse
 #import os, errno
 #import os
 #
-from box_wood_frame_outline import *
+from .box_wood_frame_outline import *
 #
 import Part
 #from FreeCAD import Base
